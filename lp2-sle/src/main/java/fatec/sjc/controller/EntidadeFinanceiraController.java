@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
 
-@Path("/entidades-financeiras")
+@Path("/entidade-financeira")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class EntidadeFinanceiraController {
