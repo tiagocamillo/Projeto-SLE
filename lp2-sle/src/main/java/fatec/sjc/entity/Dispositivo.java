@@ -23,7 +23,22 @@ public class Dispositivo {
     @Column(name = "Descricao")
     private String descricao;
     
-    @Column(name = "TipoProduto")
-    private String tipoProduto;
+    @Column(name = "Marca")
+    private String marca;
+    
+    @Column(name = "Modelo")
+    private String modelo;
+    
+    @Column(name = "Dimensoes")
+    private String dimensoes;
+    
+    @Column(name = "Condicao")
+    private String condicao;
+    
+    @Column(name = "Especificacoes")
+    private String especificacoes;
+    
+    @Column(name = "HistoricoReparo")
+    private String historicoReparo;
 	
 }

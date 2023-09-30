@@ -27,7 +27,12 @@ public class DispositivoService {
         if (dispositivoExistente != null) {
         	dispositivoExistente.setNome(dispositivoAtualizado.getNome());
         	dispositivoExistente.setDescricao(dispositivoAtualizado.getDescricao());
-        	dispositivoExistente.setTipoProduto(dispositivoAtualizado.getTipoProduto());
+        	dispositivoExistente.setMarca(dispositivoAtualizado.getMarca());
+        	dispositivoExistente.setModelo(dispositivoAtualizado.getModelo());
+        	dispositivoExistente.setDimensoes(dispositivoAtualizado.getDimensoes());
+        	dispositivoExistente.setCondicao(dispositivoAtualizado.getCondicao());
+        	dispositivoExistente.setEspecificacoes(dispositivoAtualizado.getEspecificacoes());
+        	dispositivoExistente.setHistoricoReparo(dispositivoAtualizado.getHistoricoReparo());
         }
         return dispositivoExistente;
     }

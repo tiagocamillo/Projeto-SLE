@@ -26,7 +26,12 @@ public class VeiculoService {
         if (veiculoExistente != null) {
         	veiculoExistente.setNome(veiculoAtualizado.getNome());
         	veiculoExistente.setDescricao(veiculoAtualizado.getDescricao());
-        	veiculoExistente.setTipoProduto(veiculoAtualizado.getTipoProduto());
+        	veiculoExistente.setTipo(veiculoAtualizado.getTipo());
+        	veiculoExistente.setMarca(veiculoAtualizado.getMarca());
+        	veiculoExistente.setAno(veiculoAtualizado.getAno());
+        	veiculoExistente.setAcessorios(veiculoAtualizado.getAcessorios());
+        	veiculoExistente.setCondicao(veiculoAtualizado.getCondicao());
+        	veiculoExistente.setHistoricoReparo(veiculoAtualizado.getHistoricoReparo());
         }
         return veiculoExistente;
     }
