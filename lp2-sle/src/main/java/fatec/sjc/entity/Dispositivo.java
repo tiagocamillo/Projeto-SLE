@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "Dispositivos")
-public class Dispositivo {
+public class Dispositivo extends ItemLeilao {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

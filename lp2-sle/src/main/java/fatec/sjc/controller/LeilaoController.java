@@ -2,13 +2,12 @@ package fatec.sjc.controller;
 
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.service.LeilaoService;
-import io.quarkus.hibernate.orm.panache.Panache;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
 import java.util.List;
 
 @Path("/leilao")
@@ -20,11 +19,12 @@ public class LeilaoController {
     LeilaoService leilaoService;
 
     @POST
-    @Transactional
-    public Response criarLeilao(Leilao leilao) {
+    public Response criarLeilao(@Valid Leilao leilao) {
         try {
-            leilaoService.criarLeilao(leilao);
-            return Response.status(Response.Status.CREATED).entity(leilao).build();
+            Leilao novoLeilao = leilaoService.criarLeilao(leilao);
+            return Response.status(Response.Status.CREATED).entity(novoLeilao).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o leilão.").build();
         }
@@ -32,20 +32,16 @@ public class LeilaoController {
 
     @PUT
     @Path("/{id}")
-    @Transactional
-    public Response atualizarLeilao(@PathParam("id") Long id, Leilao leilaoAtualizado) {
+    public Response atualizarLeilao(@PathParam("id") Long id, @Valid Leilao leilao) {
         try {
-            Leilao leilaoExistente = leilaoService.buscarLeilaoPorId(id);
-            if (leilaoExistente == null) {
-                return Response.status(Response.Status.NOT_FOUND).build();
+            Leilao leilaoAtualizado = leilaoService.atualizarLeilao(id, leilao);
+            if (leilaoAtualizado != null) {
+                return Response.ok(leilaoAtualizado).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("Leilão não encontrado.").build();
             }
-
-            leilaoExistente.setDataInicio(leilaoAtualizado.getDataInicio());
-            leilaoExistente.setStatus(leilaoAtualizado.getStatus());
-
-            leilaoService.atualizarLeilao(id, leilaoExistente);
-
-            return Response.ok(leilaoExistente).build();
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o leilão.").build();
         }
@@ -53,14 +49,9 @@ public class LeilaoController {
 
     @DELETE
     @Path("/{id}")
-    @Transactional
-    public Response deletarLeilao(@PathParam("id") Long id) {
+    public Response excluirLeilao(@PathParam("id") Long id) {
         try {
-            Leilao leilaoExistente = leilaoService.buscarLeilaoPorId(id);
-            if (leilaoExistente == null) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-            leilaoService.deletarLeilao(id);
+            leilaoService.excluirLeilao(id);
             return Response.noContent().build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o leilão.").build();
@@ -70,21 +61,18 @@ public class LeilaoController {
     @GET
     @Path("/{id}")
     public Response buscarLeilaoPorId(@PathParam("id") Long id) {
-        try {
-            Leilao leilao = leilaoService.buscarLeilaoPorId(id);
-            if (leilao == null) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
+        Leilao leilao = leilaoService.buscarLeilaoPorId(id);
+        if (leilao != null) {
             return Response.ok(leilao).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao buscar o leilão.").build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity("Leilão não encontrado.").build();
         }
     }
 
     @GET
-    public Response listarTodosLeiloes() {
+    public Response listarTodosOsLeiloes() {
         try {
-            List<Leilao> leiloes = leilaoService.listarTodosLeiloes();
+            List<Leilao> leiloes = leilaoService.listarTodosOsLeiloes();
             return Response.ok(leiloes).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os leilões.").build();
