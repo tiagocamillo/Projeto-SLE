@@ -22,53 +22,72 @@ public class LeilaoController {
     @POST
     @Transactional
     public Response criarLeilao(Leilao leilao) {
-        leilaoService.criarLeilao(leilao);
-        return Response.status(Response.Status.CREATED).entity(leilao).build();
+        try {
+            leilaoService.criarLeilao(leilao);
+            return Response.status(Response.Status.CREATED).entity(leilao).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o leilão.").build();
+        }
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
     public Response atualizarLeilao(@PathParam("id") Long id, Leilao leilaoAtualizado) {
-        Leilao leilaoExistente = leilaoService.buscarLeilaoPorId(id);
-        if (leilaoExistente == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            Leilao leilaoExistente = leilaoService.buscarLeilaoPorId(id);
+            if (leilaoExistente == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            leilaoExistente.setDataInicio(leilaoAtualizado.getDataInicio());
+            leilaoExistente.setStatus(leilaoAtualizado.getStatus());
+
+            leilaoService.atualizarLeilao(id, leilaoExistente);
+
+            return Response.ok(leilaoExistente).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o leilão.").build();
         }
-
-        leilaoExistente.setDataInicio(leilaoAtualizado.getDataInicio());
-        leilaoExistente.setStatus(leilaoAtualizado.getStatus());
-
-        leilaoExistente.persist();
-
-        Panache.getEntityManager().flush();
-
-        return Response.ok(leilaoExistente).build();
     }
 
     @DELETE
     @Path("/{id}")
     @Transactional
     public Response deletarLeilao(@PathParam("id") Long id) {
-        Leilao leilaoExistente = leilaoService.buscarLeilaoPorId(id);
-        if (leilaoExistente == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            Leilao leilaoExistente = leilaoService.buscarLeilaoPorId(id);
+            if (leilaoExistente == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            leilaoService.deletarLeilao(id);
+            return Response.noContent().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o leilão.").build();
         }
-        leilaoService.deletarLeilao(id);
-        return Response.noContent().build();
     }
 
     @GET
     @Path("/{id}")
     public Response buscarLeilaoPorId(@PathParam("id") Long id) {
-        Leilao leilao = leilaoService.buscarLeilaoPorId(id);
-        if (leilao == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            Leilao leilao = leilaoService.buscarLeilaoPorId(id);
+            if (leilao == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            return Response.ok(leilao).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao buscar o leilão.").build();
         }
-        return Response.ok(leilao).build();
     }
 
     @GET
-    public List<Leilao> listarTodosLeiloes() {
-        return leilaoService.listarTodosLeiloes();
+    public Response listarTodosLeiloes() {
+        try {
+            List<Leilao> leiloes = leilaoService.listarTodosLeiloes();
+            return Response.ok(leiloes).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os leilões.").build();
+        }
     }
 }
