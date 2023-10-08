@@ -1,11 +1,9 @@
 package fatec.sjc.service;
-
 import fatec.sjc.entity.EntidadeFinanceira;
 import fatec.sjc.repository.EntidadeFinanceiraRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 
 @ApplicationScoped
@@ -15,17 +13,17 @@ public class EntidadesFinanceiraService {
     EntidadeFinanceiraRepository entidadeFinanceiraRepository;
 
     @Transactional
-    public EntidadeFinanceira criarEntidadesFinanceira(EntidadeFinanceira entidadeFinanceira) {
+    public EntidadeFinanceira criarEntidadeFinanceira(EntidadeFinanceira entidadeFinanceira) {
         entidadeFinanceiraRepository.persist(entidadeFinanceira);
         return entidadeFinanceira;
     }
 
     @Transactional
-    public EntidadeFinanceira atualizarEntidadeFinanceira(Long id, EntidadeFinanceira entidadeFinanceiraAtualizado) {
+    public EntidadeFinanceira atualizarEntidadeFinanceira(Long id, EntidadeFinanceira entidadeFinanceiraAtualizada) {
         EntidadeFinanceira entidadeFinanceiraExistente = entidadeFinanceiraRepository.findById(id);
         if (entidadeFinanceiraExistente != null) {
-            entidadeFinanceiraExistente.setNome(entidadeFinanceiraAtualizado.getNome());
-            entidadeFinanceiraExistente.setCnpj(entidadeFinanceiraAtualizado.getCnpj());
+            entidadeFinanceiraExistente.setNome(entidadeFinanceiraAtualizada.getNome());
+            entidadeFinanceiraExistente.setCnpj(entidadeFinanceiraAtualizada.getCnpj());
         }
         return entidadeFinanceiraExistente;
     }

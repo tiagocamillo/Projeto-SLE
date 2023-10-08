@@ -1,15 +1,12 @@
 package fatec.sjc.service;
 
-
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.repository.LeilaoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
-import java.util.Optional;
+
 @ApplicationScoped
 public class LeilaoService {
 
@@ -18,21 +15,27 @@ public class LeilaoService {
 
     @Transactional
     public Leilao criarLeilao(Leilao leilao) {
-        leilao.persist();
-        return leilao;
-    }
-
-    @Transactional
-    public Leilao atualizarLeilao(Leilao leilao) {
         leilaoRepository.persist(leilao);
         return leilao;
     }
 
     @Transactional
-    public void deletarLeilao(Long id) {
-        Leilao leilao = leilaoRepository.findById(id);
-        if (leilao != null) {
-            leilaoRepository.delete(leilao);
+    public Leilao atualizarLeilao(Long id, Leilao leilaoAtualizado) {
+        Leilao leilaoExistente = leilaoRepository.findById(id);
+        if (leilaoExistente != null) {
+            leilaoExistente.setDataInicio(leilaoAtualizado.getDataInicio());
+            leilaoExistente.setDataFim(leilaoAtualizado.getDataFim());
+            leilaoExistente.setStatus(leilaoAtualizado.getStatus());
+            leilaoExistente.setIdEntidadeFinanceiraAssociada(leilaoAtualizado.getIdEntidadeFinanceiraAssociada());
+        }
+        return leilaoExistente;
+    }
+
+    @Transactional
+    public void excluirLeilao(Long id) {
+        Leilao leilaoExistente = leilaoRepository.findById(id);
+        if (leilaoExistente != null) {
+            leilaoRepository.delete(leilaoExistente);
         }
     }
 
@@ -40,7 +43,7 @@ public class LeilaoService {
         return leilaoRepository.findById(id);
     }
 
-    public List<Leilao> listarTodosLeiloes() {
+    public List<Leilao> listarTodosOsLeiloes() {
         return leilaoRepository.listAll();
     }
 }
