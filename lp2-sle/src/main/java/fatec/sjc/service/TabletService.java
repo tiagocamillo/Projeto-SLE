@@ -5,14 +5,13 @@ import fatec.sjc.repository.TabletRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 
 @ApplicationScoped
 public class TabletService {
 
     @Inject
-    private TabletRepository tabletRepository;
+    TabletRepository tabletRepository;
 
     @Transactional
     public Tablet criarTablet(Tablet tablet) {
@@ -21,22 +20,19 @@ public class TabletService {
     }
 
     @Transactional
-    public Tablet atualizarTablet(Long id, Tablet tablet) {
+    public Tablet atualizarTablet(Long id, Tablet tabletAtualizado) {
         Tablet tabletExistente = tabletRepository.findById(id);
         if (tabletExistente != null) {
-            // Atualize os atributos do tablet conforme necessário
-            tabletRepository.persist(tabletExistente);
-            return tabletExistente;
-        } else {
-            return null;
+            tabletExistente.setTamanhoTela(tabletAtualizado.getTamanhoTela());
         }
+        return tabletExistente;
     }
 
     @Transactional
-    public void deletarTablet(Long id) {
-        Tablet tablet = tabletRepository.findById(id);
-        if (tablet != null) {
-            tabletRepository.delete(tablet);
+    public void excluirTablet(Long id) {
+        Tablet tabletExistente = tabletRepository.findById(id);
+        if (tabletExistente != null) {
+            tabletRepository.delete(tabletExistente);
         }
     }
 
@@ -44,7 +40,7 @@ public class TabletService {
         return tabletRepository.findById(id);
     }
 
-    public List<Tablet> listarTablets() {
+    public List<Tablet> listarTodosOsTablets() {
         return tabletRepository.listAll();
     }
 }

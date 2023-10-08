@@ -1,5 +1,4 @@
 package fatec.sjc.service;
-
 import fatec.sjc.entity.Dispositivo;
 import fatec.sjc.repository.DispositivoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,14 +22,10 @@ public class DispositivoService {
     public Dispositivo atualizarDispositivo(Long id, Dispositivo dispositivoAtualizado) {
         Dispositivo dispositivoExistente = dispositivoRepository.findById(id);
         if (dispositivoExistente != null) {
-        	dispositivoExistente.setNome(dispositivoAtualizado.getNome());
-        	dispositivoExistente.setDescricao(dispositivoAtualizado.getDescricao());
-        	dispositivoExistente.setMarca(dispositivoAtualizado.getMarca());
-        	dispositivoExistente.setModelo(dispositivoAtualizado.getModelo());
-        	dispositivoExistente.setDimensoes(dispositivoAtualizado.getDimensoes());
-        	dispositivoExistente.setCondicao(dispositivoAtualizado.getCondicao());
-        	dispositivoExistente.setEspecificacoes(dispositivoAtualizado.getEspecificacoes());
-        	dispositivoExistente.setHistoricoReparo(dispositivoAtualizado.getHistoricoReparo());
+            dispositivoExistente.setMarca(dispositivoAtualizado.getMarca());
+            dispositivoExistente.setModelo(dispositivoAtualizado.getModelo());
+            dispositivoExistente.setDimensoes(dispositivoAtualizado.getDimensoes());
+            dispositivoExistente.setEspecificacoes(dispositivoAtualizado.getEspecificacoes());
         }
         return dispositivoExistente;
     }

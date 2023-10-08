@@ -23,7 +23,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @Table(name = "Leilao")
 @EqualsAndHashCode(callSuper = false)
-
 public class Leilao  {
 
     @Id

@@ -5,14 +5,13 @@ import fatec.sjc.repository.ServidorRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 
 @ApplicationScoped
 public class ServidorService {
 
     @Inject
-    private ServidorRepository servidorRepository;
+    ServidorRepository servidorRepository;
 
     @Transactional
     public Servidor criarServidor(Servidor servidor) {
@@ -21,22 +20,20 @@ public class ServidorService {
     }
 
     @Transactional
-    public Servidor atualizarServidor(Long id, Servidor servidor) {
+    public Servidor atualizarServidor(Long id, Servidor servidorAtualizado) {
         Servidor servidorExistente = servidorRepository.findById(id);
         if (servidorExistente != null) {
-            // Atualize os atributos do servidor conforme necessário
-            servidorRepository.persist(servidorExistente);
-            return servidorExistente;
-        } else {
-            return null;
+            servidorExistente.setProcessador(servidorAtualizado.getProcessador());
+            servidorExistente.setCapacidadeArmazenamento(servidorAtualizado.getCapacidadeArmazenamento());
         }
+        return servidorExistente;
     }
 
     @Transactional
-    public void deletarServidor(Long id) {
-        Servidor servidor = servidorRepository.findById(id);
-        if (servidor != null) {
-            servidorRepository.delete(servidor);
+    public void excluirServidor(Long id) {
+        Servidor servidorExistente = servidorRepository.findById(id);
+        if (servidorExistente != null) {
+            servidorRepository.delete(servidorExistente);
         }
     }
 
@@ -44,7 +41,7 @@ public class ServidorService {
         return servidorRepository.findById(id);
     }
 
-    public List<Servidor> listarServidores() {
+    public List<Servidor> listarTodosOsServidores() {
         return servidorRepository.listAll();
     }
 }

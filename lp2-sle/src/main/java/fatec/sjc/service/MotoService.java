@@ -5,7 +5,6 @@ import fatec.sjc.repository.MotoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 
 @ApplicationScoped
@@ -21,16 +20,19 @@ public class MotoService {
     }
 
     @Transactional
-    public Moto atualizarMoto(Long id, Moto moto) {
-        motoRepository.persist(moto);
-        return moto;
+    public Moto atualizarMoto(Long id, Moto motoAtualizada) {
+        Moto motoExistente = motoRepository.findById(id);
+        if (motoExistente != null) {
+            motoExistente.setCilindrada(motoAtualizada.getCilindrada());
+        }
+        return motoExistente;
     }
 
     @Transactional
-    public void deletarMoto(Long id) {
-        Moto moto = motoRepository.findById(id);
-        if (moto != null) {
-            motoRepository.delete(moto);
+    public void excluirMoto(Long id) {
+        Moto motoExistente = motoRepository.findById(id);
+        if (motoExistente != null) {
+            motoRepository.delete(motoExistente);
         }
     }
 
@@ -38,8 +40,7 @@ public class MotoService {
         return motoRepository.findById(id);
     }
 
-    public List<Moto> listarMotos() {
+    public List<Moto> listarTodasAsMotos() {
         return motoRepository.listAll();
     }
-
 }

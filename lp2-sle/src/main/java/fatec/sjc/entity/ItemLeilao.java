@@ -1,34 +1,28 @@
 package fatec.sjc.entity;
-
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import lombok.Data;
 
+@Data
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "tipo_item")
-public class ItemLeilao {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ItemLeilao extends PanacheEntity {
 
     @Column(name = "Nome")
-    private String nome;
+    public String nome;
 
     @Column(name = "Descricao")
-    private String descricao;
+    public String descricao;
 
     @Column(name = "Condicao")
-    private String condicao;
+    public String condicao;
 
     @Column(name = "HistoricoReparo")
-    private String historicoReparo;
+    public String historicoReparo;
 
 }
-

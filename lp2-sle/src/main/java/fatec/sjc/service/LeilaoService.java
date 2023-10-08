@@ -23,7 +23,10 @@ public class LeilaoService {
     public Leilao atualizarLeilao(Long id, Leilao leilaoAtualizado) {
         Leilao leilaoExistente = leilaoRepository.findById(id);
         if (leilaoExistente != null) {
-            // Atualize os campos necessários
+            leilaoExistente.setDataInicio(leilaoAtualizado.getDataInicio());
+            leilaoExistente.setDataFim(leilaoAtualizado.getDataFim());
+            leilaoExistente.setStatus(leilaoAtualizado.getStatus());
+            leilaoExistente.setIdEntidadeFinanceiraAssociada(leilaoAtualizado.getIdEntidadeFinanceiraAssociada());
         }
         return leilaoExistente;
     }

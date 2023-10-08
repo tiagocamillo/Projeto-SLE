@@ -1,20 +1,19 @@
 package fatec.sjc.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.Data;
 
 @Data
 @Entity
-@DiscriminatorValue("servidor")
+@DiscriminatorValue("SERVIDOR")
 public class Servidor extends Dispositivo {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(name = "Processador")
-    private String processador;
+    public String processador;
 
     @Column(name = "CapacidadeArmazenamento")
-    private long capacidadeArmazenamento;
+    public long capacidadeArmazenamento;
 
 }

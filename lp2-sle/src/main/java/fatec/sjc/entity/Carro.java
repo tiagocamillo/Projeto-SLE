@@ -1,18 +1,17 @@
 package fatec.sjc.entity;
 
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "carro")
+@DiscriminatorValue("CARRO")
 public class Carro extends Veiculo {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private int numeroPortas;
-
+    @Column(name = "NumeroPortas")
+    public int numeroPortas;
 
 }
+

@@ -5,7 +5,6 @@ import fatec.sjc.repository.CarroRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 
 @ApplicationScoped
@@ -21,22 +20,19 @@ public class CarroService {
     }
 
     @Transactional
-    public Carro atualizarCarro(Long id, Carro carro) {
+    public Carro atualizarCarro(Long id, Carro carroAtualizado) {
         Carro carroExistente = carroRepository.findById(id);
         if (carroExistente != null) {
-            carroExistente.setNumeroPortas(carro.getNumeroPortas());
-            carroRepository.persist(carroExistente);
-            return carroExistente;
-        } else {
-            return null;
+            carroExistente.setNumeroPortas(carroAtualizado.getNumeroPortas());
         }
+        return carroExistente;
     }
 
     @Transactional
-    public void deletarCarro(Long id) {
-        Carro carro = carroRepository.findById(id);
-        if (carro != null) {
-            carroRepository.delete(carro);
+    public void excluirCarro(Long id) {
+        Carro carroExistente = carroRepository.findById(id);
+        if (carroExistente != null) {
+            carroRepository.delete(carroExistente);
         }
     }
 
@@ -44,7 +40,7 @@ public class CarroService {
         return carroRepository.findById(id);
     }
 
-    public List<Carro> listarCarros() {
+    public List<Carro> listarTodosOsCarros() {
         return carroRepository.listAll();
     }
 }

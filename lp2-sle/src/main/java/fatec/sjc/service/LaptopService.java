@@ -5,14 +5,13 @@ import fatec.sjc.repository.LaptopRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 
 @ApplicationScoped
 public class LaptopService {
 
     @Inject
-    private LaptopRepository laptopRepository;
+    LaptopRepository laptopRepository;
 
     @Transactional
     public Laptop criarLaptop(Laptop laptop) {
@@ -21,21 +20,23 @@ public class LaptopService {
     }
 
     @Transactional
-    public Laptop atualizarLaptop(Long id, Laptop laptop) {
+    public Laptop atualizarLaptop(Long id, Laptop laptopAtualizado) {
         Laptop laptopExistente = laptopRepository.findById(id);
         if (laptopExistente != null) {
-            laptopRepository.persist(laptopExistente);
-            return laptopExistente;
-        } else {
-            return null;
+            laptopExistente.setMarca(laptopAtualizado.getMarca());
+            laptopExistente.setModelo(laptopAtualizado.getModelo());
+            laptopExistente.setDimensoes(laptopAtualizado.getDimensoes());
+            laptopExistente.setEspecificacoes(laptopAtualizado.getEspecificacoes());
+            laptopExistente.setTamanhoTela(laptopAtualizado.getTamanhoTela());
         }
+        return laptopExistente;
     }
 
     @Transactional
-    public void deletarLaptop(Long id) {
-        Laptop laptop = laptopRepository.findById(id);
-        if (laptop != null) {
-            laptopRepository.delete(laptop);
+    public void excluirLaptop(Long id) {
+        Laptop laptopExistente = laptopRepository.findById(id);
+        if (laptopExistente != null) {
+            laptopRepository.delete(laptopExistente);
         }
     }
 
@@ -43,7 +44,7 @@ public class LaptopService {
         return laptopRepository.findById(id);
     }
 
-    public List<Laptop> listarLaptops() {
+    public List<Laptop> listarTodosOsLaptops() {
         return laptopRepository.listAll();
     }
 }

@@ -23,14 +23,10 @@ public class VeiculoService {
     public Veiculo atualizarVeiculo(Long id, Veiculo veiculoAtualizado) {
         Veiculo veiculoExistente = veiculoRepository.findById(id);
         if (veiculoExistente != null) {
-        	veiculoExistente.setNome(veiculoAtualizado.getNome());
-        	veiculoExistente.setDescricao(veiculoAtualizado.getDescricao());
-        	veiculoExistente.setTipo(veiculoAtualizado.getTipo());
-        	veiculoExistente.setMarca(veiculoAtualizado.getMarca());
-        	veiculoExistente.setAno(veiculoAtualizado.getAno());
-        	veiculoExistente.setAcessorios(veiculoAtualizado.getAcessorios());
-        	veiculoExistente.setCondicao(veiculoAtualizado.getCondicao());
-        	veiculoExistente.setHistoricoReparo(veiculoAtualizado.getHistoricoReparo());
+            veiculoExistente.setTipo(veiculoAtualizado.getTipo());
+            veiculoExistente.setMarca(veiculoAtualizado.getMarca());
+            veiculoExistente.setAno(veiculoAtualizado.getAno());
+            veiculoExistente.setAcessorios(veiculoAtualizado.getAcessorios());
         }
         return veiculoExistente;
     }

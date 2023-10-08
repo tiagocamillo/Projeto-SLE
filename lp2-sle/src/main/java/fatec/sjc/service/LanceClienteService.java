@@ -1,12 +1,10 @@
 package fatec.sjc.service;
-
-import java.util.List;
-
 import fatec.sjc.entity.LanceCliente;
 import fatec.sjc.repository.LanceClienteRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import java.util.List;
 
 @ApplicationScoped
 public class LanceClienteService {
@@ -24,7 +22,9 @@ public class LanceClienteService {
     public LanceCliente atualizarLanceCliente(Long id, LanceCliente lanceClienteAtualizado) {
         LanceCliente lanceClienteExistente = lanceClienteRepository.findById(id);
         if (lanceClienteExistente != null) {
-            // Atualize os campos necessários
+            lanceClienteExistente.setCliente(lanceClienteAtualizado.getCliente());
+            lanceClienteExistente.setLeilao(lanceClienteAtualizado.getLeilao());
+            lanceClienteExistente.setValorLance(lanceClienteAtualizado.getValorLance());
         }
         return lanceClienteExistente;
     }

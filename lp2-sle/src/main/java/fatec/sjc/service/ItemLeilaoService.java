@@ -1,5 +1,4 @@
 package fatec.sjc.service;
-
 import fatec.sjc.entity.ItemLeilao;
 import fatec.sjc.repository.ItemLeilaoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,7 +22,10 @@ public class ItemLeilaoService {
     public ItemLeilao atualizarItemLeilao(Long id, ItemLeilao itemLeilaoAtualizado) {
         ItemLeilao itemLeilaoExistente = itemLeilaoRepository.findById(id);
         if (itemLeilaoExistente != null) {
-            // Atualize os campos necessários
+            itemLeilaoExistente.setNome(itemLeilaoAtualizado.getNome());
+            itemLeilaoExistente.setDescricao(itemLeilaoAtualizado.getDescricao());
+            itemLeilaoExistente.setCondicao(itemLeilaoAtualizado.getCondicao());
+            itemLeilaoExistente.setHistoricoReparo(itemLeilaoAtualizado.getHistoricoReparo());
         }
         return itemLeilaoExistente;
     }

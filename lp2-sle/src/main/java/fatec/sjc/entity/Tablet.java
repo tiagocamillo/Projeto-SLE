@@ -1,17 +1,16 @@
 package fatec.sjc.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.Data;
 
-@Entity
-@DiscriminatorValue("tablet")
 @Data
-public class Tablet {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Entity
+@DiscriminatorValue("TABLET")
+public class Tablet extends Dispositivo {
 
     @Column(name = "TamanhoTela")
-    private double tamanhoTela;
+    public double tamanhoTela;
+
 }
