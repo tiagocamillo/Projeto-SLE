@@ -59,7 +59,7 @@ public class LaptopController {
     @Path("/{id}")
     public Response excluirLaptop(@PathParam("id") Long id) {
         try {
-            laptopService.deletarLaptop(id);
+            laptopService.excluirLaptop(id);
             return Response.noContent().build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o laptop.").build();
@@ -80,7 +80,7 @@ public class LaptopController {
     @GET
     public Response listarLaptops() {
         try {
-            List<Laptop> laptops = laptopService.listarLaptops();
+            List<Laptop> laptops = laptopService.listarTodosOsLaptops();
             return Response.ok(laptops).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os laptops.").build();

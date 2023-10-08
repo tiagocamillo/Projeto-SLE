@@ -61,7 +61,7 @@ public class CarroController {
     @Path("/{id}")
     public Response excluirCarro(@PathParam("id") Long id) {
         try {
-            carroService.deletarCarro(id);
+            carroService.excluirCarro(id);
             return Response.noContent().build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o carro.").build();
@@ -82,7 +82,7 @@ public class CarroController {
     @GET
     public Response listarCarros() {
         try {
-            List<Carro> carros = carroService.listarCarros();
+            List<Carro> carros = carroService.listarTodosOsCarros();
             return Response.ok(carros).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os carros.").build();

@@ -60,7 +60,7 @@ public class OnibusController {
     @Path("/{id}")
     public Response excluirOnibus(@PathParam("id") Long id) {
         try {
-            onibusService.deletarOnibus(id);
+            onibusService.excluirOnibus(id);
             return Response.noContent().build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o ônibus.").build();
@@ -81,7 +81,7 @@ public class OnibusController {
     @GET
     public Response listarOnibus() {
         try {
-            List<Onibus> onibus = onibusService.listarOnibus();
+            List<Onibus> onibus = onibusService.listarTodosOsOnibus();
             return Response.ok(onibus).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os ônibus.").build();

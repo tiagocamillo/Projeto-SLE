@@ -59,7 +59,7 @@ public class TabletController {
     @Path("/{id}")
     public Response excluirTablet(@PathParam("id") Long id) {
         try {
-            tabletService.deletarTablet(id);
+            tabletService.excluirTablet(id);
             return Response.noContent().build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o tablet.").build();
@@ -80,7 +80,7 @@ public class TabletController {
     @GET
     public Response listarTablets() {
         try {
-            List<Tablet> tablets = tabletService.listarTablets();
+            List<Tablet> tablets = tabletService.listarTodosOsTablets();
             return Response.ok(tablets).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os tablets.").build();

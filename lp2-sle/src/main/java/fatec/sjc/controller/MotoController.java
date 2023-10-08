@@ -52,7 +52,7 @@ public class MotoController {
     @Path("/{id}")
     public Response excluirMoto(@PathParam("id") Long id) {
         try {
-            motoService.deletarMoto(id);
+            motoService.excluirMoto(id);
             return Response.noContent().build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir a moto.").build();
@@ -73,7 +73,7 @@ public class MotoController {
     @GET
     public Response listarMotos() {
         try {
-            List<Moto> motos = motoService.listarMotos();
+            List<Moto> motos = motoService.listarTodasAsMotos();
             return Response.ok(motos).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar as motos.").build();

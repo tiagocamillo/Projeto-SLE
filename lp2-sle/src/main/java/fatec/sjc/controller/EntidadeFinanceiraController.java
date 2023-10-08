@@ -22,7 +22,7 @@ public class EntidadeFinanceiraController {
     @POST
     public Response criarEntidadesFinanceira(@Valid EntidadeFinanceira entidadeFinanceira) {
         try {
-            EntidadeFinanceira novaEntidadeFinanceira = entidadesFinanceiraService.criarEntidadesFinanceira(entidadeFinanceira);
+            EntidadeFinanceira novaEntidadeFinanceira = entidadesFinanceiraService.criarEntidadeFinanceira(entidadeFinanceira);
             return Response.status(Response.Status.CREATED).entity(novaEntidadeFinanceira).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();

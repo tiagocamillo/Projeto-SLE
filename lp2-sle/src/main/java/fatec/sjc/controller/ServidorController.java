@@ -59,7 +59,7 @@ public class ServidorController {
     @Path("/{id}")
     public Response excluirServidor(@PathParam("id") Long id) {
         try {
-            servidorService.deletarServidor(id);
+            servidorService.excluirServidor(id);
             return Response.noContent().build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o servidor.").build();
@@ -80,7 +80,7 @@ public class ServidorController {
     @GET
     public Response listarServidores() {
         try {
-            List<Servidor> servidores = servidorService.listarServidores();
+            List<Servidor> servidores = servidorService.listarTodosOsServidores();
             return Response.ok(servidores).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os servidores.").build();
