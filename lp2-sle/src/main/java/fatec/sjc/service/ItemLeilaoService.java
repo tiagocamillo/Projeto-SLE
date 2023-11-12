@@ -1,9 +1,12 @@
 package fatec.sjc.service;
+
+import fatec.sjc.DTO.ItemLeilaoDTO;
 import fatec.sjc.entity.ItemLeilao;
 import fatec.sjc.repository.ItemLeilaoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
 
 @ApplicationScoped
@@ -13,19 +16,25 @@ public class ItemLeilaoService {
     ItemLeilaoRepository itemLeilaoRepository;
 
     @Transactional
-    public ItemLeilao criarItemLeilao(ItemLeilao itemLeilao) {
+    public ItemLeilao criarItemLeilao(ItemLeilaoDTO itemLeilaoDTO) {
+        ItemLeilao itemLeilao = new ItemLeilao();
+        itemLeilao.setNome(itemLeilaoDTO.getNome());
+        itemLeilao.setDescricao(itemLeilaoDTO.getDescricao());
+        itemLeilao.setCondicao(itemLeilaoDTO.getCondicao());
+        itemLeilao.setHistoricoReparo(itemLeilaoDTO.getHistoricoReparo());
+
         itemLeilaoRepository.persist(itemLeilao);
         return itemLeilao;
     }
 
     @Transactional
-    public ItemLeilao atualizarItemLeilao(Long id, ItemLeilao itemLeilaoAtualizado) {
+    public ItemLeilao atualizarItemLeilao(Long id, ItemLeilaoDTO itemLeilaoDTO) {
         ItemLeilao itemLeilaoExistente = itemLeilaoRepository.findById(id);
         if (itemLeilaoExistente != null) {
-            itemLeilaoExistente.setNome(itemLeilaoAtualizado.getNome());
-            itemLeilaoExistente.setDescricao(itemLeilaoAtualizado.getDescricao());
-            itemLeilaoExistente.setCondicao(itemLeilaoAtualizado.getCondicao());
-            itemLeilaoExistente.setHistoricoReparo(itemLeilaoAtualizado.getHistoricoReparo());
+            itemLeilaoExistente.setNome(itemLeilaoDTO.getNome());
+            itemLeilaoExistente.setDescricao(itemLeilaoDTO.getDescricao());
+            itemLeilaoExistente.setCondicao(itemLeilaoDTO.getCondicao());
+            itemLeilaoExistente.setHistoricoReparo(itemLeilaoDTO.getHistoricoReparo());
         }
         return itemLeilaoExistente;
     }

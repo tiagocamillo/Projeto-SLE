@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.DTO.TabletDTO;
 import fatec.sjc.entity.Tablet;
 import fatec.sjc.service.TabletService;
 import jakarta.validation.ConstraintViolationException;
@@ -27,12 +28,10 @@ public class TabletController {
     TabletService tabletService;
 
     @POST
-    public Response criarTablet(@Valid Tablet tablet) {
+    public Response criarTablet(@Valid TabletDTO tabletDTO) {
         try {
-            Tablet novoTablet = tabletService.criarTablet(tablet);
+            TabletDTO novoTablet = tabletService.criarTablet(tabletDTO);
             return Response.status(Response.Status.CREATED).entity(novoTablet).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o tablet.").build();
         }
@@ -40,16 +39,14 @@ public class TabletController {
 
     @PUT
     @Path("/{id}")
-    public Response atualizarTablet(@PathParam("id") Long id, @Valid Tablet tablet) {
+    public Response atualizarTablet(@PathParam("id") Long id, @Valid TabletDTO tabletDTO) {
         try {
-            Tablet tabletAtualizado = tabletService.atualizarTablet(id, tablet);
+            TabletDTO tabletAtualizado = tabletService.atualizarTablet(id, tabletDTO);
             if (tabletAtualizado != null) {
                 return Response.ok(tabletAtualizado).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).entity("Tablet não encontrado.").build();
             }
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o tablet.").build();
         }
@@ -69,7 +66,7 @@ public class TabletController {
     @GET
     @Path("/{id}")
     public Response buscarTabletPorId(@PathParam("id") Long id) {
-        Tablet tablet = tabletService.buscarTabletPorId(id);
+        TabletDTO tablet = tabletService.buscarTabletPorId(id);
         if (tablet != null) {
             return Response.ok(tablet).build();
         } else {
@@ -80,7 +77,7 @@ public class TabletController {
     @GET
     public Response listarTablets() {
         try {
-            List<Tablet> tablets = tabletService.listarTodosOsTablets();
+            List<TabletDTO> tablets = tabletService.listarTodosOsTablets();
             return Response.ok(tablets).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os tablets.").build();

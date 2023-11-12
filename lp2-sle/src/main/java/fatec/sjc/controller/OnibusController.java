@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.DTO.OnibusDTO;
 import fatec.sjc.entity.Onibus;
 import fatec.sjc.service.OnibusService;
 import jakarta.validation.ConstraintViolationException;
@@ -28,9 +29,9 @@ public class OnibusController {
     OnibusService onibusService;
 
     @POST
-    public Response criarOnibus(@Valid Onibus onibus) {
+    public Response criarOnibus(@Valid OnibusDTO onibusDTO) {
         try {
-            Onibus novoOnibus = onibusService.criarOnibus(onibus);
+            OnibusDTO novoOnibus = onibusService.criarOnibus(onibusDTO);
             return Response.status(Response.Status.CREATED).entity(novoOnibus).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
@@ -41,9 +42,9 @@ public class OnibusController {
 
     @PUT
     @Path("/{id}")
-    public Response atualizarOnibus(@PathParam("id") Long id, @Valid Onibus onibus) {
+    public Response atualizarOnibus(@PathParam("id") Long id, @Valid OnibusDTO onibusDTO) {
         try {
-            Onibus onibusAtualizado = onibusService.atualizarOnibus(id, onibus);
+            OnibusDTO onibusAtualizado = onibusService.atualizarOnibus(id, onibusDTO);
             if (onibusAtualizado != null) {
                 return Response.ok(onibusAtualizado).build();
             } else {
@@ -70,7 +71,7 @@ public class OnibusController {
     @GET
     @Path("/{id}")
     public Response buscarOnibusPorId(@PathParam("id") Long id) {
-        Onibus onibus = onibusService.buscarOnibusPorId(id);
+        OnibusDTO onibus = onibusService.buscarOnibusPorId(id);
         if (onibus != null) {
             return Response.ok(onibus).build();
         } else {
@@ -81,7 +82,7 @@ public class OnibusController {
     @GET
     public Response listarOnibus() {
         try {
-            List<Onibus> onibus = onibusService.listarTodosOsOnibus();
+            List<OnibusDTO> onibus = onibusService.listarTodosOsOnibus();
             return Response.ok(onibus).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os ônibus.").build();

@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.DTO.LeilaoDTO;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.service.LeilaoService;
 import jakarta.inject.Inject;
@@ -8,7 +9,10 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.sql.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/leilao")
 @Produces(MediaType.APPLICATION_JSON)
@@ -19,8 +23,9 @@ public class LeilaoController {
     LeilaoService leilaoService;
 
     @POST
-    public Response criarLeilao(@Valid Leilao leilao) {
+    public Response criarLeilao(@Valid LeilaoDTO leilaoDTO) {
         try {
+            Leilao leilao = convertDTOToEntity(leilaoDTO);
             Leilao novoLeilao = leilaoService.criarLeilao(leilao);
             return Response.status(Response.Status.CREATED).entity(novoLeilao).build();
         } catch (ConstraintViolationException e) {
@@ -32,11 +37,12 @@ public class LeilaoController {
 
     @PUT
     @Path("/{id}")
-    public Response atualizarLeilao(@PathParam("id") Long id, @Valid Leilao leilao) {
+    public Response atualizarLeilao(@PathParam("id") Long id, @Valid LeilaoDTO leilaoDTO) {
         try {
-            Leilao leilaoAtualizado = leilaoService.atualizarLeilao(id, leilao);
-            if (leilaoAtualizado != null) {
-                return Response.ok(leilaoAtualizado).build();
+            Leilao leilaoAtualizado = convertDTOToEntity(leilaoDTO);
+            Leilao leilao = leilaoService.atualizarLeilao(id, leilaoAtualizado);
+            if (leilao != null) {
+                return Response.ok(leilao).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).entity("Leilão não encontrado.").build();
             }
@@ -63,7 +69,8 @@ public class LeilaoController {
     public Response buscarLeilaoPorId(@PathParam("id") Long id) {
         Leilao leilao = leilaoService.buscarLeilaoPorId(id);
         if (leilao != null) {
-            return Response.ok(leilao).build();
+            LeilaoDTO leilaoDTO = convertEntityToDTO(leilao);
+            return Response.ok(leilaoDTO).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity("Leilão não encontrado.").build();
         }
@@ -73,9 +80,30 @@ public class LeilaoController {
     public Response listarTodosOsLeiloes() {
         try {
             List<Leilao> leiloes = leilaoService.listarTodosOsLeiloes();
-            return Response.ok(leiloes).build();
+            List<LeilaoDTO> leiloesDTO = leiloes.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
+            return Response.ok(leiloesDTO).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os leilões.").build();
         }
+    }
+
+    private Leilao convertDTOToEntity(LeilaoDTO leilaoDTO) {
+        Leilao leilao = new Leilao();
+        leilao.setIdLeilao(leilaoDTO.getIdLeilao());
+        leilao.setDataInicio(leilaoDTO.getDataInicio());
+        leilao.setDataFim(leilaoDTO.getDataFim());
+        leilao.setStatus(leilaoDTO.getStatus());
+        leilao.setIdEntidadeFinanceiraAssociada(leilaoDTO.getIdEntidadeFinanceiraAssociada());
+        return leilao;
+    }
+
+    private LeilaoDTO convertEntityToDTO(Leilao leilao) {
+        LeilaoDTO leilaoDTO = new LeilaoDTO();
+        leilaoDTO.setIdLeilao(leilao.getIdLeilao());
+        leilaoDTO.setDataInicio((Date) leilao.getDataInicio());
+        leilaoDTO.setDataFim((Date) leilao.getDataFim());
+        leilaoDTO.setStatus(leilao.getStatus());
+        leilaoDTO.setIdEntidadeFinanceiraAssociada(leilao.getIdEntidadeFinanceiraAssociada());
+        return leilaoDTO;
     }
 }

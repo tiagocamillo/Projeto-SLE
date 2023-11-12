@@ -1,11 +1,13 @@
 package fatec.sjc.service;
 
+import fatec.sjc.DTO.OnibusDTO;
 import fatec.sjc.entity.Onibus;
 import fatec.sjc.repository.OnibusRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class OnibusService {
@@ -14,18 +16,19 @@ public class OnibusService {
     OnibusRepository onibusRepository;
 
     @Transactional
-    public Onibus criarOnibus(Onibus onibus) {
+    public OnibusDTO criarOnibus(OnibusDTO onibusDTO) {
+        Onibus onibus = convertToEntity(onibusDTO);
         onibusRepository.persist(onibus);
-        return onibus;
+        return convertToDTO(onibus);
     }
 
     @Transactional
-    public Onibus atualizarOnibus(Long id, Onibus onibusAtualizado) {
+    public OnibusDTO atualizarOnibus(Long id, OnibusDTO onibusAtualizadoDTO) {
         Onibus onibusExistente = onibusRepository.findById(id);
         if (onibusExistente != null) {
-            onibusExistente.setCapacidadePassageiros(onibusAtualizado.getCapacidadePassageiros());
+            updateEntityFromDTO(onibusExistente, onibusAtualizadoDTO);
         }
-        return onibusExistente;
+        return convertToDTO(onibusExistente);
     }
 
     @Transactional
@@ -36,11 +39,31 @@ public class OnibusService {
         }
     }
 
-    public Onibus buscarOnibusPorId(Long id) {
-        return onibusRepository.findById(id);
+    public OnibusDTO buscarOnibusPorId(Long id) {
+        Onibus onibus = onibusRepository.findById(id);
+        return (onibus != null) ? convertToDTO(onibus) : null;
     }
 
-    public List<Onibus> listarTodosOsOnibus() {
-        return onibusRepository.listAll();
+    public List<OnibusDTO> listarTodosOsOnibus() {
+        return onibusRepository.listAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private Onibus convertToEntity(OnibusDTO onibusDTO) {
+        Onibus onibus = new Onibus();
+
+        onibus.setCapacidadePassageiros(onibusDTO.getCapacidadePassageiros());
+        return onibus;
+    }
+
+    private void updateEntityFromDTO(Onibus onibus, OnibusDTO onibusDTO) {
+        onibus.setCapacidadePassageiros(onibusDTO.getCapacidadePassageiros());
+    }
+
+    private OnibusDTO convertToDTO(Onibus onibus) {
+        OnibusDTO onibusDTO = new OnibusDTO();
+        onibusDTO.setCapacidadePassageiros(onibus.getCapacidadePassageiros());
+        return onibusDTO;
     }
 }

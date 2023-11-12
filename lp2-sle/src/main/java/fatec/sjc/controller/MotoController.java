@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.DTO.MotoDTO;
 import fatec.sjc.entity.Moto;
 import fatec.sjc.service.MotoService;
 import jakarta.inject.Inject;
@@ -20,9 +21,9 @@ public class MotoController {
     MotoService motoService;
 
     @POST
-    public Response criarMoto(@Valid Moto moto) {
+    public Response criarMoto(@Valid MotoDTO motoDTO) {
         try {
-            Moto novaMoto = motoService.criarMoto(moto);
+            MotoDTO novaMoto = motoService.criarMoto(motoDTO);
             return Response.status(Response.Status.CREATED).entity(novaMoto).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
@@ -33,9 +34,9 @@ public class MotoController {
 
     @PUT
     @Path("/{id}")
-    public Response atualizarMoto(@PathParam("id") Long id, @Valid Moto moto) {
+    public Response atualizarMoto(@PathParam("id") Long id, @Valid MotoDTO motoDTO) {
         try {
-            Moto motoAtualizada = motoService.atualizarMoto(id, moto);
+            MotoDTO motoAtualizada = motoService.atualizarMoto(id, motoDTO);
             if (motoAtualizada != null) {
                 return Response.ok(motoAtualizada).build();
             } else {
@@ -62,7 +63,7 @@ public class MotoController {
     @GET
     @Path("/{id}")
     public Response buscarMotoPorId(@PathParam("id") Long id) {
-        Moto moto = motoService.buscarMotoPorId(id);
+        MotoDTO moto = motoService.buscarMotoPorId(id);
         if (moto != null) {
             return Response.ok(moto).build();
         } else {
@@ -73,7 +74,7 @@ public class MotoController {
     @GET
     public Response listarMotos() {
         try {
-            List<Moto> motos = motoService.listarTodasAsMotos();
+            List<MotoDTO> motos = motoService.listarTodasAsMotos();
             return Response.ok(motos).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar as motos.").build();

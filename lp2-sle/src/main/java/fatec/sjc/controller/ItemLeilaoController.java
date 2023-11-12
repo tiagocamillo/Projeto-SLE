@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.DTO.ItemLeilaoDTO;
 import fatec.sjc.entity.ItemLeilao;
 import fatec.sjc.service.ItemLeilaoService;
 import jakarta.inject.Inject;
@@ -8,6 +9,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import java.util.List;
 
 @Path("/itemleilao")
@@ -19,9 +21,9 @@ public class ItemLeilaoController {
     ItemLeilaoService itemLeilaoService;
 
     @POST
-    public Response criarItemLeilao(@Valid ItemLeilao itemLeilao) {
+    public Response criarItemLeilao(@Valid ItemLeilaoDTO itemLeilaoDTO) {
         try {
-            ItemLeilao novoItemLeilao = itemLeilaoService.criarItemLeilao(itemLeilao);
+            ItemLeilao novoItemLeilao = itemLeilaoService.criarItemLeilao(itemLeilaoDTO);
             return Response.status(Response.Status.CREATED).entity(novoItemLeilao).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
@@ -32,9 +34,9 @@ public class ItemLeilaoController {
 
     @PUT
     @Path("/{id}")
-    public Response atualizarItemLeilao(@PathParam("id") Long id, @Valid ItemLeilao itemLeilao) {
+    public Response atualizarItemLeilao(@PathParam("id") Long id, @Valid ItemLeilaoDTO itemLeilaoDTO) {
         try {
-            ItemLeilao itemLeilaoAtualizado = itemLeilaoService.atualizarItemLeilao(id, itemLeilao);
+            ItemLeilao itemLeilaoAtualizado = itemLeilaoService.atualizarItemLeilao(id, itemLeilaoDTO);
             if (itemLeilaoAtualizado != null) {
                 return Response.ok(itemLeilaoAtualizado).build();
             } else {

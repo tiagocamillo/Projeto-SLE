@@ -1,5 +1,8 @@
 package fatec.sjc.service;
+import fatec.sjc.DTO.LanceClienteDTO;
+import fatec.sjc.entity.Cliente;
 import fatec.sjc.entity.LanceCliente;
+import fatec.sjc.entity.Leilao;
 import fatec.sjc.repository.LanceClienteRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,15 +16,17 @@ public class LanceClienteService {
     LanceClienteRepository lanceClienteRepository;
 
     @Transactional
-    public LanceCliente criarLanceCliente(LanceCliente lanceCliente) {
+    public LanceCliente criarLanceCliente(LanceClienteDTO lanceClienteDTO) {
+        LanceCliente lanceCliente = convertDTOToEntity(lanceClienteDTO);
         lanceClienteRepository.persist(lanceCliente);
         return lanceCliente;
     }
 
     @Transactional
-    public LanceCliente atualizarLanceCliente(Long id, LanceCliente lanceClienteAtualizado) {
+    public LanceCliente atualizarLanceCliente(Long id, LanceClienteDTO lanceClienteDTO) {
         LanceCliente lanceClienteExistente = lanceClienteRepository.findById(id);
         if (lanceClienteExistente != null) {
+            LanceCliente lanceClienteAtualizado = convertDTOToEntity(lanceClienteDTO);
             lanceClienteExistente.setCliente(lanceClienteAtualizado.getCliente());
             lanceClienteExistente.setLeilao(lanceClienteAtualizado.getLeilao());
             lanceClienteExistente.setValorLance(lanceClienteAtualizado.getValorLance());
@@ -43,5 +48,23 @@ public class LanceClienteService {
 
     public List<LanceCliente> listarTodosOsLancesClientes() {
         return lanceClienteRepository.listAll();
+    }
+
+    private LanceCliente convertDTOToEntity(LanceClienteDTO lanceClienteDTO) {
+        LanceCliente lanceCliente = new LanceCliente();
+        lanceCliente.setId(lanceClienteDTO.getId());
+
+        Cliente cliente = new Cliente();
+        cliente.setId(lanceClienteDTO.getIdCliente());
+        // Configure outros atributos do cliente, se necessário
+        lanceCliente.setCliente(cliente);
+
+        Leilao leilao = new Leilao();
+        leilao.setIdLeilao(lanceClienteDTO.getIdLeilao());
+        lanceCliente.setLeilao(leilao);
+
+        lanceCliente.setValorLance(lanceClienteDTO.getValorLance());
+
+        return lanceCliente;
     }
 }

@@ -20,13 +20,13 @@ public class LeilaoService {
     }
 
     @Transactional
-    public Leilao atualizarLeilao(Long id, Leilao leilaoAtualizado) {
+    public Leilao atualizarLeilao(Long id, Leilao leilaoDTO) {
         Leilao leilaoExistente = leilaoRepository.findById(id);
         if (leilaoExistente != null) {
-            leilaoExistente.setDataInicio(leilaoAtualizado.getDataInicio());
-            leilaoExistente.setDataFim(leilaoAtualizado.getDataFim());
-            leilaoExistente.setStatus(leilaoAtualizado.getStatus());
-            leilaoExistente.setIdEntidadeFinanceiraAssociada(leilaoAtualizado.getIdEntidadeFinanceiraAssociada());
+            leilaoExistente.setDataInicio(leilaoDTO.getDataInicio());
+            leilaoExistente.setDataFim(leilaoDTO.getDataFim());
+            leilaoExistente.setStatus(leilaoDTO.getStatus());
+            leilaoExistente.setIdEntidadeFinanceiraAssociada(leilaoDTO.getIdEntidadeFinanceiraAssociada());
         }
         return leilaoExistente;
     }

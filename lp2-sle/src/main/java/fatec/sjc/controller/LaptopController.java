@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.DTO.LaptopDTO;
 import fatec.sjc.entity.Laptop;
 import fatec.sjc.service.LaptopService;
 import jakarta.validation.ConstraintViolationException;
@@ -17,7 +18,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.validation.Valid;
 
 import java.util.List;
-
 @Path("/laptop")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -27,12 +27,10 @@ public class LaptopController {
     LaptopService laptopService;
 
     @POST
-    public Response criarLaptop(@Valid Laptop laptop) {
+    public Response criarLaptop(@Valid LaptopDTO laptopDTO) {
         try {
-            Laptop novoLaptop = laptopService.criarLaptop(laptop);
+            LaptopDTO novoLaptop = laptopService.criarLaptop(laptopDTO);
             return Response.status(Response.Status.CREATED).entity(novoLaptop).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o laptop.").build();
         }
@@ -40,16 +38,14 @@ public class LaptopController {
 
     @PUT
     @Path("/{id}")
-    public Response atualizarLaptop(@PathParam("id") Long id, @Valid Laptop laptop) {
+    public Response atualizarLaptop(@PathParam("id") Long id, @Valid LaptopDTO laptopDTO) {
         try {
-            Laptop laptopAtualizado = laptopService.atualizarLaptop(id, laptop);
+            LaptopDTO laptopAtualizado = laptopService.atualizarLaptop(id, laptopDTO);
             if (laptopAtualizado != null) {
                 return Response.ok(laptopAtualizado).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).entity("Laptop não encontrado.").build();
             }
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o laptop.").build();
         }
@@ -69,7 +65,7 @@ public class LaptopController {
     @GET
     @Path("/{id}")
     public Response buscarLaptopPorId(@PathParam("id") Long id) {
-        Laptop laptop = laptopService.buscarLaptopPorId(id);
+        LaptopDTO laptop = laptopService.buscarLaptopPorId(id);
         if (laptop != null) {
             return Response.ok(laptop).build();
         } else {
@@ -80,7 +76,7 @@ public class LaptopController {
     @GET
     public Response listarLaptops() {
         try {
-            List<Laptop> laptops = laptopService.listarTodosOsLaptops();
+            List<LaptopDTO> laptops = laptopService.listarTodosOsLaptops();
             return Response.ok(laptops).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os laptops.").build();

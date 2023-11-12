@@ -1,11 +1,15 @@
 package fatec.sjc.service;
 
+import fatec.sjc.DTO.ServidorDTO;
 import fatec.sjc.entity.Servidor;
 import fatec.sjc.repository.ServidorRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ServidorService {
@@ -14,19 +18,19 @@ public class ServidorService {
     ServidorRepository servidorRepository;
 
     @Transactional
-    public Servidor criarServidor(Servidor servidor) {
+    public ServidorDTO criarServidor(ServidorDTO servidorDTO) {
+        Servidor servidor = convertToEntity(servidorDTO);
         servidorRepository.persist(servidor);
-        return servidor;
+        return convertToDTO(servidor);
     }
 
     @Transactional
-    public Servidor atualizarServidor(Long id, Servidor servidorAtualizado) {
+    public ServidorDTO atualizarServidor(Long id, ServidorDTO servidorAtualizadoDTO) {
         Servidor servidorExistente = servidorRepository.findById(id);
         if (servidorExistente != null) {
-            servidorExistente.setProcessador(servidorAtualizado.getProcessador());
-            servidorExistente.setCapacidadeArmazenamento(servidorAtualizado.getCapacidadeArmazenamento());
+            updateEntityFromDTO(servidorExistente, servidorAtualizadoDTO);
         }
-        return servidorExistente;
+        return convertToDTO(servidorExistente);
     }
 
     @Transactional
@@ -37,11 +41,34 @@ public class ServidorService {
         }
     }
 
-    public Servidor buscarServidorPorId(Long id) {
-        return servidorRepository.findById(id);
+    public ServidorDTO buscarServidorPorId(Long id) {
+        Servidor servidor = servidorRepository.findById(id);
+        return (servidor != null) ? convertToDTO(servidor) : null;
     }
 
-    public List<Servidor> listarTodosOsServidores() {
-        return servidorRepository.listAll();
+    public List<ServidorDTO> listarTodosOsServidores() {
+        return servidorRepository.listAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private Servidor convertToEntity(ServidorDTO servidorDTO) {
+        Servidor servidor = new Servidor();
+        servidor.processador = servidorDTO.getProcessador();
+        servidor.capacidadeArmazenamento = servidorDTO.getCapacidadeArmazenamento();
+        return servidor;
+    }
+
+    private void updateEntityFromDTO(Servidor servidor, ServidorDTO servidorDTO) {
+        servidor.processador = servidorDTO.getProcessador();
+        servidor.capacidadeArmazenamento = servidorDTO.getCapacidadeArmazenamento();
+    }
+
+    private ServidorDTO convertToDTO(Servidor servidor) {
+        ServidorDTO servidorDTO = new ServidorDTO();
+        servidorDTO.setId(servidor.id);
+        servidorDTO.setProcessador(servidor.processador);
+        servidorDTO.setCapacidadeArmazenamento(servidor.capacidadeArmazenamento);
+        return servidorDTO;
     }
 }

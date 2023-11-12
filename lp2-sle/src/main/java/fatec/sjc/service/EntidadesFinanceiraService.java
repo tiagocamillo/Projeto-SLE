@@ -1,10 +1,13 @@
 package fatec.sjc.service;
+
+import java.util.List;
+
+import fatec.sjc.DTO.EntidadeFinanceiraDTO;
 import fatec.sjc.entity.EntidadeFinanceira;
 import fatec.sjc.repository.EntidadeFinanceiraRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.util.List;
 
 @ApplicationScoped
 public class EntidadesFinanceiraService {
@@ -13,17 +16,21 @@ public class EntidadesFinanceiraService {
     EntidadeFinanceiraRepository entidadeFinanceiraRepository;
 
     @Transactional
-    public EntidadeFinanceira criarEntidadeFinanceira(EntidadeFinanceira entidadeFinanceira) {
+    public EntidadeFinanceira criarEntidadeFinanceira(EntidadeFinanceiraDTO entidadeFinanceiraDTO) {
+        EntidadeFinanceira entidadeFinanceira = new EntidadeFinanceira();
+        entidadeFinanceira.setNome(entidadeFinanceiraDTO.getNome());
+        entidadeFinanceira.setCnpj(entidadeFinanceiraDTO.getCnpj());
+
         entidadeFinanceiraRepository.persist(entidadeFinanceira);
         return entidadeFinanceira;
     }
 
     @Transactional
-    public EntidadeFinanceira atualizarEntidadeFinanceira(Long id, EntidadeFinanceira entidadeFinanceiraAtualizada) {
+    public EntidadeFinanceira atualizarEntidadeFinanceira(Long id, EntidadeFinanceiraDTO entidadeFinanceiraDTO) {
         EntidadeFinanceira entidadeFinanceiraExistente = entidadeFinanceiraRepository.findById(id);
         if (entidadeFinanceiraExistente != null) {
-            entidadeFinanceiraExistente.setNome(entidadeFinanceiraAtualizada.getNome());
-            entidadeFinanceiraExistente.setCnpj(entidadeFinanceiraAtualizada.getCnpj());
+            entidadeFinanceiraExistente.setNome(entidadeFinanceiraDTO.getNome());
+            entidadeFinanceiraExistente.setCnpj(entidadeFinanceiraDTO.getCnpj());
         }
         return entidadeFinanceiraExistente;
     }

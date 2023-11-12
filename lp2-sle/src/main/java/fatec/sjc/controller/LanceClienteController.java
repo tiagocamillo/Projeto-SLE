@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.DTO.LanceClienteDTO;
 import fatec.sjc.entity.LanceCliente;
 import fatec.sjc.service.LanceClienteService;
 import jakarta.inject.Inject;
@@ -9,6 +10,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/lancecliente")
 @Produces(MediaType.APPLICATION_JSON)
@@ -19,10 +21,11 @@ public class LanceClienteController {
     LanceClienteService lanceClienteService;
 
     @POST
-    public Response criarLanceCliente(@Valid LanceCliente lanceCliente) {
+    public Response criarLanceCliente(@Valid LanceClienteDTO lanceClienteDTO) {
         try {
-            LanceCliente novoLanceCliente = lanceClienteService.criarLanceCliente(lanceCliente);
-            return Response.status(Response.Status.CREATED).entity(novoLanceCliente).build();
+            LanceCliente lanceCliente = lanceClienteService.criarLanceCliente(lanceClienteDTO);
+            LanceClienteDTO novoLanceClienteDTO = convertEntityToDTO(lanceCliente);
+            return Response.status(Response.Status.CREATED).entity(novoLanceClienteDTO).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
         } catch (Exception e) {
@@ -32,11 +35,12 @@ public class LanceClienteController {
 
     @PUT
     @Path("/{id}")
-    public Response atualizarLanceCliente(@PathParam("id") Long id, @Valid LanceCliente lanceCliente) {
+    public Response atualizarLanceCliente(@PathParam("id") Long id, @Valid LanceClienteDTO lanceClienteDTO) {
         try {
-            LanceCliente lanceClienteAtualizado = lanceClienteService.atualizarLanceCliente(id, lanceCliente);
+            LanceCliente lanceClienteAtualizado = lanceClienteService.atualizarLanceCliente(id, lanceClienteDTO);
             if (lanceClienteAtualizado != null) {
-                return Response.ok(lanceClienteAtualizado).build();
+                LanceClienteDTO atualizadoDTO = convertEntityToDTO(lanceClienteAtualizado);
+                return Response.ok(atualizadoDTO).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).entity("Lance do cliente não encontrado.").build();
             }
@@ -63,7 +67,8 @@ public class LanceClienteController {
     public Response buscarLanceClientePorId(@PathParam("id") Long id) {
         LanceCliente lanceCliente = lanceClienteService.buscarLanceClientePorId(id);
         if (lanceCliente != null) {
-            return Response.ok(lanceCliente).build();
+            LanceClienteDTO lanceClienteDTO = convertEntityToDTO(lanceCliente);
+            return Response.ok(lanceClienteDTO).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity("Lance do cliente não encontrado.").build();
         }
@@ -73,9 +78,19 @@ public class LanceClienteController {
     public Response listarTodosOsLancesClientes() {
         try {
             List<LanceCliente> lancesClientes = lanceClienteService.listarTodosOsLancesClientes();
-            return Response.ok(lancesClientes).build();
+            List<LanceClienteDTO> lancesDTO = lancesClientes.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
+            return Response.ok(lancesDTO).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os lances dos clientes.").build();
         }
+    }
+
+    private LanceClienteDTO convertEntityToDTO(LanceCliente lanceCliente) {
+        LanceClienteDTO lanceClienteDTO = new LanceClienteDTO();
+        lanceClienteDTO.setId(lanceCliente.getId());
+        lanceClienteDTO.setIdCliente(lanceCliente.getCliente().getId());
+        lanceClienteDTO.setIdLeilao(lanceCliente.getLeilao().getIdLeilao());
+        lanceClienteDTO.setValorLance(lanceCliente.getValorLance());
+        return lanceClienteDTO;
     }
 }

@@ -1,13 +1,14 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.DTO.ClienteDTO;
 import fatec.sjc.entity.Cliente;
 import fatec.sjc.service.ClienteService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import java.util.List;
 
 @Path("/cliente")
@@ -19,12 +20,10 @@ public class ClienteController {
     ClienteService clienteService;
 
     @POST
-    public Response criarCliente(@Valid Cliente cliente) {
+    public Response criarCliente(@Valid ClienteDTO clienteDTO) {
         try {
-            Cliente novoCliente = clienteService.criarCliente(cliente);
+            Cliente novoCliente = clienteService.criarCliente(clienteDTO);
             return Response.status(Response.Status.CREATED).entity(novoCliente).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o cliente.").build();
         }
@@ -32,16 +31,14 @@ public class ClienteController {
 
     @PUT
     @Path("/{id}")
-    public Response atualizarCliente(@PathParam("id") Long id, @Valid Cliente cliente) {
+    public Response atualizarCliente(@PathParam("id") Long id, @Valid ClienteDTO clienteDTO) {
         try {
-            Cliente clienteAtualizado = clienteService.atualizarCliente(id, cliente);
+            Cliente clienteAtualizado = clienteService.atualizarCliente(id, clienteDTO);
             if (clienteAtualizado != null) {
                 return Response.ok(clienteAtualizado).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).entity("Cliente não encontrado.").build();
             }
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o cliente.").build();
         }

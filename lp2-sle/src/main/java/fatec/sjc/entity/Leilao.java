@@ -50,5 +50,7 @@ public class Leilao  {
 
     @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LanceCliente> lances = new ArrayList<>();
-    
+
+    public void setId(Long idLeilao) {
+    }
 }

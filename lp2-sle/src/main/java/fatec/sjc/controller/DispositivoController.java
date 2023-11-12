@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.DTO.DispositivoDTO;
 import fatec.sjc.entity.Dispositivo;
 import fatec.sjc.service.DispositivoService;
 import jakarta.inject.Inject;
@@ -19,9 +20,9 @@ public class DispositivoController {
     DispositivoService dispositivoService;
 
     @POST
-    public Response criarDispositivo(@Valid Dispositivo dispositivo) {
+    public Response criarDispositivo(@Valid DispositivoDTO dispositivoDTO) {
         try {
-            Dispositivo novoDispositivo = dispositivoService.criarDispositivo(dispositivo);
+            Dispositivo novoDispositivo = dispositivoService.criarDispositivo(dispositivoDTO);
             return Response.status(Response.Status.CREATED).entity(novoDispositivo).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
@@ -32,9 +33,9 @@ public class DispositivoController {
 
     @PUT
     @Path("/{id}")
-    public Response atualizarDispositivo(@PathParam("id") Long id, @Valid Dispositivo dispositivo) {
+    public Response atualizarDispositivo(@PathParam("id") Long id, @Valid DispositivoDTO dispositivoDTO) {
         try {
-            Dispositivo dispositivoAtualizado = dispositivoService.atualizarDispositivo(id, dispositivo);
+            Dispositivo dispositivoAtualizado = dispositivoService.atualizarDispositivo(id, dispositivoDTO);
             if (dispositivoAtualizado != null) {
                 return Response.ok(dispositivoAtualizado).build();
             } else {

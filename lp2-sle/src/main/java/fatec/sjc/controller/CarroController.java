@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.DTO.CarroDTO;
 import fatec.sjc.entity.Carro;
 import fatec.sjc.service.CarroService;
 import jakarta.validation.ConstraintViolationException;
@@ -29,9 +30,9 @@ public class CarroController {
     CarroService carroService;
 
     @POST
-    public Response criarCarro(@Valid Carro carro) {
+    public Response criarCarro(@Valid CarroDTO carroDTO) {
         try {
-            Carro novoCarro = carroService.criarCarro(carro);
+            CarroDTO novoCarro = carroService.criarCarro(carroDTO);
             return Response.status(Response.Status.CREATED).entity(novoCarro).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
@@ -42,9 +43,9 @@ public class CarroController {
 
     @PUT
     @Path("/{id}")
-    public Response atualizarCarro(@PathParam("id") Long id, @Valid Carro carro) {
+    public Response atualizarCarro(@PathParam("id") Long id, @Valid CarroDTO carroDTO) {
         try {
-            Carro carroAtualizado = carroService.atualizarCarro(id, carro);
+            CarroDTO carroAtualizado = carroService.atualizarCarro(id, carroDTO);
             if (carroAtualizado != null) {
                 return Response.ok(carroAtualizado).build();
             } else {
@@ -71,7 +72,7 @@ public class CarroController {
     @GET
     @Path("/{id}")
     public Response buscarCarroPorId(@PathParam("id") Long id) {
-        Carro carro = carroService.buscarCarroPorId(id);
+        CarroDTO carro = carroService.buscarCarroPorId(id);
         if (carro != null) {
             return Response.ok(carro).build();
         } else {
@@ -82,11 +83,10 @@ public class CarroController {
     @GET
     public Response listarCarros() {
         try {
-            List<Carro> carros = carroService.listarTodosOsCarros();
+            List<CarroDTO> carros = carroService.listarTodosOsCarros();
             return Response.ok(carros).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os carros.").build();
         }
     }
 }
-

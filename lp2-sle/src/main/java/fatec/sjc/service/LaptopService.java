@@ -1,11 +1,16 @@
 package fatec.sjc.service;
 
+import fatec.sjc.DTO.LaptopDTO;
 import fatec.sjc.entity.Laptop;
 import fatec.sjc.repository.LaptopRepository;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class LaptopService {
@@ -14,22 +19,19 @@ public class LaptopService {
     LaptopRepository laptopRepository;
 
     @Transactional
-    public Laptop criarLaptop(Laptop laptop) {
+    public LaptopDTO criarLaptop(LaptopDTO laptopDTO) {
+        Laptop laptop = convertToEntity(laptopDTO);
         laptopRepository.persist(laptop);
-        return laptop;
+        return convertToDTO(laptop);
     }
 
     @Transactional
-    public Laptop atualizarLaptop(Long id, Laptop laptopAtualizado) {
+    public LaptopDTO atualizarLaptop(Long id, LaptopDTO laptopAtualizadoDTO) {
         Laptop laptopExistente = laptopRepository.findById(id);
         if (laptopExistente != null) {
-            laptopExistente.setMarca(laptopAtualizado.getMarca());
-            laptopExistente.setModelo(laptopAtualizado.getModelo());
-            laptopExistente.setDimensoes(laptopAtualizado.getDimensoes());
-            laptopExistente.setEspecificacoes(laptopAtualizado.getEspecificacoes());
-            laptopExistente.setTamanhoTela(laptopAtualizado.getTamanhoTela());
+            updateEntityFromDTO(laptopExistente, laptopAtualizadoDTO);
         }
-        return laptopExistente;
+        return convertToDTO(laptopExistente);
     }
 
     @Transactional
@@ -40,11 +42,31 @@ public class LaptopService {
         }
     }
 
-    public Laptop buscarLaptopPorId(Long id) {
-        return laptopRepository.findById(id);
+    public LaptopDTO buscarLaptopPorId(Long id) {
+        Laptop laptop = laptopRepository.findById(id);
+        return (laptop != null) ? convertToDTO(laptop) : null;
     }
 
-    public List<Laptop> listarTodosOsLaptops() {
-        return laptopRepository.listAll();
+    public List<LaptopDTO> listarTodosOsLaptops() {
+        return laptopRepository.listAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private Laptop convertToEntity(LaptopDTO laptopDTO) {
+        Laptop laptop = new Laptop();
+        laptop.tamanhoTela = laptopDTO.getTamanhoTela();
+        return laptop;
+    }
+
+    private void updateEntityFromDTO(Laptop laptop, LaptopDTO laptopDTO) {
+        laptop.tamanhoTela = laptopDTO.getTamanhoTela();
+    }
+
+    private LaptopDTO convertToDTO(Laptop laptop) {
+        LaptopDTO laptopDTO = new LaptopDTO();
+
+        laptopDTO.setTamanhoTela(laptop.tamanhoTela);
+        return laptopDTO;
     }
 }

@@ -1,11 +1,13 @@
 package fatec.sjc.service;
 
+import fatec.sjc.DTO.CarroDTO;
 import fatec.sjc.entity.Carro;
 import fatec.sjc.repository.CarroRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class CarroService {
@@ -14,18 +16,19 @@ public class CarroService {
     CarroRepository carroRepository;
 
     @Transactional
-    public Carro criarCarro(Carro carro) {
+    public CarroDTO criarCarro(CarroDTO carroDTO) {
+        Carro carro = convertToEntity(carroDTO);
         carroRepository.persist(carro);
-        return carro;
+        return convertToDTO(carro);
     }
 
     @Transactional
-    public Carro atualizarCarro(Long id, Carro carroAtualizado) {
+    public CarroDTO atualizarCarro(Long id, CarroDTO carroAtualizadoDTO) {
         Carro carroExistente = carroRepository.findById(id);
         if (carroExistente != null) {
-            carroExistente.setNumeroPortas(carroAtualizado.getNumeroPortas());
+            updateEntityFromDTO(carroExistente, carroAtualizadoDTO);
         }
-        return carroExistente;
+        return convertToDTO(carroExistente);
     }
 
     @Transactional
@@ -36,11 +39,30 @@ public class CarroService {
         }
     }
 
-    public Carro buscarCarroPorId(Long id) {
-        return carroRepository.findById(id);
+    public CarroDTO buscarCarroPorId(Long id) {
+        Carro carro = carroRepository.findById(id);
+        return (carro != null) ? convertToDTO(carro) : null;
     }
 
-    public List<Carro> listarTodosOsCarros() {
-        return carroRepository.listAll();
+    public List<CarroDTO> listarTodosOsCarros() {
+        return carroRepository.listAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private Carro convertToEntity(CarroDTO carroDTO) {
+        Carro carro = new Carro();
+        carro.setNumeroPortas(carroDTO.getNumeroPortas());
+        return carro;
+    }
+
+    private void updateEntityFromDTO(Carro carro, CarroDTO carroDTO) {
+        carro.setNumeroPortas(carroDTO.getNumeroPortas());
+    }
+
+    private CarroDTO convertToDTO(Carro carro) {
+        CarroDTO carroDTO = new CarroDTO();
+        carroDTO.setNumeroPortas(carro.getNumeroPortas());
+        return carroDTO;
     }
 }
