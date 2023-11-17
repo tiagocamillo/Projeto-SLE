@@ -106,4 +106,16 @@ public class LeilaoController {
         leilaoDTO.setIdEntidadeFinanceiraAssociada(leilao.getIdEntidadeFinanceiraAssociada());
         return leilaoDTO;
     }
+    
+    @GET
+    @Path("/listarOrdenadosPorData")
+    public Response listarLeiloesOrdenadosPorData() {
+        try {
+            List<Leilao> leiloesOrdenados = leilaoService.listarLeiloesOrdenadosPorData();
+            return Response.ok(leiloesOrdenados).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro ao listar os leilões.").build();
+        }
+    }
+    
 }

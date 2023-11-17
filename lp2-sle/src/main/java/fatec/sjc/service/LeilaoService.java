@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class LeilaoService {
@@ -46,4 +47,14 @@ public class LeilaoService {
     public List<Leilao> listarTodosOsLeiloes() {
         return leilaoRepository.listAll();
     }
+    
+    public List<Leilao> listarLeiloesOrdenadosPorData() {
+        // Consulta os leilões e ordena por data de início
+        List<Leilao> leiloesOrdenados = leilaoRepository.listAll()
+                .stream()
+                .sorted((leilao1, leilao2) -> leilao1.getDataInicio().compareTo(leilao2.getDataInicio()))
+                .collect(Collectors.toList());
+        return leiloesOrdenados;
+    }
+    
 }
