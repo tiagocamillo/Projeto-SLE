@@ -5,6 +5,8 @@ import fatec.sjc.repository.LeilaoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,21 @@ public class LeilaoService {
             leilaoExistente.setIdEntidadeFinanceiraAssociada(leilaoDTO.getIdEntidadeFinanceiraAssociada());
         }
         return leilaoExistente;
+    }
+    @Transactional
+    public void atualizarStatusLeiloes() {
+        List<Leilao> leiloes = leilaoRepository.listAll();
+        Date currentDate = new Date(System.currentTimeMillis());
+
+        for (Leilao leilao : leiloes) {
+            if (leilao.getDataInicio().after(currentDate)) {
+                leilao.setStatus("EM ABERTO");
+            } else if (leilao.getDataInicio().before(currentDate) && leilao.getDataFim().after(currentDate)) {
+                leilao.setStatus("EM ANDAMENTO");
+            } else {
+                leilao.setStatus("FINALIZADO");
+            }
+        }
     }
 
     @Transactional

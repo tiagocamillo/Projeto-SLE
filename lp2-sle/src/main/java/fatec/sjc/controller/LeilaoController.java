@@ -79,11 +79,15 @@ public class LeilaoController {
     @GET
     public Response listarTodosOsLeiloes() {
         try {
+            leilaoService.atualizarStatusLeiloes();
+
             List<Leilao> leiloes = leilaoService.listarTodosOsLeiloes();
             List<LeilaoDTO> leiloesDTO = leiloes.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
+
             return Response.ok(leiloesDTO).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os leilões.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro interno ao listar os leilões: " + e.getMessage()).build();
         }
     }
 
