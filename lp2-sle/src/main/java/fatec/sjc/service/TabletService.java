@@ -6,6 +6,8 @@ import fatec.sjc.repository.TabletRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,17 +54,28 @@ public class TabletService {
 
     private Tablet convertToEntity(TabletDTO tabletDTO) {
         Tablet tablet = new Tablet();
+        tablet.setMarca(tabletDTO.getMarca());
+        tablet.setModelo(tabletDTO.getModelo());
+        tablet.setDimensoes(tabletDTO.getDimensoes());
+        tablet.setEspecificacoes(tabletDTO.getEspecificacoes());
         tablet.setTamanhoTela(tabletDTO.getTamanhoTela());
         return tablet;
     }
 
     private void updateEntityFromDTO(Tablet tablet, TabletDTO tabletDTO) {
+        tablet.setMarca(tabletDTO.getMarca());
+        tablet.setModelo(tabletDTO.getModelo());
+        tablet.setDimensoes(tabletDTO.getDimensoes());
+        tablet.setEspecificacoes(tabletDTO.getEspecificacoes());
         tablet.setTamanhoTela(tabletDTO.getTamanhoTela());
     }
 
     private TabletDTO convertToDTO(Tablet tablet) {
         TabletDTO tabletDTO = new TabletDTO();
-
+        tabletDTO.setMarca(tablet.getMarca());
+        tabletDTO.setModelo(tablet.getModelo());
+        tabletDTO.setDimensoes(tablet.getDimensoes());
+        tabletDTO.setEspecificacoes(tablet.getEspecificacoes());
         tabletDTO.setTamanhoTela(tablet.getTamanhoTela());
         return tabletDTO;
     }

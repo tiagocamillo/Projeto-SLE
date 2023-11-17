@@ -19,7 +19,7 @@ import fatec.sjc.DTO.ServidorDTO;
 import java.util.List;
 
 
-@Path("/servidor")
+@Path("/servidores")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ServidorController {
@@ -28,59 +28,30 @@ public class ServidorController {
     ServidorService servidorService;
 
     @POST
-    public Response criarServidor(@Valid ServidorDTO servidorDTO) {
-        try {
-            ServidorDTO novoServidor = servidorService.criarServidor(servidorDTO);
-            return Response.status(Response.Status.CREATED).entity(novoServidor).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o servidor.").build();
-        }
+    public ServidorDTO criarServidor(ServidorDTO servidorDTO) {
+        return servidorService.criarServidor(servidorDTO);
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizarServidor(@PathParam("id") Long id, @Valid ServidorDTO servidorDTO) {
-        try {
-            ServidorDTO servidorAtualizado = servidorService.atualizarServidor(id, servidorDTO);
-            if (servidorAtualizado != null) {
-                return Response.ok(servidorAtualizado).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Servidor não encontrado.").build();
-            }
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o servidor.").build();
-        }
+    public ServidorDTO atualizarServidor(@PathParam("id") Long id, ServidorDTO servidorDTO) {
+        return servidorService.atualizarServidor(id, servidorDTO);
     }
 
     @DELETE
     @Path("/{id}")
-    public Response excluirServidor(@PathParam("id") Long id) {
-        try {
-            servidorService.excluirServidor(id);
-            return Response.noContent().build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o servidor.").build();
-        }
+    public void excluirServidor(@PathParam("id") Long id) {
+        servidorService.excluirServidor(id);
     }
 
     @GET
     @Path("/{id}")
-    public Response buscarServidorPorId(@PathParam("id") Long id) {
-        ServidorDTO servidor = servidorService.buscarServidorPorId(id);
-        if (servidor != null) {
-            return Response.ok(servidor).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Servidor não encontrado.").build();
-        }
+    public ServidorDTO buscarServidorPorId(@PathParam("id") Long id) {
+        return servidorService.buscarServidorPorId(id);
     }
 
     @GET
-    public Response listarServidores() {
-        try {
-            List<ServidorDTO> servidores = servidorService.listarTodosOsServidores();
-            return Response.ok(servidores).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os servidores.").build();
-        }
+    public List<ServidorDTO> listarTodosOsServidores() {
+        return servidorService.listarTodosOsServidores();
     }
 }

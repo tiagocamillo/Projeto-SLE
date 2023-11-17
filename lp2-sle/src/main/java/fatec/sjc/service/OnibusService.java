@@ -6,6 +6,7 @@ import fatec.sjc.repository.OnibusRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,17 +53,30 @@ public class OnibusService {
 
     private Onibus convertToEntity(OnibusDTO onibusDTO) {
         Onibus onibus = new Onibus();
+        onibus.setTipo(onibusDTO.getTipo());
+        onibus.setMarca(onibusDTO.getMarca());
+        onibus.setAno(onibusDTO.getAno());
+        onibus.setAcessorios(onibusDTO.getAcessorios());
 
         onibus.setCapacidadePassageiros(onibusDTO.getCapacidadePassageiros());
         return onibus;
     }
 
     private void updateEntityFromDTO(Onibus onibus, OnibusDTO onibusDTO) {
+        onibus.setTipo(onibusDTO.getTipo());
+        onibus.setMarca(onibusDTO.getMarca());
+        onibus.setAno(onibusDTO.getAno());
+        onibus.setAcessorios(onibusDTO.getAcessorios());
+
         onibus.setCapacidadePassageiros(onibusDTO.getCapacidadePassageiros());
     }
 
     private OnibusDTO convertToDTO(Onibus onibus) {
         OnibusDTO onibusDTO = new OnibusDTO();
+        onibusDTO.setTipo(onibus.getTipo());
+        onibusDTO.setMarca(onibus.getMarca());
+        onibusDTO.setAno(onibus.getAno());
+        onibusDTO.setAcessorios(onibus.getAcessorios());
         onibusDTO.setCapacidadePassageiros(onibus.getCapacidadePassageiros());
         return onibusDTO;
     }

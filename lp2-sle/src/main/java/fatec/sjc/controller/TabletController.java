@@ -19,7 +19,7 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
-@Path("/tablet")
+@Path("/tablets")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TabletController {
@@ -28,59 +28,30 @@ public class TabletController {
     TabletService tabletService;
 
     @POST
-    public Response criarTablet(@Valid TabletDTO tabletDTO) {
-        try {
-            TabletDTO novoTablet = tabletService.criarTablet(tabletDTO);
-            return Response.status(Response.Status.CREATED).entity(novoTablet).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o tablet.").build();
-        }
+    public TabletDTO criarTablet(TabletDTO tabletDTO) {
+        return tabletService.criarTablet(tabletDTO);
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizarTablet(@PathParam("id") Long id, @Valid TabletDTO tabletDTO) {
-        try {
-            TabletDTO tabletAtualizado = tabletService.atualizarTablet(id, tabletDTO);
-            if (tabletAtualizado != null) {
-                return Response.ok(tabletAtualizado).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Tablet não encontrado.").build();
-            }
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o tablet.").build();
-        }
+    public TabletDTO atualizarTablet(@PathParam("id") Long id, TabletDTO tabletDTO) {
+        return tabletService.atualizarTablet(id, tabletDTO);
     }
 
     @DELETE
     @Path("/{id}")
-    public Response excluirTablet(@PathParam("id") Long id) {
-        try {
-            tabletService.excluirTablet(id);
-            return Response.noContent().build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o tablet.").build();
-        }
+    public void excluirTablet(@PathParam("id") Long id) {
+        tabletService.excluirTablet(id);
     }
 
     @GET
     @Path("/{id}")
-    public Response buscarTabletPorId(@PathParam("id") Long id) {
-        TabletDTO tablet = tabletService.buscarTabletPorId(id);
-        if (tablet != null) {
-            return Response.ok(tablet).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Tablet não encontrado.").build();
-        }
+    public TabletDTO buscarTabletPorId(@PathParam("id") Long id) {
+        return tabletService.buscarTabletPorId(id);
     }
 
     @GET
-    public Response listarTablets() {
-        try {
-            List<TabletDTO> tablets = tabletService.listarTodosOsTablets();
-            return Response.ok(tablets).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os tablets.").build();
-        }
+    public List<TabletDTO> listarTodosOsTablets() {
+        return tabletService.listarTodosOsTablets();
     }
 }

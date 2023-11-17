@@ -2,10 +2,10 @@ package fatec.sjc.DTO;
 
 import lombok.Data;
 
+
 @Data
+public class TabletDTO extends DispositivoDTO {
 
-public class TabletDTO {
     private double tamanhoTela;
-
 
 }

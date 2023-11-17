@@ -54,21 +54,32 @@ public class ServidorService {
 
     private Servidor convertToEntity(ServidorDTO servidorDTO) {
         Servidor servidor = new Servidor();
-        servidor.processador = servidorDTO.getProcessador();
-        servidor.capacidadeArmazenamento = servidorDTO.getCapacidadeArmazenamento();
+        servidor.setMarca(servidorDTO.getMarca());
+        servidor.setModelo(servidorDTO.getModelo());
+        servidor.setDimensoes(servidorDTO.getDimensoes());
+        servidor.setEspecificacoes(servidorDTO.getEspecificacoes());
+        servidor.setProcessador(servidorDTO.getProcessador());
+        servidor.setCapacidadeArmazenamento(servidorDTO.getCapacidadeArmazenamento());
         return servidor;
     }
 
     private void updateEntityFromDTO(Servidor servidor, ServidorDTO servidorDTO) {
-        servidor.processador = servidorDTO.getProcessador();
-        servidor.capacidadeArmazenamento = servidorDTO.getCapacidadeArmazenamento();
+        servidor.setMarca(servidorDTO.getMarca());
+        servidor.setModelo(servidorDTO.getModelo());
+        servidor.setDimensoes(servidorDTO.getDimensoes());
+        servidor.setEspecificacoes(servidorDTO.getEspecificacoes());
+        servidor.setProcessador(servidorDTO.getProcessador());
+        servidor.setCapacidadeArmazenamento(servidorDTO.getCapacidadeArmazenamento());
     }
 
     private ServidorDTO convertToDTO(Servidor servidor) {
         ServidorDTO servidorDTO = new ServidorDTO();
-        servidorDTO.setId(servidor.id);
-        servidorDTO.setProcessador(servidor.processador);
-        servidorDTO.setCapacidadeArmazenamento(servidor.capacidadeArmazenamento);
+        servidorDTO.setMarca(servidor.getMarca());
+        servidorDTO.setModelo(servidor.getModelo());
+        servidorDTO.setDimensoes(servidor.getDimensoes());
+        servidorDTO.setEspecificacoes(servidor.getEspecificacoes());
+        servidorDTO.setProcessador(servidor.getProcessador());
+        servidorDTO.setCapacidadeArmazenamento(servidor.getCapacidadeArmazenamento());
         return servidorDTO;
     }
 }

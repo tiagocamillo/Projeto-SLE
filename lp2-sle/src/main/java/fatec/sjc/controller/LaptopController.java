@@ -18,7 +18,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.validation.Valid;
 
 import java.util.List;
-@Path("/laptop")
+@Path("/laptops")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class LaptopController {
@@ -27,59 +27,30 @@ public class LaptopController {
     LaptopService laptopService;
 
     @POST
-    public Response criarLaptop(@Valid LaptopDTO laptopDTO) {
-        try {
-            LaptopDTO novoLaptop = laptopService.criarLaptop(laptopDTO);
-            return Response.status(Response.Status.CREATED).entity(novoLaptop).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o laptop.").build();
-        }
+    public LaptopDTO criarLaptop(LaptopDTO laptopDTO) {
+        return laptopService.criarLaptop(laptopDTO);
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizarLaptop(@PathParam("id") Long id, @Valid LaptopDTO laptopDTO) {
-        try {
-            LaptopDTO laptopAtualizado = laptopService.atualizarLaptop(id, laptopDTO);
-            if (laptopAtualizado != null) {
-                return Response.ok(laptopAtualizado).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Laptop não encontrado.").build();
-            }
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o laptop.").build();
-        }
+    public LaptopDTO atualizarLaptop(@PathParam("id") Long id, LaptopDTO laptopDTO) {
+        return laptopService.atualizarLaptop(id, laptopDTO);
     }
 
     @DELETE
     @Path("/{id}")
-    public Response excluirLaptop(@PathParam("id") Long id) {
-        try {
-            laptopService.excluirLaptop(id);
-            return Response.noContent().build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o laptop.").build();
-        }
+    public void excluirLaptop(@PathParam("id") Long id) {
+        laptopService.excluirLaptop(id);
     }
 
     @GET
     @Path("/{id}")
-    public Response buscarLaptopPorId(@PathParam("id") Long id) {
-        LaptopDTO laptop = laptopService.buscarLaptopPorId(id);
-        if (laptop != null) {
-            return Response.ok(laptop).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Laptop não encontrado.").build();
-        }
+    public LaptopDTO buscarLaptopPorId(@PathParam("id") Long id) {
+        return laptopService.buscarLaptopPorId(id);
     }
 
     @GET
-    public Response listarLaptops() {
-        try {
-            List<LaptopDTO> laptops = laptopService.listarTodosOsLaptops();
-            return Response.ok(laptops).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os laptops.").build();
-        }
+    public List<LaptopDTO> listarTodosOsLaptops() {
+        return laptopService.listarTodosOsLaptops();
     }
 }

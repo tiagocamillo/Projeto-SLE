@@ -6,7 +6,9 @@ import fatec.sjc.repository.DispositivoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class DispositivoService {
@@ -15,37 +17,19 @@ public class DispositivoService {
     DispositivoRepository dispositivoRepository;
 
     @Transactional
-    public Dispositivo criarDispositivo(DispositivoDTO dispositivoDTO) {
-        Dispositivo dispositivo = new Dispositivo();
-        // Convert DTO to Entity and set other fields
-        dispositivo.setNome(dispositivoDTO.getNome());
-        dispositivo.setDescricao(dispositivoDTO.getDescricao());
-        dispositivo.setCondicao(dispositivoDTO.getCondicao());
-        dispositivo.setHistoricoReparo(dispositivoDTO.getHistoricoReparo());
-        dispositivo.setMarca(dispositivoDTO.getMarca());
-        dispositivo.setModelo(dispositivoDTO.getModelo());
-        dispositivo.setDimensoes(dispositivoDTO.getDimensoes());
-        dispositivo.setEspecificacoes(dispositivoDTO.getEspecificacoes());
-
+    public DispositivoDTO criarDispositivo(DispositivoDTO dispositivoDTO) {
+        Dispositivo dispositivo = convertToEntity(dispositivoDTO);
         dispositivoRepository.persist(dispositivo);
-        return dispositivo;
+        return convertToDTO(dispositivo);
     }
 
     @Transactional
-    public Dispositivo atualizarDispositivo(Long id, DispositivoDTO dispositivoDTO) {
+    public DispositivoDTO atualizarDispositivo(Long id, DispositivoDTO dispositivoAtualizadoDTO) {
         Dispositivo dispositivoExistente = dispositivoRepository.findById(id);
         if (dispositivoExistente != null) {
-            // Update fields from DTO to Entity
-            dispositivoExistente.setNome(dispositivoDTO.getNome());
-            dispositivoExistente.setDescricao(dispositivoDTO.getDescricao());
-            dispositivoExistente.setCondicao(dispositivoDTO.getCondicao());
-            dispositivoExistente.setHistoricoReparo(dispositivoDTO.getHistoricoReparo());
-            dispositivoExistente.setMarca(dispositivoDTO.getMarca());
-            dispositivoExistente.setModelo(dispositivoDTO.getModelo());
-            dispositivoExistente.setDimensoes(dispositivoDTO.getDimensoes());
-            dispositivoExistente.setEspecificacoes(dispositivoDTO.getEspecificacoes());
+            updateEntityFromDTO(dispositivoExistente, dispositivoAtualizadoDTO);
         }
-        return dispositivoExistente;
+        return convertToDTO(dispositivoExistente);
     }
 
     @Transactional
@@ -56,11 +40,39 @@ public class DispositivoService {
         }
     }
 
-    public Dispositivo buscarDispositivoPorId(Long id) {
-        return dispositivoRepository.findById(id);
+    public DispositivoDTO buscarDispositivoPorId(Long id) {
+        Dispositivo dispositivo = dispositivoRepository.findById(id);
+        return (dispositivo != null) ? convertToDTO(dispositivo) : null;
     }
 
-    public List<Dispositivo> listarTodosOsDispositivos() {
-        return dispositivoRepository.listAll();
+    public List<DispositivoDTO> listarTodosOsDispositivos() {
+        return dispositivoRepository.listAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private Dispositivo convertToEntity(DispositivoDTO dispositivoDTO) {
+        Dispositivo dispositivo = new Dispositivo();
+        dispositivo.setMarca(dispositivoDTO.getMarca());
+        dispositivo.setModelo(dispositivoDTO.getModelo());
+        dispositivo.setDimensoes(dispositivoDTO.getDimensoes());
+        dispositivo.setEspecificacoes(dispositivoDTO.getEspecificacoes());
+        return dispositivo;
+    }
+
+    private void updateEntityFromDTO(Dispositivo dispositivo, DispositivoDTO dispositivoDTO) {
+        dispositivo.setMarca(dispositivoDTO.getMarca());
+        dispositivo.setModelo(dispositivoDTO.getModelo());
+        dispositivo.setDimensoes(dispositivoDTO.getDimensoes());
+        dispositivo.setEspecificacoes(dispositivoDTO.getEspecificacoes());
+    }
+
+    private DispositivoDTO convertToDTO(Dispositivo dispositivo) {
+        DispositivoDTO dispositivoDTO = new DispositivoDTO();
+        dispositivoDTO.setMarca(dispositivo.getMarca());
+        dispositivoDTO.setModelo(dispositivo.getModelo());
+        dispositivoDTO.setDimensoes(dispositivo.getDimensoes());
+        dispositivoDTO.setEspecificacoes(dispositivo.getEspecificacoes());
+        return dispositivoDTO;
     }
 }

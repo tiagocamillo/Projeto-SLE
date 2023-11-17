@@ -1,3 +1,4 @@
+// VeiculoService.java
 package fatec.sjc.service;
 
 import fatec.sjc.DTO.VeiculoDTO;
@@ -6,10 +7,11 @@ import fatec.sjc.repository.VeiculoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
-@ApplicationScoped
 
+@ApplicationScoped
 public class VeiculoService {
 
     @Inject
@@ -68,7 +70,6 @@ public class VeiculoService {
 
     private VeiculoDTO convertToDTO(Veiculo veiculo) {
         VeiculoDTO veiculoDTO = new VeiculoDTO();
-        veiculoDTO.setId(veiculo.id);
         veiculoDTO.setTipo(veiculo.getTipo());
         veiculoDTO.setMarca(veiculo.getMarca());
         veiculoDTO.setAno(veiculo.getAno());
@@ -76,7 +77,3 @@ public class VeiculoService {
         return veiculoDTO;
     }
 }
-
-
-
-

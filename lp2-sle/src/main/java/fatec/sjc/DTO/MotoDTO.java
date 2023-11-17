@@ -1,9 +1,11 @@
 package fatec.sjc.DTO;
 
+
 import lombok.Data;
 
 @Data
-public class MotoDTO {
+public class MotoDTO extends VeiculoDTO {
+
     private int cilindrada;
 
 }

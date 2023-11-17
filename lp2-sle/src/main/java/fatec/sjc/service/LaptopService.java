@@ -3,7 +3,6 @@ package fatec.sjc.service;
 import fatec.sjc.DTO.LaptopDTO;
 import fatec.sjc.entity.Laptop;
 import fatec.sjc.repository.LaptopRepository;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -55,18 +54,29 @@ public class LaptopService {
 
     private Laptop convertToEntity(LaptopDTO laptopDTO) {
         Laptop laptop = new Laptop();
-        laptop.tamanhoTela = laptopDTO.getTamanhoTela();
+        laptop.setMarca(laptopDTO.getMarca());
+        laptop.setModelo(laptopDTO.getModelo());
+        laptop.setDimensoes(laptopDTO.getDimensoes());
+        laptop.setEspecificacoes(laptopDTO.getEspecificacoes());
+        laptop.setTamanhoTela(laptopDTO.getTamanhoTela());
         return laptop;
     }
 
     private void updateEntityFromDTO(Laptop laptop, LaptopDTO laptopDTO) {
-        laptop.tamanhoTela = laptopDTO.getTamanhoTela();
+        laptop.setMarca(laptopDTO.getMarca());
+        laptop.setModelo(laptopDTO.getModelo());
+        laptop.setDimensoes(laptopDTO.getDimensoes());
+        laptop.setEspecificacoes(laptopDTO.getEspecificacoes());
+        laptop.setTamanhoTela(laptopDTO.getTamanhoTela());
     }
 
     private LaptopDTO convertToDTO(Laptop laptop) {
         LaptopDTO laptopDTO = new LaptopDTO();
-
-        laptopDTO.setTamanhoTela(laptop.tamanhoTela);
+        laptopDTO.setMarca(laptop.getMarca());
+        laptopDTO.setModelo(laptop.getModelo());
+        laptopDTO.setDimensoes(laptop.getDimensoes());
+        laptopDTO.setEspecificacoes(laptop.getEspecificacoes());
+        laptopDTO.setTamanhoTela(laptop.getTamanhoTela());
         return laptopDTO;
     }
 }

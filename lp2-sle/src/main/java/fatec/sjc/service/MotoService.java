@@ -1,3 +1,4 @@
+// MotoService.java
 package fatec.sjc.service;
 
 import fatec.sjc.DTO.MotoDTO;
@@ -6,6 +7,7 @@ import fatec.sjc.repository.MotoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,10 +25,10 @@ public class MotoService {
     }
 
     @Transactional
-    public MotoDTO atualizarMoto(Long id, MotoDTO motoAtualizadaDTO) {
+    public MotoDTO atualizarMoto(Long id, MotoDTO motoAtualizadoDTO) {
         Moto motoExistente = motoRepository.findById(id);
         if (motoExistente != null) {
-            updateEntityFromDTO(motoExistente, motoAtualizadaDTO);
+            updateEntityFromDTO(motoExistente, motoAtualizadoDTO);
         }
         return convertToDTO(motoExistente);
     }
@@ -52,16 +54,28 @@ public class MotoService {
 
     private Moto convertToEntity(MotoDTO motoDTO) {
         Moto moto = new Moto();
+        moto.setTipo(motoDTO.getTipo());
+        moto.setMarca(motoDTO.getMarca());
+        moto.setAno(motoDTO.getAno());
+        moto.setAcessorios(motoDTO.getAcessorios());
         moto.setCilindrada(motoDTO.getCilindrada());
         return moto;
     }
 
     private void updateEntityFromDTO(Moto moto, MotoDTO motoDTO) {
+        moto.setTipo(motoDTO.getTipo());
+        moto.setMarca(motoDTO.getMarca());
+        moto.setAno(motoDTO.getAno());
+        moto.setAcessorios(motoDTO.getAcessorios());
         moto.setCilindrada(motoDTO.getCilindrada());
     }
 
     private MotoDTO convertToDTO(Moto moto) {
         MotoDTO motoDTO = new MotoDTO();
+        motoDTO.setTipo(moto.getTipo());
+        motoDTO.setMarca(moto.getMarca());
+        motoDTO.setAno(moto.getAno());
+        motoDTO.setAcessorios(moto.getAcessorios());
         motoDTO.setCilindrada(moto.getCilindrada());
         return motoDTO;
     }

@@ -5,10 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class LaptopDTO {
-
+public class LaptopDTO extends DispositivoDTO {
 
     private double tamanhoTela;
-
 
 }

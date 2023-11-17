@@ -12,7 +12,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
-@Path("/moto")
+@Path("/motos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class MotoController {
@@ -21,63 +21,30 @@ public class MotoController {
     MotoService motoService;
 
     @POST
-    public Response criarMoto(@Valid MotoDTO motoDTO) {
-        try {
-            MotoDTO novaMoto = motoService.criarMoto(motoDTO);
-            return Response.status(Response.Status.CREATED).entity(novaMoto).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar a moto.").build();
-        }
+    public MotoDTO criarMoto(MotoDTO motoDTO) {
+        return motoService.criarMoto(motoDTO);
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizarMoto(@PathParam("id") Long id, @Valid MotoDTO motoDTO) {
-        try {
-            MotoDTO motoAtualizada = motoService.atualizarMoto(id, motoDTO);
-            if (motoAtualizada != null) {
-                return Response.ok(motoAtualizada).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Moto não encontrada.").build();
-            }
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar a moto.").build();
-        }
+    public MotoDTO atualizarMoto(@PathParam("id") Long id, MotoDTO motoDTO) {
+        return motoService.atualizarMoto(id, motoDTO);
     }
 
     @DELETE
     @Path("/{id}")
-    public Response excluirMoto(@PathParam("id") Long id) {
-        try {
-            motoService.excluirMoto(id);
-            return Response.noContent().build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir a moto.").build();
-        }
+    public void excluirMoto(@PathParam("id") Long id) {
+        motoService.excluirMoto(id);
     }
 
     @GET
     @Path("/{id}")
-    public Response buscarMotoPorId(@PathParam("id") Long id) {
-        MotoDTO moto = motoService.buscarMotoPorId(id);
-        if (moto != null) {
-            return Response.ok(moto).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Moto não encontrada.").build();
-        }
+    public MotoDTO buscarMotoPorId(@PathParam("id") Long id) {
+        return motoService.buscarMotoPorId(id);
     }
 
     @GET
-    public Response listarMotos() {
-        try {
-            List<MotoDTO> motos = motoService.listarTodasAsMotos();
-            return Response.ok(motos).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar as motos.").build();
-        }
+    public List<MotoDTO> listarTodasAsMotos() {
+        return motoService.listarTodasAsMotos();
     }
 }

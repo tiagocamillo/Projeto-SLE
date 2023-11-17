@@ -11,7 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/dispositivo")
+@Path("/dispositivos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DispositivoController {
@@ -20,63 +20,30 @@ public class DispositivoController {
     DispositivoService dispositivoService;
 
     @POST
-    public Response criarDispositivo(@Valid DispositivoDTO dispositivoDTO) {
-        try {
-            Dispositivo novoDispositivo = dispositivoService.criarDispositivo(dispositivoDTO);
-            return Response.status(Response.Status.CREATED).entity(novoDispositivo).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o dispositivo.").build();
-        }
+    public DispositivoDTO criarDispositivo(DispositivoDTO dispositivoDTO) {
+        return dispositivoService.criarDispositivo(dispositivoDTO);
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizarDispositivo(@PathParam("id") Long id, @Valid DispositivoDTO dispositivoDTO) {
-        try {
-            Dispositivo dispositivoAtualizado = dispositivoService.atualizarDispositivo(id, dispositivoDTO);
-            if (dispositivoAtualizado != null) {
-                return Response.ok(dispositivoAtualizado).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Dispositivo não encontrado.").build();
-            }
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o dispositivo.").build();
-        }
+    public DispositivoDTO atualizarDispositivo(@PathParam("id") Long id, DispositivoDTO dispositivoDTO) {
+        return dispositivoService.atualizarDispositivo(id, dispositivoDTO);
     }
 
     @DELETE
     @Path("/{id}")
-    public Response excluirDispositivo(@PathParam("id") Long id) {
-        try {
-            dispositivoService.excluirDispositivo(id);
-            return Response.noContent().build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o dispositivo.").build();
-        }
+    public void excluirDispositivo(@PathParam("id") Long id) {
+        dispositivoService.excluirDispositivo(id);
     }
 
     @GET
     @Path("/{id}")
-    public Response buscarDispositivoPorId(@PathParam("id") Long id) {
-        Dispositivo dispositivo = dispositivoService.buscarDispositivoPorId(id);
-        if (dispositivo != null) {
-            return Response.ok(dispositivo).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Dispositivo não encontrado.").build();
-        }
+    public DispositivoDTO buscarDispositivoPorId(@PathParam("id") Long id) {
+        return dispositivoService.buscarDispositivoPorId(id);
     }
 
     @GET
-    public Response listarTodosOsDispositivos() {
-        try {
-            List<Dispositivo> dispositivos = dispositivoService.listarTodosOsDispositivos();
-            return Response.ok(dispositivos).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os dispositivos.").build();
-        }
+    public List<DispositivoDTO> listarTodosOsDispositivos() {
+        return dispositivoService.listarTodosOsDispositivos();
     }
 }
