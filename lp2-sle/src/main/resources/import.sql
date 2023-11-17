@@ -4,6 +4,6 @@ INSERT INTO EntidadesFinanceiras (idEntidadeFinanceira, nome, cnpj) VALUES
 (2, 'Nome Entidade Financeira 2', 'CNPJ Entidade Financeira 2');
 
 INSERT INTO Leilao (IDLeilao, DataInicio, DataFim, Status, IDEntidadeFinanceiraAssociada) VALUES
-(1, '2023-02-02', '2023-02-10', 'Ativo', 1),
-(2, '2023-01-01', '2023-01-01', 'Finalizado', 2),
-(3, '2023-02-03', '2023-02-15', 'Finalizado', 2);
+(1, '2023-02-02 02:02:02', '2023-02-10 03:03:03', 'Ativo', 1),
+(2, '2023-01-01 04:04:04', '2023-01-01 05:05:05', 'Finalizado', 2),
+(3, '2023-02-03 06:06:06', '2023-02-15 07:07:07', 'Finalizado', 2);

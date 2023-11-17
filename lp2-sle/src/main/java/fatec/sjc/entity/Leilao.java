@@ -1,7 +1,7 @@
 package fatec.sjc.entity;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -32,11 +32,11 @@ public class Leilao  {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DataInicio")
-    private Date dataInicio;
+    private Timestamp dataInicio;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DataFim")
-    private Date dataFim;
+    private Timestamp dataFim;
 
     @Column(name = "Status", length = 20)
     private String status;

@@ -1,18 +1,25 @@
 package fatec.sjc.controller;
 
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import fatec.sjc.DTO.LeilaoDTO;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.service.LeilaoService;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.ws.rs.*;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
-import java.sql.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/leilao")
 @Produces(MediaType.APPLICATION_JSON)
@@ -104,8 +111,8 @@ public class LeilaoController {
     private LeilaoDTO convertEntityToDTO(Leilao leilao) {
         LeilaoDTO leilaoDTO = new LeilaoDTO();
         leilaoDTO.setIdLeilao(leilao.getIdLeilao());
-        leilaoDTO.setDataInicio((Date) leilao.getDataInicio());
-        leilaoDTO.setDataFim((Date) leilao.getDataFim());
+        leilaoDTO.setDataInicio((Timestamp) leilao.getDataInicio());
+        leilaoDTO.setDataFim((Timestamp) leilao.getDataFim());
         leilaoDTO.setStatus(leilao.getStatus());
         leilaoDTO.setIdEntidadeFinanceiraAssociada(leilao.getIdEntidadeFinanceiraAssociada());
         return leilaoDTO;

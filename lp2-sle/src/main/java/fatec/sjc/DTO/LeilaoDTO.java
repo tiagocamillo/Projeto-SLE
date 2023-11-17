@@ -1,16 +1,14 @@
 package fatec.sjc.DTO;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import java.sql.Timestamp;
 
-import java.sql.Date;
+import lombok.Data;
 @Data
 public class LeilaoDTO {
     private Long idLeilao;
 
-    private Date dataInicio;
-
-    private Date dataFim;
+    private Timestamp dataInicio;
+    private Timestamp dataFim;
 
     private String status;
     private int idEntidadeFinanceiraAssociada;
