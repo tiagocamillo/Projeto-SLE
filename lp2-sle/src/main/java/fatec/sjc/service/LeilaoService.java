@@ -1,6 +1,7 @@
 package fatec.sjc.service;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,12 +37,12 @@ public class LeilaoService {
     @Transactional
     public void atualizarStatusLeiloes() {
         List<Leilao> leiloes = leilaoRepository.listAll();
-        Date currentDate = new Date(System.currentTimeMillis());
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
         for (Leilao leilao : leiloes) {
-            if (leilao.getDataInicio().after(currentDate)) {
+            if (leilao.getDataInicio().isAfter(currentDateTime)) {
                 leilao.setStatus("EM ABERTO");
-            } else if (leilao.getDataInicio().before(currentDate) && leilao.getDataFim().after(currentDate)) {
+            } else if (leilao.getDataInicio().isBefore(currentDateTime) && leilao.getDataFim().isAfter(currentDateTime)) {
                 leilao.setStatus("EM ANDAMENTO");
             } else {
                 leilao.setStatus("FINALIZADO");

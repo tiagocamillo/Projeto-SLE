@@ -100,7 +100,6 @@ public class LeilaoController {
 
     private Leilao convertDTOToEntity(LeilaoDTO leilaoDTO) {
         Leilao leilao = new Leilao();
-        leilao.setIdLeilao(leilaoDTO.getIdLeilao());
         leilao.setDataInicio(leilaoDTO.getDataInicio());
         leilao.setDataFim(leilaoDTO.getDataFim());
         leilao.setStatus(leilaoDTO.getStatus());
@@ -110,14 +109,13 @@ public class LeilaoController {
 
     private LeilaoDTO convertEntityToDTO(Leilao leilao) {
         LeilaoDTO leilaoDTO = new LeilaoDTO();
-        leilaoDTO.setIdLeilao(leilao.getIdLeilao());
-        leilaoDTO.setDataInicio((Timestamp) leilao.getDataInicio());
-        leilaoDTO.setDataFim((Timestamp) leilao.getDataFim());
+        leilaoDTO.setDataInicio(leilao.getDataInicio());
+        leilaoDTO.setDataFim(leilao.getDataFim());
         leilaoDTO.setStatus(leilao.getStatus());
         leilaoDTO.setIdEntidadeFinanceiraAssociada(leilao.getIdEntidadeFinanceiraAssociada());
         return leilaoDTO;
     }
-    
+
     @GET
     @Path("/listarOrdenadosPorData")
     public Response listarLeiloesOrdenadosPorData() {

@@ -1,14 +1,14 @@
 package fatec.sjc.DTO;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import lombok.Data;
 @Data
 public class LeilaoDTO {
-    private Long idLeilao;
 
-    private Timestamp dataInicio;
-    private Timestamp dataFim;
+
+    private LocalDateTime dataInicio;
+    private LocalDateTime dataFim;
 
     private String status;
     private int idEntidadeFinanceiraAssociada;

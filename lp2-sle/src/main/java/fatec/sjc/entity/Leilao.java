@@ -1,6 +1,6 @@
 package fatec.sjc.entity;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,13 +29,11 @@ public class Leilao  {
     @Column(name = "IDLeilao")
     private Long idLeilao;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DataInicio")
-    private Timestamp dataInicio;
+    private LocalDateTime dataInicio;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DataFim")
-    private Timestamp dataFim;
+    private LocalDateTime dataFim;
 
     @Column(name = "Status", length = 20)
     private String status;
