@@ -14,7 +14,6 @@ public class Dispositivo {
 
     private String nome;
     private String descricao;
-    private double valorInicial;
     private String status;
     private String tipo;
 

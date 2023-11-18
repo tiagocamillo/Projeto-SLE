@@ -1,11 +1,12 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.TabletDTO;
 import fatec.sjc.entity.Tablet;
 import fatec.sjc.service.TabletService;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-
 import java.util.List;
 
 @Path("/tablets")
@@ -13,8 +14,17 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class TabletController {
 
+    private final TabletService tabletService;
+
     @Inject
-    TabletService tabletService;
+    public TabletController(TabletService tabletService) {
+        this.tabletService = tabletService;
+    }
+
+    @POST
+    public Tablet salvarTablet(TabletDTO tabletDTO) {
+        return tabletService.salvarTablet(tabletDTO);
+    }
 
     @GET
     public List<Tablet> listarTablets() {
@@ -27,21 +37,10 @@ public class TabletController {
         return tabletService.buscarPorId(id);
     }
 
-    @POST
-    public Tablet salvarTablet(Tablet tablet) {
-        return tabletService.salvarTablet(tablet);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarTablet(@PathParam("id") Long id, Tablet tablet) {
-        Tablet tabletExistente = tabletService.buscarPorId(id);
-        if (tabletExistente != null) {
-            tablet.setId(id);
-            tabletService.atualizarTablet(tablet);
-        } else {
-            throw new NotFoundException("Tablet não encontrado");
-        }
+    public void atualizarTablet(@PathParam("id") Long id, TabletDTO tabletDTO) {
+        tabletService.atualizarTablet(tabletDTO);
     }
 
     @DELETE

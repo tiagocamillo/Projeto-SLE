@@ -1,5 +1,6 @@
 package fatec.sjc.service;
 
+import fatec.sjc.dto.ClienteDTO;
 import fatec.sjc.entity.Cliente;
 import fatec.sjc.repository.ClienteRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -18,11 +19,7 @@ public class ClienteService {
         this.clienteRepository = clienteRepository;
     }
 
-    @Transactional
-    public Cliente salvarCliente(Cliente cliente) {
-        clienteRepository.persist(cliente);
-        return cliente;
-    }
+
 
     public List<Cliente> listarClientes() {
         return clienteRepository.listAll();
@@ -33,10 +30,25 @@ public class ClienteService {
     }
 
     @Transactional
-    public void atualizarCliente(Cliente cliente) {
+    public void atualizarCliente(Long id, ClienteDTO clienteDTO) {
+        Cliente cliente = clienteRepository.findById(id);
+
+        cliente.setNome(clienteDTO.getNome());
+        cliente.setDetalhesContato(clienteDTO.getDetalhesContato());
+
+
         clienteRepository.persist(cliente);
     }
+    @Transactional
+    public Cliente salvarCliente(ClienteDTO clienteDTO) {
+        // Criar uma nova instância de Cliente a partir do DTO
+        Cliente novoCliente = new Cliente();
+        novoCliente.setNome(clienteDTO.getNome());
+        novoCliente.setDetalhesContato(clienteDTO.getDetalhesContato());
 
+        clienteRepository.persist(novoCliente);
+        return novoCliente;
+    }
     @Transactional
     public void excluirCliente(Long id) {
         clienteRepository.deleteById(id);

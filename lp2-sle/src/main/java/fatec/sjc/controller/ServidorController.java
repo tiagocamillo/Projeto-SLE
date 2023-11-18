@@ -1,22 +1,30 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.ServidorDTO;
 import fatec.sjc.entity.Servidor;
 import fatec.sjc.service.ServidorService;
-import jakarta.ws.rs.*;
+
 import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-
-
 import java.util.List;
-
 
 @Path("/servidores")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ServidorController {
 
+    private final ServidorService servidorService;
+
     @Inject
-    ServidorService servidorService;
+    public ServidorController(ServidorService servidorService) {
+        this.servidorService = servidorService;
+    }
+
+    @POST
+    public Servidor salvarServidor(ServidorDTO servidorDTO) {
+        return servidorService.salvarServidor(servidorDTO);
+    }
 
     @GET
     public List<Servidor> listarServidores() {
@@ -29,21 +37,10 @@ public class ServidorController {
         return servidorService.buscarPorId(id);
     }
 
-    @POST
-    public Servidor salvarServidor(Servidor servidor) {
-        return servidorService.salvarServidor(servidor);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarServidor(@PathParam("id") Long id, Servidor servidor) {
-        Servidor servidorExistente = servidorService.buscarPorId(id);
-        if (servidorExistente != null) {
-            servidor.setId(id);
-            servidorService.atualizarServidor(servidor);
-        } else {
-            throw new NotFoundException("Servidor não encontrado");
-        }
+    public void atualizarServidor(@PathParam("id") Long id, ServidorDTO servidorDTO) {
+        servidorService.atualizarServidor(servidorDTO);
     }
 
     @DELETE

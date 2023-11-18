@@ -1,20 +1,30 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.CarroDTO;
 import fatec.sjc.entity.Carro;
 import fatec.sjc.service.CarroService;
-import jakarta.ws.rs.*;
+
 import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
-
 
 @Path("/carros")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CarroController {
 
+    private final CarroService carroService;
+
     @Inject
-    CarroService carroService;
+    public CarroController(CarroService carroService) {
+        this.carroService = carroService;
+    }
+
+    @POST
+    public Carro salvarCarro(CarroDTO carroDTO) {
+        return carroService.salvarCarro(carroDTO);
+    }
 
     @GET
     public List<Carro> listarCarros() {
@@ -27,21 +37,10 @@ public class CarroController {
         return carroService.buscarPorId(id);
     }
 
-    @POST
-    public Carro salvarCarro(Carro carro) {
-        return carroService.salvarCarro(carro);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarCarro(@PathParam("id") Long id, Carro carro) {
-        Carro carroExistente = carroService.buscarPorId(id);
-        if (carroExistente != null) {
-            carro.setId(id);
-            carroService.atualizarCarro(carro);
-        } else {
-            throw new NotFoundException("Carro não encontrado");
-        }
+    public void atualizarCarro(@PathParam("id") Long id, CarroDTO carroDTO) {
+        carroService.atualizarCarro(carroDTO);
     }
 
     @DELETE

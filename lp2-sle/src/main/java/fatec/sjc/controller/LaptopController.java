@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.LaptopDTO;
 import fatec.sjc.entity.Laptop;
 import fatec.sjc.service.LaptopService;
 import jakarta.inject.Inject;
@@ -12,8 +13,17 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class LaptopController {
 
+    private final LaptopService laptopService;
+
     @Inject
-    LaptopService laptopService;
+    public LaptopController(LaptopService laptopService) {
+        this.laptopService = laptopService;
+    }
+
+    @POST
+    public Laptop salvarLaptop(LaptopDTO laptopDTO) {
+        return laptopService.salvarLaptop(laptopDTO);
+    }
 
     @GET
     public List<Laptop> listarLaptops() {
@@ -26,21 +36,11 @@ public class LaptopController {
         return laptopService.buscarPorId(id);
     }
 
-    @POST
-    public Laptop salvarLaptop(Laptop laptop) {
-        return laptopService.salvarLaptop(laptop);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarLaptop(@PathParam("id") Long id, Laptop laptop) {
-        Laptop laptopExistente = laptopService.buscarPorId(id);
-        if (laptopExistente != null) {
-            laptop.setId(id);
-            laptopService.atualizarLaptop(laptop);
-        } else {
-            throw new NotFoundException("Laptop não encontrado");
-        }
+    public void atualizarLaptop(@PathParam("id") Long id, LaptopDTO laptopDTO) {
+
+        laptopService.atualizarLaptop(laptopDTO);
     }
 
     @DELETE

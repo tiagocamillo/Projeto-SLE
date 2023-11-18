@@ -1,5 +1,6 @@
 package fatec.sjc.service;
 
+import fatec.sjc.dto.CarroDTO;
 import fatec.sjc.entity.Carro;
 import fatec.sjc.repository.CarroRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,7 +20,10 @@ public class CarroService {
     }
 
     @Transactional
-    public Carro salvarCarro(Carro carro) {
+    public Carro salvarCarro(CarroDTO carroDTO) {
+        Carro carro = new Carro();
+        carro.setQuantidadeAssentos(carroDTO.getQuantidadeAssentos());
+        carro.setTipoCombustivel(carroDTO.getTipoCombustivel());
         carroRepository.persist(carro);
         return carro;
     }
@@ -33,7 +37,10 @@ public class CarroService {
     }
 
     @Transactional
-    public void atualizarCarro(Carro carro) {
+    public void atualizarCarro(CarroDTO carroDTO) {
+        Carro carro = new Carro();
+        carro.setQuantidadeAssentos(carroDTO.getQuantidadeAssentos());
+        carro.setTipoCombustivel(carroDTO.getTipoCombustivel());
         carroRepository.persist(carro);
     }
 

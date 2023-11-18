@@ -1,20 +1,30 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.LanceClienteDTO;
 import fatec.sjc.entity.LanceCliente;
 import fatec.sjc.service.LanceClienteService;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-
 import java.util.List;
 
-@Path("/lancesclientes")
+@Path("/lances-clientes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class LanceClienteController {
 
+    private final LanceClienteService lanceClienteService;
+
     @Inject
-    LanceClienteService lanceClienteService;
+    public LanceClienteController(LanceClienteService lanceClienteService) {
+        this.lanceClienteService = lanceClienteService;
+    }
+
+    @POST
+    public LanceCliente salvarLanceCliente(LanceClienteDTO lanceClienteDTO) {
+        return lanceClienteService.salvarLanceCliente(lanceClienteDTO);
+    }
 
     @GET
     public List<LanceCliente> listarLancesClientes() {
@@ -27,21 +37,10 @@ public class LanceClienteController {
         return lanceClienteService.buscarPorId(id);
     }
 
-    @POST
-    public LanceCliente salvarLanceCliente(LanceCliente lanceCliente) {
-        return lanceClienteService.salvarLanceCliente(lanceCliente);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarLanceCliente(@PathParam("id") Long id, LanceCliente lanceCliente) {
-        LanceCliente lanceClienteExistente = lanceClienteService.buscarPorId(id);
-        if (lanceClienteExistente != null) {
-            lanceCliente.setId(id);
-            lanceClienteService.atualizarLanceCliente(lanceCliente);
-        } else {
-            throw new NotFoundException("Lance do Cliente não encontrado");
-        }
+    public void atualizarLanceCliente(@PathParam("id") Long id, LanceClienteDTO lanceClienteDTO) {
+        lanceClienteService.atualizarLanceCliente(lanceClienteDTO);
     }
 
     @DELETE

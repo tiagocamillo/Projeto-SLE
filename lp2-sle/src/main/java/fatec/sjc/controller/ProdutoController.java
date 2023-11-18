@@ -1,4 +1,5 @@
 package fatec.sjc.controller;
+import fatec.sjc.dto.ProdutoDTO;
 import fatec.sjc.entity.Produto;
 import fatec.sjc.service.ProdutoService;
 import jakarta.ws.rs.*;
@@ -11,8 +12,17 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProdutoController {
 
+    private final ProdutoService produtoService;
+
     @Inject
-    ProdutoService produtoService;
+    public ProdutoController(ProdutoService produtoService) {
+        this.produtoService = produtoService;
+    }
+
+    @POST
+    public Produto salvarProduto(ProdutoDTO produtoDTO) {
+        return produtoService.salvarProduto(produtoDTO);
+    }
 
     @GET
     public List<Produto> listarProdutos() {
@@ -25,21 +35,10 @@ public class ProdutoController {
         return produtoService.buscarPorId(id);
     }
 
-    @POST
-    public Produto salvarProduto(Produto produto) {
-        return produtoService.salvarProduto(produto);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarProduto(@PathParam("id") Long id, Produto produto) {
-        Produto produtoExistente = produtoService.buscarPorId(id);
-        if (produtoExistente != null) {
-            produto.getId();
-            produtoService.atualizarProduto(produto);
-        } else {
-            throw new NotFoundException("Produto não encontrado");
-        }
+    public void atualizarProduto(@PathParam("id") Long id, ProdutoDTO produtoDTO) {
+        produtoService.atualizarProduto(produtoDTO);
     }
 
     @DELETE

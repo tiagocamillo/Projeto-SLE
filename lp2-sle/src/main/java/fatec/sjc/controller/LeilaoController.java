@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.LeilaoDTO;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.service.LeilaoService;
 import jakarta.inject.Inject;
@@ -12,8 +13,17 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class LeilaoController {
 
+    private final LeilaoService leilaoService;
+
     @Inject
-    LeilaoService leilaoService;
+    public LeilaoController(LeilaoService leilaoService) {
+        this.leilaoService = leilaoService;
+    }
+
+    @POST
+    public Leilao salvarLeilao(LeilaoDTO leilaoDTO) {
+        return leilaoService.salvarLeilao(leilaoDTO);
+    }
 
     @GET
     public List<Leilao> listarLeiloes() {
@@ -26,21 +36,11 @@ public class LeilaoController {
         return leilaoService.buscarPorId(id);
     }
 
-    @POST
-    public Leilao salvarLeilao(Leilao leilao) {
-        return leilaoService.salvarLeilao(leilao);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarLeilao(@PathParam("id") Long id, Leilao leilao) {
-        Leilao leilaoExistente = leilaoService.buscarPorId(id);
-        if (leilaoExistente != null) {
-            leilao.setId(id);
-            leilaoService.atualizarLeilao(leilao);
-        } else {
-            throw new NotFoundException("Leilão não encontrado");
-        }
+    public void atualizarLeilao(@PathParam("id") Long id, LeilaoDTO leilaoDTO) {
+        leilaoDTO.setId(id);
+        leilaoService.atualizarLeilao(leilaoDTO);
     }
 
     @DELETE

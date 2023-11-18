@@ -1,5 +1,6 @@
 package fatec.sjc.service;
 
+import fatec.sjc.dto.TabletDTO;
 import fatec.sjc.entity.Tablet;
 import fatec.sjc.repository.TabletRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,7 +20,10 @@ public class TabletService {
     }
 
     @Transactional
-    public Tablet salvarTablet(Tablet tablet) {
+    public Tablet salvarTablet(TabletDTO tabletDTO) {
+        Tablet tablet = new Tablet();
+        tablet.setTamanhoTela(tabletDTO.getTamanhoTela());
+        tablet.setSistemaOperacional(tabletDTO.getSistemaOperacional());
         tabletRepository.persist(tablet);
         return tablet;
     }
@@ -33,7 +37,10 @@ public class TabletService {
     }
 
     @Transactional
-    public void atualizarTablet(Tablet tablet) {
+    public void atualizarTablet(TabletDTO tabletDTO) {
+        Tablet tablet = new Tablet();
+        tablet.setTamanhoTela(tabletDTO.getTamanhoTela());
+        tablet.setSistemaOperacional(tabletDTO.getSistemaOperacional());
         tabletRepository.persist(tablet);
     }
 

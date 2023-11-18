@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.MotoDTO;
 import fatec.sjc.entity.Moto;
 import fatec.sjc.service.MotoService;
 import jakarta.inject.Inject;
@@ -7,14 +8,22 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
-
 @Path("/motos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class MotoController {
 
+    private final MotoService motoService;
+
     @Inject
-    MotoService motoService;
+    public MotoController(MotoService motoService) {
+        this.motoService = motoService;
+    }
+
+    @POST
+    public Moto salvarMoto(MotoDTO motoDTO) {
+        return motoService.salvarMoto(motoDTO);
+    }
 
     @GET
     public List<Moto> listarMotos() {
@@ -27,21 +36,10 @@ public class MotoController {
         return motoService.buscarPorId(id);
     }
 
-    @POST
-    public Moto salvarMoto(Moto moto) {
-        return motoService.salvarMoto(moto);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarMoto(@PathParam("id") Long id, Moto moto) {
-        Moto motoExistente = motoService.buscarPorId(id);
-        if (motoExistente != null) {
-            moto.setId(id);
-            motoService.atualizarMoto(moto);
-        } else {
-            throw new NotFoundException("Moto não encontrada");
-        }
+    public void atualizarMoto(@PathParam("id") Long id, MotoDTO motoDTO) {
+        motoService.atualizarMoto(motoDTO);
     }
 
     @DELETE

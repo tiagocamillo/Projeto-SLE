@@ -1,11 +1,12 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.ClienteDTO;
 import fatec.sjc.entity.Cliente;
 import fatec.sjc.service.ClienteService;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-
 import java.util.List;
 
 @Path("/clientes")
@@ -13,8 +14,17 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ClienteController {
 
+    private final ClienteService clienteService;
+
     @Inject
-    ClienteService clienteService;
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
+    }
+
+    @POST
+    public Cliente salvarCliente(ClienteDTO clienteDTO) {
+        return clienteService.salvarCliente(clienteDTO);
+    }
 
     @GET
     public List<Cliente> listarClientes() {
@@ -27,21 +37,10 @@ public class ClienteController {
         return clienteService.buscarPorId(id);
     }
 
-    @POST
-    public Cliente salvarCliente(Cliente cliente) {
-        return clienteService.salvarCliente(cliente);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarCliente(@PathParam("id") Long id, Cliente cliente) {
-        Cliente clienteExistente = clienteService.buscarPorId(id);
-        if (clienteExistente != null) {
-            cliente.setId(id);
-            clienteService.atualizarCliente(cliente);
-        } else {
-            throw new NotFoundException("Cliente não encontrado");
-        }
+    public void atualizarCliente(@PathParam("id") Long id, ClienteDTO clienteDTO) {
+        clienteService.atualizarCliente(id, clienteDTO);
     }
 
     @DELETE

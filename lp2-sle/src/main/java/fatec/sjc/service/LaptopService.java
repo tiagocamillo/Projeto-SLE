@@ -1,5 +1,6 @@
 package fatec.sjc.service;
 
+import fatec.sjc.dto.LaptopDTO;
 import fatec.sjc.entity.Laptop;
 import fatec.sjc.repository.LaptopRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,7 +8,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
-
 
 @ApplicationScoped
 public class LaptopService {
@@ -20,7 +20,10 @@ public class LaptopService {
     }
 
     @Transactional
-    public Laptop salvarLaptop(Laptop laptop) {
+    public Laptop salvarLaptop(LaptopDTO laptopDTO) {
+        Laptop laptop = new Laptop();
+        laptop.setTamanhoTela(laptopDTO.getTamanhoTela());
+        laptop.setProcessador(laptopDTO.getProcessador());
         laptopRepository.persist(laptop);
         return laptop;
     }
@@ -34,7 +37,10 @@ public class LaptopService {
     }
 
     @Transactional
-    public void atualizarLaptop(Laptop laptop) {
+    public void atualizarLaptop(LaptopDTO laptopDTO) {
+        Laptop laptop = new Laptop();
+        laptop.setTamanhoTela(laptopDTO.getTamanhoTela());
+        laptop.setProcessador(laptopDTO.getProcessador());
         laptopRepository.persist(laptop);
     }
 

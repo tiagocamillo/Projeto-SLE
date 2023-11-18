@@ -1,5 +1,6 @@
 package fatec.sjc.service;
 
+import fatec.sjc.dto.OnibusDTO;
 import fatec.sjc.entity.Onibus;
 import fatec.sjc.repository.OnibusRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -19,7 +20,10 @@ public class OnibusService {
     }
 
     @Transactional
-    public Onibus salvarOnibus(Onibus onibus) {
+    public Onibus salvarOnibus(OnibusDTO onibusDTO) {
+        Onibus onibus = new Onibus();
+        onibus.setQuantidadeAssentos(onibusDTO.getQuantidadeAssentos());
+        onibus.setQuantidadePortas(onibusDTO.getQuantidadePortas());
         onibusRepository.persist(onibus);
         return onibus;
     }
@@ -33,7 +37,11 @@ public class OnibusService {
     }
 
     @Transactional
-    public void atualizarOnibus(Onibus onibus) {
+    public void atualizarOnibus(OnibusDTO onibusDTO) {
+        Onibus onibus = new Onibus();
+
+        onibus.setQuantidadeAssentos(onibusDTO.getQuantidadeAssentos());
+        onibus.setQuantidadePortas(onibusDTO.getQuantidadePortas());
         onibusRepository.persist(onibus);
     }
 

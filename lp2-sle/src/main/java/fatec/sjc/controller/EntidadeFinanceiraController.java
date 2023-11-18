@@ -1,20 +1,30 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.EntidadeFinanceiraDTO;
 import fatec.sjc.entity.EntidadeFinanceira;
 import fatec.sjc.service.EntidadeFinanceiraService;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-
 import java.util.List;
 
-@Path("/entidadesfinanceiras")
+@Path("/entidades-financeiras")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class EntidadeFinanceiraController {
 
+    private final EntidadeFinanceiraService entidadeFinanceiraService;
+
     @Inject
-    EntidadeFinanceiraService entidadeFinanceiraService;
+    public EntidadeFinanceiraController(EntidadeFinanceiraService entidadeFinanceiraService) {
+        this.entidadeFinanceiraService = entidadeFinanceiraService;
+    }
+
+    @POST
+    public EntidadeFinanceira salvarEntidadeFinanceira(EntidadeFinanceiraDTO entidadeFinanceiraDTO) {
+        return entidadeFinanceiraService.salvarEntidadeFinanceira(entidadeFinanceiraDTO);
+    }
 
     @GET
     public List<EntidadeFinanceira> listarEntidadesFinanceiras() {
@@ -27,21 +37,10 @@ public class EntidadeFinanceiraController {
         return entidadeFinanceiraService.buscarPorId(id);
     }
 
-    @POST
-    public EntidadeFinanceira salvarEntidadeFinanceira(EntidadeFinanceira entidadeFinanceira) {
-        return entidadeFinanceiraService.salvarEntidadeFinanceira(entidadeFinanceira);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarEntidadeFinanceira(@PathParam("id") Long id, EntidadeFinanceira entidadeFinanceira) {
-        EntidadeFinanceira entidadeFinanceiraExistente = entidadeFinanceiraService.buscarPorId(id);
-        if (entidadeFinanceiraExistente != null) {
-            entidadeFinanceira.setId(id);
-            entidadeFinanceiraService.atualizarEntidadeFinanceira(entidadeFinanceira);
-        } else {
-            throw new NotFoundException("Entidade Financeira não encontrada");
-        }
+    public void atualizarEntidadeFinanceira(@PathParam("id") Long id, EntidadeFinanceiraDTO entidadeFinanceiraDTO) {
+        entidadeFinanceiraService.atualizarEntidadeFinanceira(entidadeFinanceiraDTO);
     }
 
     @DELETE

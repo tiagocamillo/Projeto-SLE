@@ -1,5 +1,6 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.VeiculoDTO;
 import fatec.sjc.entity.Veiculo;
 import fatec.sjc.service.VeiculoService;
 import jakarta.inject.Inject;
@@ -13,8 +14,17 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class VeiculoController {
 
+    private final VeiculoService veiculoService;
+
     @Inject
-    VeiculoService veiculoService;
+    public VeiculoController(VeiculoService veiculoService) {
+        this.veiculoService = veiculoService;
+    }
+
+    @POST
+    public Veiculo salvarVeiculo(VeiculoDTO veiculoDTO) {
+        return veiculoService.salvarVeiculo(veiculoDTO);
+    }
 
     @GET
     public List<Veiculo> listarVeiculos() {
@@ -27,21 +37,10 @@ public class VeiculoController {
         return veiculoService.buscarPorId(id);
     }
 
-    @POST
-    public Veiculo salvarVeiculo(Veiculo veiculo) {
-        return veiculoService.salvarVeiculo(veiculo);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarVeiculo(@PathParam("id") Long id, Veiculo veiculo) {
-        Veiculo veiculoExistente = veiculoService.buscarPorId(id);
-        if (veiculoExistente != null) {
-            veiculo.setId(id);
-            veiculoService.atualizarVeiculo(veiculo);
-        } else {
-            throw new NotFoundException("Veículo não encontrado");
-        }
+    public void atualizarVeiculo(@PathParam("id") Long id, VeiculoDTO veiculoDTO) {
+        veiculoService.atualizarVeiculo(veiculoDTO);
     }
 
     @DELETE

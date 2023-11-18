@@ -1,5 +1,6 @@
 package fatec.sjc.service;
 
+import fatec.sjc.dto.LeilaoDTO;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.repository.LeilaoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+
 @ApplicationScoped
 public class LeilaoService {
 
@@ -18,7 +20,14 @@ public class LeilaoService {
     }
 
     @Transactional
-    public Leilao salvarLeilao(Leilao leilao) {
+    public Leilao salvarLeilao(LeilaoDTO leilaoDTO) {
+        Leilao leilao = new Leilao();
+        leilao.setDataOcorrencia(leilaoDTO.getDataOcorrencia());
+        leilao.setDataVisita(leilaoDTO.getDataVisita());
+        leilao.setLocal(leilaoDTO.getLocal());
+        leilao.setStatus(leilaoDTO.getStatus());
+        leilao.setProdutos(leilaoDTO.getProdutos());
+        leilao.setInstituicaoFinanceira(leilaoDTO.getInstituicaoFinanceira());
         leilaoRepository.persist(leilao);
         return leilao;
     }
@@ -32,7 +41,15 @@ public class LeilaoService {
     }
 
     @Transactional
-    public void atualizarLeilao(Leilao leilao) {
+    public void atualizarLeilao(LeilaoDTO leilaoDTO) {
+        Leilao leilao = new Leilao();
+        leilao.setId(leilaoDTO.getId());
+        leilao.setDataOcorrencia(leilaoDTO.getDataOcorrencia());
+        leilao.setDataVisita(leilaoDTO.getDataVisita());
+        leilao.setLocal(leilaoDTO.getLocal());
+        leilao.setStatus(leilaoDTO.getStatus());
+        leilao.setProdutos(leilaoDTO.getProdutos());
+        leilao.setInstituicaoFinanceira(leilaoDTO.getInstituicaoFinanceira());
         leilaoRepository.persist(leilao);
     }
 

@@ -1,5 +1,6 @@
 package fatec.sjc.service;
 
+import fatec.sjc.dto.DispositivoDTO;
 import fatec.sjc.entity.Dispositivo;
 import fatec.sjc.repository.DispositivoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,7 +18,12 @@ public class DispositivoService {
     }
 
     @Transactional
-    public Dispositivo salvarDispositivo(Dispositivo dispositivo) {
+    public Dispositivo salvarDispositivo(DispositivoDTO dispositivoDTO) {
+        Dispositivo dispositivo = new Dispositivo();
+        dispositivo.setNome(dispositivoDTO.getNome());
+        dispositivo.setDescricao(dispositivoDTO.getDescricao());
+        dispositivo.setStatus(dispositivoDTO.getStatus());
+        dispositivo.setTipo(dispositivoDTO.getTipo());
         dispositivoRepository.persist(dispositivo);
         return dispositivo;
     }
@@ -31,7 +37,13 @@ public class DispositivoService {
     }
 
     @Transactional
-    public void atualizarDispositivo(Dispositivo dispositivo) {
+    public void atualizarDispositivo(DispositivoDTO dispositivoDTO) {
+        Dispositivo dispositivo = new Dispositivo();
+        dispositivo.setId(dispositivoDTO.getId());  // Assuming you have an 'id' field in DispositivoDTO
+        dispositivo.setNome(dispositivoDTO.getNome());
+        dispositivo.setDescricao(dispositivoDTO.getDescricao());
+        dispositivo.setStatus(dispositivoDTO.getStatus());
+        dispositivo.setTipo(dispositivoDTO.getTipo());
         dispositivoRepository.persist(dispositivo);
     }
 

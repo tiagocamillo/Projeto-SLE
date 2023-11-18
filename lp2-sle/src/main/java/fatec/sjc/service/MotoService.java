@@ -1,6 +1,6 @@
-// MotoService.java
 package fatec.sjc.service;
 
+import fatec.sjc.dto.MotoDTO;
 import fatec.sjc.entity.Moto;
 import fatec.sjc.repository.MotoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -8,7 +8,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
-
 
 @ApplicationScoped
 public class MotoService {
@@ -21,7 +20,10 @@ public class MotoService {
     }
 
     @Transactional
-    public Moto salvarMoto(Moto moto) {
+    public Moto salvarMoto(MotoDTO motoDTO) {
+        Moto moto = new Moto();
+        moto.setPossuiCarenagem(motoDTO.isPossuiCarenagem());
+        moto.setTipoMotocicleta(motoDTO.getTipoMotocicleta());
         motoRepository.persist(moto);
         return moto;
     }
@@ -35,7 +37,10 @@ public class MotoService {
     }
 
     @Transactional
-    public void atualizarMoto(Moto moto) {
+    public void atualizarMoto(MotoDTO motoDTO) {
+        Moto moto = new Moto();
+        moto.setPossuiCarenagem(motoDTO.isPossuiCarenagem());
+        moto.setTipoMotocicleta(motoDTO.getTipoMotocicleta());
         motoRepository.persist(moto);
     }
 

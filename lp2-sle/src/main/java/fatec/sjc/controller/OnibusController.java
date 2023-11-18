@@ -1,11 +1,12 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.OnibusDTO;
 import fatec.sjc.entity.Onibus;
 import fatec.sjc.service.OnibusService;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-
 import java.util.List;
 
 @Path("/onibus")
@@ -13,8 +14,17 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class OnibusController {
 
+    private final OnibusService onibusService;
+
     @Inject
-    OnibusService onibusService;
+    public OnibusController(OnibusService onibusService) {
+        this.onibusService = onibusService;
+    }
+
+    @POST
+    public Onibus salvarOnibus(OnibusDTO onibusDTO) {
+        return onibusService.salvarOnibus(onibusDTO);
+    }
 
     @GET
     public List<Onibus> listarOnibus() {
@@ -27,21 +37,10 @@ public class OnibusController {
         return onibusService.buscarPorId(id);
     }
 
-    @POST
-    public Onibus salvarOnibus(Onibus onibus) {
-        return onibusService.salvarOnibus(onibus);
-    }
-
     @PUT
     @Path("/{id}")
-    public void atualizarOnibus(@PathParam("id") Long id, Onibus onibus) {
-        Onibus onibusExistente = onibusService.buscarPorId(id);
-        if (onibusExistente != null) {
-            onibus.setId(id);
-            onibusService.atualizarOnibus(onibus);
-        } else {
-            throw new NotFoundException("Ônibus não encontrado");
-        }
+    public void atualizarOnibus(@PathParam("id") Long id, OnibusDTO onibusDTO) {
+        onibusService.atualizarOnibus(onibusDTO);
     }
 
     @DELETE

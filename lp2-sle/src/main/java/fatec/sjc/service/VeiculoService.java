@@ -1,6 +1,6 @@
-// VeiculoService.java
 package fatec.sjc.service;
 
+import fatec.sjc.dto.VeiculoDTO;
 import fatec.sjc.entity.Veiculo;
 import fatec.sjc.repository.VeiculoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -20,7 +20,9 @@ public class VeiculoService {
     }
 
     @Transactional
-    public Veiculo salvarVeiculo(Veiculo veiculo) {
+    public Veiculo salvarVeiculo(VeiculoDTO veiculoDTO) {
+        Veiculo veiculo = new Veiculo();
+        atualizarVeiculoFromDTO(veiculo, veiculoDTO);
         veiculoRepository.persist(veiculo);
         return veiculo;
     }
@@ -34,12 +36,22 @@ public class VeiculoService {
     }
 
     @Transactional
-    public void atualizarVeiculo(Veiculo veiculo) {
-        veiculoRepository.persist(veiculo);
+    public void atualizarVeiculo(VeiculoDTO veiculoDTO) {
+        Veiculo veiculo = veiculoRepository.findById(veiculoDTO.getId());
+        if (veiculo != null) {
+            atualizarVeiculoFromDTO(veiculo, veiculoDTO);
+        }
     }
 
     @Transactional
     public void excluirVeiculo(Long id) {
         veiculoRepository.deleteById(id);
+    }
+
+    private void atualizarVeiculoFromDTO(Veiculo veiculo, VeiculoDTO veiculoDTO) {
+        veiculo.setNome(veiculoDTO.getNome());
+        veiculo.setDescricao(veiculoDTO.getDescricao());
+        veiculo.setStatus(veiculoDTO.getStatus());
+        veiculo.setTipo(veiculoDTO.getTipo());
     }
 }
