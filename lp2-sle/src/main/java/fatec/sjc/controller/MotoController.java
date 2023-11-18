@@ -1,14 +1,10 @@
 package fatec.sjc.controller;
 
-import fatec.sjc.DTO.MotoDTO;
 import fatec.sjc.entity.Moto;
 import fatec.sjc.service.MotoService;
 import jakarta.inject.Inject;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
@@ -20,31 +16,37 @@ public class MotoController {
     @Inject
     MotoService motoService;
 
+    @GET
+    public List<Moto> listarMotos() {
+        return motoService.listarMotos();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Moto buscarPorId(@PathParam("id") Long id) {
+        return motoService.buscarPorId(id);
+    }
+
     @POST
-    public MotoDTO criarMoto(MotoDTO motoDTO) {
-        return motoService.criarMoto(motoDTO);
+    public Moto salvarMoto(Moto moto) {
+        return motoService.salvarMoto(moto);
     }
 
     @PUT
     @Path("/{id}")
-    public MotoDTO atualizarMoto(@PathParam("id") Long id, MotoDTO motoDTO) {
-        return motoService.atualizarMoto(id, motoDTO);
+    public void atualizarMoto(@PathParam("id") Long id, Moto moto) {
+        Moto motoExistente = motoService.buscarPorId(id);
+        if (motoExistente != null) {
+            moto.setId(id);
+            motoService.atualizarMoto(moto);
+        } else {
+            throw new NotFoundException("Moto não encontrada");
+        }
     }
 
     @DELETE
     @Path("/{id}")
     public void excluirMoto(@PathParam("id") Long id) {
         motoService.excluirMoto(id);
-    }
-
-    @GET
-    @Path("/{id}")
-    public MotoDTO buscarMotoPorId(@PathParam("id") Long id) {
-        return motoService.buscarMotoPorId(id);
-    }
-
-    @GET
-    public List<MotoDTO> listarTodasAsMotos() {
-        return motoService.listarTodasAsMotos();
     }
 }

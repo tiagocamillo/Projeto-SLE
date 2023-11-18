@@ -1,20 +1,11 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.entity.Servidor;
 import fatec.sjc.service.ServidorService;
-import jakarta.ws.rs.Path;
+import jakarta.ws.rs.*;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.validation.Valid;
 
-import fatec.sjc.DTO.ServidorDTO;
 
 import java.util.List;
 
@@ -27,31 +18,37 @@ public class ServidorController {
     @Inject
     ServidorService servidorService;
 
+    @GET
+    public List<Servidor> listarServidores() {
+        return servidorService.listarServidores();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Servidor buscarPorId(@PathParam("id") Long id) {
+        return servidorService.buscarPorId(id);
+    }
+
     @POST
-    public ServidorDTO criarServidor(ServidorDTO servidorDTO) {
-        return servidorService.criarServidor(servidorDTO);
+    public Servidor salvarServidor(Servidor servidor) {
+        return servidorService.salvarServidor(servidor);
     }
 
     @PUT
     @Path("/{id}")
-    public ServidorDTO atualizarServidor(@PathParam("id") Long id, ServidorDTO servidorDTO) {
-        return servidorService.atualizarServidor(id, servidorDTO);
+    public void atualizarServidor(@PathParam("id") Long id, Servidor servidor) {
+        Servidor servidorExistente = servidorService.buscarPorId(id);
+        if (servidorExistente != null) {
+            servidor.setId(id);
+            servidorService.atualizarServidor(servidor);
+        } else {
+            throw new NotFoundException("Servidor não encontrado");
+        }
     }
 
     @DELETE
     @Path("/{id}")
     public void excluirServidor(@PathParam("id") Long id) {
         servidorService.excluirServidor(id);
-    }
-
-    @GET
-    @Path("/{id}")
-    public ServidorDTO buscarServidorPorId(@PathParam("id") Long id) {
-        return servidorService.buscarServidorPorId(id);
-    }
-
-    @GET
-    public List<ServidorDTO> listarTodosOsServidores() {
-        return servidorService.listarTodosOsServidores();
     }
 }

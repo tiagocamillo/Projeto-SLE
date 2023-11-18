@@ -1,21 +1,10 @@
 package fatec.sjc.controller;
 
-import fatec.sjc.DTO.TabletDTO;
 import fatec.sjc.entity.Tablet;
 import fatec.sjc.service.TabletService;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.ws.rs.Path;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -27,31 +16,37 @@ public class TabletController {
     @Inject
     TabletService tabletService;
 
+    @GET
+    public List<Tablet> listarTablets() {
+        return tabletService.listarTablets();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Tablet buscarPorId(@PathParam("id") Long id) {
+        return tabletService.buscarPorId(id);
+    }
+
     @POST
-    public TabletDTO criarTablet(TabletDTO tabletDTO) {
-        return tabletService.criarTablet(tabletDTO);
+    public Tablet salvarTablet(Tablet tablet) {
+        return tabletService.salvarTablet(tablet);
     }
 
     @PUT
     @Path("/{id}")
-    public TabletDTO atualizarTablet(@PathParam("id") Long id, TabletDTO tabletDTO) {
-        return tabletService.atualizarTablet(id, tabletDTO);
+    public void atualizarTablet(@PathParam("id") Long id, Tablet tablet) {
+        Tablet tabletExistente = tabletService.buscarPorId(id);
+        if (tabletExistente != null) {
+            tablet.setId(id);
+            tabletService.atualizarTablet(tablet);
+        } else {
+            throw new NotFoundException("Tablet não encontrado");
+        }
     }
 
     @DELETE
     @Path("/{id}")
     public void excluirTablet(@PathParam("id") Long id) {
         tabletService.excluirTablet(id);
-    }
-
-    @GET
-    @Path("/{id}")
-    public TabletDTO buscarTabletPorId(@PathParam("id") Long id) {
-        return tabletService.buscarTabletPorId(id);
-    }
-
-    @GET
-    public List<TabletDTO> listarTodosOsTablets() {
-        return tabletService.listarTodosOsTablets();
     }
 }

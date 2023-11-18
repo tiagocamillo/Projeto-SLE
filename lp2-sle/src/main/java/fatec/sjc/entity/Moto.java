@@ -10,7 +10,7 @@ import lombok.Data;
 @DiscriminatorValue("MOTO")
 public class Moto extends Veiculo {
 
-    @Column(name = "Cilindrada")
-    public int cilindrada;
+    private boolean possuiCarenagem;
+    private String tipoMotocicleta;
 
 }

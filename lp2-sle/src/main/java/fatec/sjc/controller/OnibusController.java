@@ -1,22 +1,10 @@
 package fatec.sjc.controller;
 
-import fatec.sjc.DTO.OnibusDTO;
 import fatec.sjc.entity.Onibus;
 import fatec.sjc.service.OnibusService;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
-import jakarta.ws.rs.Path;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
@@ -28,31 +16,37 @@ public class OnibusController {
     @Inject
     OnibusService onibusService;
 
+    @GET
+    public List<Onibus> listarOnibus() {
+        return onibusService.listarOnibus();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Onibus buscarPorId(@PathParam("id") Long id) {
+        return onibusService.buscarPorId(id);
+    }
+
     @POST
-    public OnibusDTO criarOnibus(OnibusDTO onibusDTO) {
-        return onibusService.criarOnibus(onibusDTO);
+    public Onibus salvarOnibus(Onibus onibus) {
+        return onibusService.salvarOnibus(onibus);
     }
 
     @PUT
     @Path("/{id}")
-    public OnibusDTO atualizarOnibus(@PathParam("id") Long id, OnibusDTO onibusDTO) {
-        return onibusService.atualizarOnibus(id, onibusDTO);
+    public void atualizarOnibus(@PathParam("id") Long id, Onibus onibus) {
+        Onibus onibusExistente = onibusService.buscarPorId(id);
+        if (onibusExistente != null) {
+            onibus.setId(id);
+            onibusService.atualizarOnibus(onibus);
+        } else {
+            throw new NotFoundException("Ônibus não encontrado");
+        }
     }
 
     @DELETE
     @Path("/{id}")
     public void excluirOnibus(@PathParam("id") Long id) {
         onibusService.excluirOnibus(id);
-    }
-
-    @GET
-    @Path("/{id}")
-    public OnibusDTO buscarOnibusPorId(@PathParam("id") Long id) {
-        return onibusService.buscarOnibusPorId(id);
-    }
-
-    @GET
-    public List<OnibusDTO> listarTodosOsOnibus() {
-        return onibusService.listarTodosOsOnibus();
     }
 }

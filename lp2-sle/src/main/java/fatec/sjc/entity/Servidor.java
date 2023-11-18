@@ -10,10 +10,7 @@ import lombok.Data;
 @DiscriminatorValue("SERVIDOR")
 public class Servidor extends Dispositivo {
 
-    @Column(name = "Processador")
-    public String processador;
-
-    @Column(name = "CapacidadeArmazenamento")
-    public long capacidadeArmazenamento;
+    private String tamanhoRack;
+    private int quantidadeProcessadores;
 
 }

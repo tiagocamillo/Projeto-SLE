@@ -1,10 +1,9 @@
 package fatec.sjc.repository;
-
-import fatec.sjc.entity.ItemLeilao;
+import fatec.sjc.entity.Produto;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class ItemLeilaoRepository implements PanacheRepository<ItemLeilao> {
+
+public class ProdutoRepository implements PanacheRepository<Produto> {
 }

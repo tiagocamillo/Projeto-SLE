@@ -10,7 +10,7 @@ import lombok.Data;
 @DiscriminatorValue("TABLET")
 public class Tablet extends Dispositivo {
 
-    @Column(name = "TamanhoTela")
-    public double tamanhoTela;
+    private String tamanhoTela;
+    private String sistemaOperacional;
 
 }

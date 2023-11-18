@@ -26,30 +26,18 @@ public class Leilao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IDLeilao")
-    private Long idLeilao;
+    private Long id;
 
-    @Column(name = "DataInicio")
-    private LocalDateTime dataInicio;
-
-    @Column(name = "DataFim")
-    private LocalDateTime dataFim;
-
-    @Column(name = "Status", length = 20)
+    private String dataOcorrencia;
+    private String dataVisita;
+    private String local;
     private String status;
 
-    @Column(name = "IDEntidadeFinanceiraAssociada")
-    private int idEntidadeFinanceiraAssociada;
+    @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL)
+    private List<Produto> produtos;
 
     @ManyToOne
-    @JoinColumn(name = "IDEntidadeFinanceiraAssociada", referencedColumnName = "idEntidadeFinanceira", insertable = false, updatable = false)
-    private EntidadeFinanceira entidadeFinanceiraAssociada;
-
-    @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LanceCliente> lances = new ArrayList<>();
-
-    @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemLeilao> itensLeilao = new ArrayList<>();
+    private EntidadeFinanceira instituicaoFinanceira;
 
 
 

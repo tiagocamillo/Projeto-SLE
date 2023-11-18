@@ -1,16 +1,9 @@
 package fatec.sjc.controller;
 
-import fatec.sjc.DTO.CarroDTO;
+import fatec.sjc.entity.Carro;
 import fatec.sjc.service.CarroService;
-import jakarta.ws.rs.Path;
+import jakarta.ws.rs.*;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -23,31 +16,37 @@ public class CarroController {
     @Inject
     CarroService carroService;
 
+    @GET
+    public List<Carro> listarCarros() {
+        return carroService.listarCarros();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Carro buscarPorId(@PathParam("id") Long id) {
+        return carroService.buscarPorId(id);
+    }
+
     @POST
-    public CarroDTO criarCarro(CarroDTO carroDTO) {
-        return carroService.criarCarro(carroDTO);
+    public Carro salvarCarro(Carro carro) {
+        return carroService.salvarCarro(carro);
     }
 
     @PUT
     @Path("/{id}")
-    public CarroDTO atualizarCarro(@PathParam("id") Long id, CarroDTO carroDTO) {
-        return carroService.atualizarCarro(id, carroDTO);
+    public void atualizarCarro(@PathParam("id") Long id, Carro carro) {
+        Carro carroExistente = carroService.buscarPorId(id);
+        if (carroExistente != null) {
+            carro.setId(id);
+            carroService.atualizarCarro(carro);
+        } else {
+            throw new NotFoundException("Carro não encontrado");
+        }
     }
 
     @DELETE
     @Path("/{id}")
     public void excluirCarro(@PathParam("id") Long id) {
         carroService.excluirCarro(id);
-    }
-
-    @GET
-    @Path("/{id}")
-    public CarroDTO buscarCarroPorId(@PathParam("id") Long id) {
-        return carroService.buscarCarroPorId(id);
-    }
-
-    @GET
-    public List<CarroDTO> listarTodosOsCarros() {
-        return carroService.listarTodosOsCarros();
     }
 }

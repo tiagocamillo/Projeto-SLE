@@ -9,6 +9,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "LanceCliente")
@@ -18,18 +20,14 @@ public class LanceCliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private double valor;
+
     @ManyToOne
-    @JoinColumn(name = "id_cliente")
+    private Produto produto;
+
+    @ManyToOne
     private Cliente cliente;
 
-    @ManyToOne
-    @JoinColumn(name = "id_leilao")
-    private Leilao leilao;
-
-    @ManyToOne
-    @JoinColumn(name = "id_item_leilao")
-    private ItemLeilao itemLeilao;
-
-    private Double valorLance;
+    private LocalDateTime dataHoraLance;
 
 }

@@ -1,11 +1,12 @@
 package fatec.sjc.entity;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
-@DiscriminatorValue("VEICULO")
-public class Veiculo extends Produto {
+@Table(name = "Cliente")
+public class Produto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,5 +17,8 @@ public class Veiculo extends Produto {
     private double valorInicial;
     private String status;
     private String tipo;
+
+    @ManyToOne
+    private Leilao leilao;
 
 }

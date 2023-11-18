@@ -1,14 +1,11 @@
 package fatec.sjc.controller;
 
-import fatec.sjc.DTO.DispositivoDTO;
 import fatec.sjc.entity.Dispositivo;
 import fatec.sjc.service.DispositivoService;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+
 import java.util.List;
 
 @Path("/dispositivos")
@@ -19,31 +16,37 @@ public class DispositivoController {
     @Inject
     DispositivoService dispositivoService;
 
+    @GET
+    public List<Dispositivo> listarDispositivos() {
+        return dispositivoService.listarDispositivos();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Dispositivo buscarPorId(@PathParam("id") Long id) {
+        return dispositivoService.buscarPorId(id);
+    }
+
     @POST
-    public DispositivoDTO criarDispositivo(DispositivoDTO dispositivoDTO) {
-        return dispositivoService.criarDispositivo(dispositivoDTO);
+    public Dispositivo salvarDispositivo(Dispositivo dispositivo) {
+        return dispositivoService.salvarDispositivo(dispositivo);
     }
 
     @PUT
     @Path("/{id}")
-    public DispositivoDTO atualizarDispositivo(@PathParam("id") Long id, DispositivoDTO dispositivoDTO) {
-        return dispositivoService.atualizarDispositivo(id, dispositivoDTO);
+    public void atualizarDispositivo(@PathParam("id") Long id, Dispositivo dispositivo) {
+        Dispositivo dispositivoExistente = dispositivoService.buscarPorId(id);
+        if (dispositivoExistente != null) {
+            dispositivo.setId(id);
+            dispositivoService.atualizarDispositivo(dispositivo);
+        } else {
+            throw new NotFoundException("Dispositivo não encontrado");
+        }
     }
 
     @DELETE
     @Path("/{id}")
     public void excluirDispositivo(@PathParam("id") Long id) {
         dispositivoService.excluirDispositivo(id);
-    }
-
-    @GET
-    @Path("/{id}")
-    public DispositivoDTO buscarDispositivoPorId(@PathParam("id") Long id) {
-        return dispositivoService.buscarDispositivoPorId(id);
-    }
-
-    @GET
-    public List<DispositivoDTO> listarTodosOsDispositivos() {
-        return dispositivoService.listarTodosOsDispositivos();
     }
 }

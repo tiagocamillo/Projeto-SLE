@@ -1,6 +1,5 @@
 package fatec.sjc.service;
 
-import fatec.sjc.DTO.OnibusDTO;
 import fatec.sjc.entity.Onibus;
 import fatec.sjc.repository.OnibusRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -8,76 +7,38 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class OnibusService {
 
-    @Inject
-    OnibusRepository onibusRepository;
+    private final OnibusRepository onibusRepository;
 
-    @Transactional
-    public OnibusDTO criarOnibus(OnibusDTO onibusDTO) {
-        Onibus onibus = convertToEntity(onibusDTO);
-        onibusRepository.persist(onibus);
-        return convertToDTO(onibus);
+    @Inject
+    public OnibusService(OnibusRepository onibusRepository) {
+        this.onibusRepository = onibusRepository;
     }
 
     @Transactional
-    public OnibusDTO atualizarOnibus(Long id, OnibusDTO onibusAtualizadoDTO) {
-        Onibus onibusExistente = onibusRepository.findById(id);
-        if (onibusExistente != null) {
-            updateEntityFromDTO(onibusExistente, onibusAtualizadoDTO);
-        }
-        return convertToDTO(onibusExistente);
+    public Onibus salvarOnibus(Onibus onibus) {
+        onibusRepository.persist(onibus);
+        return onibus;
+    }
+
+    public List<Onibus> listarOnibus() {
+        return onibusRepository.listAll();
+    }
+
+    public Onibus buscarPorId(Long id) {
+        return onibusRepository.findById(id);
+    }
+
+    @Transactional
+    public void atualizarOnibus(Onibus onibus) {
+        onibusRepository.persist(onibus);
     }
 
     @Transactional
     public void excluirOnibus(Long id) {
-        Onibus onibusExistente = onibusRepository.findById(id);
-        if (onibusExistente != null) {
-            onibusRepository.delete(onibusExistente);
-        }
-    }
-
-    public OnibusDTO buscarOnibusPorId(Long id) {
-        Onibus onibus = onibusRepository.findById(id);
-        return (onibus != null) ? convertToDTO(onibus) : null;
-    }
-
-    public List<OnibusDTO> listarTodosOsOnibus() {
-        return onibusRepository.listAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    private Onibus convertToEntity(OnibusDTO onibusDTO) {
-        Onibus onibus = new Onibus();
-        onibus.setTipo(onibusDTO.getTipo());
-        onibus.setMarca(onibusDTO.getMarca());
-        onibus.setAno(onibusDTO.getAno());
-        onibus.setAcessorios(onibusDTO.getAcessorios());
-
-        onibus.setCapacidadePassageiros(onibusDTO.getCapacidadePassageiros());
-        return onibus;
-    }
-
-    private void updateEntityFromDTO(Onibus onibus, OnibusDTO onibusDTO) {
-        onibus.setTipo(onibusDTO.getTipo());
-        onibus.setMarca(onibusDTO.getMarca());
-        onibus.setAno(onibusDTO.getAno());
-        onibus.setAcessorios(onibusDTO.getAcessorios());
-
-        onibus.setCapacidadePassageiros(onibusDTO.getCapacidadePassageiros());
-    }
-
-    private OnibusDTO convertToDTO(Onibus onibus) {
-        OnibusDTO onibusDTO = new OnibusDTO();
-        onibusDTO.setTipo(onibus.getTipo());
-        onibusDTO.setMarca(onibus.getMarca());
-        onibusDTO.setAno(onibus.getAno());
-        onibusDTO.setAcessorios(onibus.getAcessorios());
-        onibusDTO.setCapacidadePassageiros(onibus.getCapacidadePassageiros());
-        return onibusDTO;
+        onibusRepository.deleteById(id);
     }
 }

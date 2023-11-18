@@ -1,53 +1,44 @@
 package fatec.sjc.service;
 
-import java.util.List;
-
-import fatec.sjc.DTO.ClienteDTO;
 import fatec.sjc.entity.Cliente;
 import fatec.sjc.repository.ClienteRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.util.List;
+
 @ApplicationScoped
 public class ClienteService {
 
+    private final ClienteRepository clienteRepository;
+
     @Inject
-    ClienteRepository clienteRepository;
+    public ClienteService(ClienteRepository clienteRepository) {
+        this.clienteRepository = clienteRepository;
+    }
 
     @Transactional
-    public Cliente criarCliente(ClienteDTO clienteDTO) {
-        Cliente cliente = new Cliente();
-        cliente.setNome(clienteDTO.getNome());
-        cliente.setCpfcnpj(clienteDTO.getCpfcnpj());
-
+    public Cliente salvarCliente(Cliente cliente) {
         clienteRepository.persist(cliente);
         return cliente;
     }
 
+    public List<Cliente> listarClientes() {
+        return clienteRepository.listAll();
+    }
+
+    public Cliente buscarPorId(Long id) {
+        return clienteRepository.findById(id);
+    }
+
     @Transactional
-    public Cliente atualizarCliente(Long id, ClienteDTO clienteAtualizado) {
-        Cliente clienteExistente = clienteRepository.findById(id);
-        if (clienteExistente != null) {
-            clienteExistente.setNome(clienteAtualizado.getNome());
-            clienteExistente.setCpfcnpj(clienteAtualizado.getCpfcnpj());
-        }
-        return clienteExistente;
+    public void atualizarCliente(Cliente cliente) {
+        clienteRepository.persist(cliente);
     }
 
     @Transactional
     public void excluirCliente(Long id) {
-        Cliente clienteExistente = clienteRepository.findById(id);
-        if (clienteExistente != null) {
-            clienteRepository.delete(clienteExistente);
-        }
-    }
-
-    public Cliente buscarClientePorId(Long id) {
-        return clienteRepository.findById(id);
-    }
-
-    public List<Cliente> listarTodosOsClientes() {
-        return clienteRepository.listAll();
+        clienteRepository.deleteById(id);
     }
 }

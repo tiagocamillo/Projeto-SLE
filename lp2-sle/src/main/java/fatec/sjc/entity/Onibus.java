@@ -10,7 +10,6 @@ import lombok.Data;
 @DiscriminatorValue("ONIBUS")
 public class Onibus extends Veiculo {
 
-    @Column(name = "CapacidadePassageiros")
-    public int capacidadePassageiros;
-
+    private int quantidadeAssentos;
+    private int quantidadePortas;
 }

@@ -1,82 +1,44 @@
 package fatec.sjc.service;
 
-import fatec.sjc.DTO.TabletDTO;
 import fatec.sjc.entity.Tablet;
 import fatec.sjc.repository.TabletRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class TabletService {
 
-    @Inject
-    TabletRepository tabletRepository;
+    private final TabletRepository tabletRepository;
 
-    @Transactional
-    public TabletDTO criarTablet(TabletDTO tabletDTO) {
-        Tablet tablet = convertToEntity(tabletDTO);
-        tabletRepository.persist(tablet);
-        return convertToDTO(tablet);
+    @Inject
+    public TabletService(TabletRepository tabletRepository) {
+        this.tabletRepository = tabletRepository;
     }
 
     @Transactional
-    public TabletDTO atualizarTablet(Long id, TabletDTO tabletAtualizadoDTO) {
-        Tablet tabletExistente = tabletRepository.findById(id);
-        if (tabletExistente != null) {
-            updateEntityFromDTO(tabletExistente, tabletAtualizadoDTO);
-        }
-        return convertToDTO(tabletExistente);
+    public Tablet salvarTablet(Tablet tablet) {
+        tabletRepository.persist(tablet);
+        return tablet;
+    }
+
+    public List<Tablet> listarTablets() {
+        return tabletRepository.listAll();
+    }
+
+    public Tablet buscarPorId(Long id) {
+        return tabletRepository.findById(id);
+    }
+
+    @Transactional
+    public void atualizarTablet(Tablet tablet) {
+        tabletRepository.persist(tablet);
     }
 
     @Transactional
     public void excluirTablet(Long id) {
-        Tablet tabletExistente = tabletRepository.findById(id);
-        if (tabletExistente != null) {
-            tabletRepository.delete(tabletExistente);
-        }
-    }
-
-    public TabletDTO buscarTabletPorId(Long id) {
-        Tablet tablet = tabletRepository.findById(id);
-        return (tablet != null) ? convertToDTO(tablet) : null;
-    }
-
-    public List<TabletDTO> listarTodosOsTablets() {
-        return tabletRepository.listAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    private Tablet convertToEntity(TabletDTO tabletDTO) {
-        Tablet tablet = new Tablet();
-        tablet.setMarca(tabletDTO.getMarca());
-        tablet.setModelo(tabletDTO.getModelo());
-        tablet.setDimensoes(tabletDTO.getDimensoes());
-        tablet.setEspecificacoes(tabletDTO.getEspecificacoes());
-        tablet.setTamanhoTela(tabletDTO.getTamanhoTela());
-        return tablet;
-    }
-
-    private void updateEntityFromDTO(Tablet tablet, TabletDTO tabletDTO) {
-        tablet.setMarca(tabletDTO.getMarca());
-        tablet.setModelo(tabletDTO.getModelo());
-        tablet.setDimensoes(tabletDTO.getDimensoes());
-        tablet.setEspecificacoes(tabletDTO.getEspecificacoes());
-        tablet.setTamanhoTela(tabletDTO.getTamanhoTela());
-    }
-
-    private TabletDTO convertToDTO(Tablet tablet) {
-        TabletDTO tabletDTO = new TabletDTO();
-        tabletDTO.setMarca(tablet.getMarca());
-        tabletDTO.setModelo(tablet.getModelo());
-        tabletDTO.setDimensoes(tablet.getDimensoes());
-        tabletDTO.setEspecificacoes(tablet.getEspecificacoes());
-        tabletDTO.setTamanhoTela(tablet.getTamanhoTela());
-        return tabletDTO;
+        tabletRepository.deleteById(id);
     }
 }

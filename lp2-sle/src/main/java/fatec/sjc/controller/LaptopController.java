@@ -1,21 +1,10 @@
 package fatec.sjc.controller;
 
-import fatec.sjc.DTO.LaptopDTO;
 import fatec.sjc.entity.Laptop;
 import fatec.sjc.service.LaptopService;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.ws.rs.Path;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.validation.Valid;
 
 import java.util.List;
 @Path("/laptops")
@@ -26,31 +15,37 @@ public class LaptopController {
     @Inject
     LaptopService laptopService;
 
+    @GET
+    public List<Laptop> listarLaptops() {
+        return laptopService.listarLaptops();
+    }
+
+    @GET
+    @Path("/{id}")
+    public Laptop buscarPorId(@PathParam("id") Long id) {
+        return laptopService.buscarPorId(id);
+    }
+
     @POST
-    public LaptopDTO criarLaptop(LaptopDTO laptopDTO) {
-        return laptopService.criarLaptop(laptopDTO);
+    public Laptop salvarLaptop(Laptop laptop) {
+        return laptopService.salvarLaptop(laptop);
     }
 
     @PUT
     @Path("/{id}")
-    public LaptopDTO atualizarLaptop(@PathParam("id") Long id, LaptopDTO laptopDTO) {
-        return laptopService.atualizarLaptop(id, laptopDTO);
+    public void atualizarLaptop(@PathParam("id") Long id, Laptop laptop) {
+        Laptop laptopExistente = laptopService.buscarPorId(id);
+        if (laptopExistente != null) {
+            laptop.setId(id);
+            laptopService.atualizarLaptop(laptop);
+        } else {
+            throw new NotFoundException("Laptop não encontrado");
+        }
     }
 
     @DELETE
     @Path("/{id}")
     public void excluirLaptop(@PathParam("id") Long id) {
         laptopService.excluirLaptop(id);
-    }
-
-    @GET
-    @Path("/{id}")
-    public LaptopDTO buscarLaptopPorId(@PathParam("id") Long id) {
-        return laptopService.buscarLaptopPorId(id);
-    }
-
-    @GET
-    public List<LaptopDTO> listarTodosOsLaptops() {
-        return laptopService.listarTodosOsLaptops();
     }
 }
