@@ -1,25 +1,16 @@
 package fatec.sjc.controller;
 
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import fatec.sjc.DTO.LeilaoDTO;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.service.LeilaoService;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/leilao")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,7 +25,8 @@ public class LeilaoController {
         try {
             Leilao leilao = convertDTOToEntity(leilaoDTO);
             Leilao novoLeilao = leilaoService.criarLeilao(leilao);
-            return Response.status(Response.Status.CREATED).entity(novoLeilao).build();
+            LeilaoDTO novoLeilaoDTO = convertEntityToDTO(novoLeilao);
+            return Response.status(Response.Status.CREATED).entity(novoLeilaoDTO).build();
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
         } catch (Exception e) {
@@ -49,7 +41,8 @@ public class LeilaoController {
             Leilao leilaoAtualizado = convertDTOToEntity(leilaoDTO);
             Leilao leilao = leilaoService.atualizarLeilao(id, leilaoAtualizado);
             if (leilao != null) {
-                return Response.ok(leilao).build();
+                LeilaoDTO leilaoAtualizadoDTO = convertEntityToDTO(leilao);
+                return Response.ok(leilaoAtualizadoDTO).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).entity("Leilão não encontrado.").build();
             }
@@ -88,13 +81,28 @@ public class LeilaoController {
         try {
             leilaoService.atualizarStatusLeiloes();
 
-            List<Leilao> leiloes = leilaoService.listarTodosOsLeiloes();
-            List<LeilaoDTO> leiloesDTO = leiloes.stream().map(this::convertEntityToDTO).collect(Collectors.toList());
+            List<LeilaoDTO> leiloesDTO = leilaoService.listarTodosOsLeiloes().stream()
+                    .map(this::convertEntityToDTO)
+                    .collect(Collectors.toList());
 
             return Response.ok(leiloesDTO).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro interno ao listar os leilões: " + e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/listarOrdenadosPorData")
+    public Response listarLeiloesOrdenadosPorData() {
+        try {
+            List<Leilao> leiloesOrdenados = leilaoService.listarLeiloesOrdenadosPorData();
+            List<LeilaoDTO> leiloesOrdenadosDTO = leiloesOrdenados.stream()
+                    .map(this::convertEntityToDTO)
+                    .collect(Collectors.toList());
+            return Response.ok(leiloesOrdenadosDTO).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro ao listar os leilões.").build();
         }
     }
 
@@ -115,16 +123,4 @@ public class LeilaoController {
         leilaoDTO.setIdEntidadeFinanceiraAssociada(leilao.getIdEntidadeFinanceiraAssociada());
         return leilaoDTO;
     }
-
-    @GET
-    @Path("/listarOrdenadosPorData")
-    public Response listarLeiloesOrdenadosPorData() {
-        try {
-            List<Leilao> leiloesOrdenados = leilaoService.listarLeiloesOrdenadosPorData();
-            return Response.ok(leiloesOrdenados).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro ao listar os leilões.").build();
-        }
-    }
-    
 }

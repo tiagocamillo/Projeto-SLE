@@ -1,9 +1,12 @@
 package fatec.sjc.service;
+
 import fatec.sjc.DTO.LanceClienteDTO;
 import fatec.sjc.entity.Cliente;
 import fatec.sjc.entity.LanceCliente;
 import fatec.sjc.entity.Leilao;
+import fatec.sjc.repository.ClienteRepository;
 import fatec.sjc.repository.LanceClienteRepository;
+import fatec.sjc.repository.LeilaoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -14,6 +17,12 @@ public class LanceClienteService {
 
     @Inject
     LanceClienteRepository lanceClienteRepository;
+
+    @Inject
+    ClienteRepository clienteRepository;
+
+    @Inject
+    LeilaoRepository leilaoRepository;
 
     @Transactional
     public LanceCliente criarLanceCliente(LanceClienteDTO lanceClienteDTO) {
@@ -53,13 +62,10 @@ public class LanceClienteService {
     private LanceCliente convertDTOToEntity(LanceClienteDTO lanceClienteDTO) {
         LanceCliente lanceCliente = new LanceCliente();
 
-        Cliente cliente = new Cliente();
-        cliente.setId(lanceClienteDTO.getIdCliente());
-        // Configure outros atributos do cliente, se necessário
+        Cliente cliente = clienteRepository.findById(lanceClienteDTO.getIdCliente());
         lanceCliente.setCliente(cliente);
 
-        Leilao leilao = new Leilao();
-        leilao.setIdLeilao(lanceClienteDTO.getIdLeilao());
+        Leilao leilao = leilaoRepository.findById(lanceClienteDTO.getIdLeilao());
         lanceCliente.setLeilao(leilao);
 
         lanceCliente.setValorLance(lanceClienteDTO.getValorLance());

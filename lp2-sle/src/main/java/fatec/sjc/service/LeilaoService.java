@@ -1,7 +1,6 @@
 package fatec.sjc.service;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,15 +33,16 @@ public class LeilaoService {
         }
         return leilaoExistente;
     }
+
     @Transactional
     public void atualizarStatusLeiloes() {
         List<Leilao> leiloes = leilaoRepository.listAll();
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        Date currentDate = new Date(System.currentTimeMillis());
 
         for (Leilao leilao : leiloes) {
-            if (leilao.getDataInicio().isAfter(currentDateTime)) {
+            if (leilao.getDataInicio().isAfter(currentDate.toLocalDate().atStartOfDay())) {
                 leilao.setStatus("EM ABERTO");
-            } else if (leilao.getDataInicio().isBefore(currentDateTime) && leilao.getDataFim().isAfter(currentDateTime)) {
+            } else if (leilao.getDataInicio().isBefore(currentDate.toLocalDate().atStartOfDay()) && leilao.getDataFim().isAfter(currentDate.toLocalDate().atStartOfDay())) {
                 leilao.setStatus("EM ANDAMENTO");
             } else {
                 leilao.setStatus("FINALIZADO");
@@ -65,13 +65,11 @@ public class LeilaoService {
     public List<Leilao> listarTodosOsLeiloes() {
         return leilaoRepository.listAll();
     }
-    
+
     public List<Leilao> listarLeiloesOrdenadosPorData() {
-        List<Leilao> leiloesOrdenados = leilaoRepository.listAll()
+        return leilaoRepository.listAll()
                 .stream()
                 .sorted((leilao1, leilao2) -> leilao1.getDataInicio().compareTo(leilao2.getDataInicio()))
                 .collect(Collectors.toList());
-        return leiloesOrdenados;
     }
-    
 }

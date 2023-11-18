@@ -9,5 +9,5 @@ public class ItemLeilaoDTO {
     private String descricao;
     private String condicao;
     private String historicoReparo;
-
+    private Long idLeilao;
 }

@@ -1,17 +1,15 @@
 package fatec.sjc.entity;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "ItemLeilao")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "tipo_item")
 public class ItemLeilao extends PanacheEntity {
+
 
     @Column(name = "Nome")
     public String nome;
@@ -24,5 +22,10 @@ public class ItemLeilao extends PanacheEntity {
 
     @Column(name = "HistoricoReparo")
     public String historicoReparo;
+
+    @ManyToOne
+    @JoinColumn(name = "IDLeilao")
+    private Leilao leilao;
+
 
 }

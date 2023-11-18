@@ -26,6 +26,10 @@ public class LanceCliente {
     @JoinColumn(name = "id_leilao")
     private Leilao leilao;
 
+    @ManyToOne
+    @JoinColumn(name = "id_item_leilao")
+    private ItemLeilao itemLeilao;
+
     private Double valorLance;
 
 }

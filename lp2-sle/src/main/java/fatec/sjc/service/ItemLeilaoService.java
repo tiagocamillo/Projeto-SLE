@@ -2,7 +2,9 @@ package fatec.sjc.service;
 
 import fatec.sjc.DTO.ItemLeilaoDTO;
 import fatec.sjc.entity.ItemLeilao;
+import fatec.sjc.entity.Leilao;
 import fatec.sjc.repository.ItemLeilaoRepository;
+import fatec.sjc.repository.LeilaoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -15,14 +17,12 @@ public class ItemLeilaoService {
     @Inject
     ItemLeilaoRepository itemLeilaoRepository;
 
+    @Inject
+    LeilaoRepository leilaoRepository;
     @Transactional
     public ItemLeilao criarItemLeilao(ItemLeilaoDTO itemLeilaoDTO) {
         ItemLeilao itemLeilao = new ItemLeilao();
-        itemLeilao.setNome(itemLeilaoDTO.getNome());
-        itemLeilao.setDescricao(itemLeilaoDTO.getDescricao());
-        itemLeilao.setCondicao(itemLeilaoDTO.getCondicao());
-        itemLeilao.setHistoricoReparo(itemLeilaoDTO.getHistoricoReparo());
-
+        atualizarEntidadeComDTO(itemLeilao, itemLeilaoDTO);
         itemLeilaoRepository.persist(itemLeilao);
         return itemLeilao;
     }
@@ -31,20 +31,18 @@ public class ItemLeilaoService {
     public ItemLeilao atualizarItemLeilao(Long id, ItemLeilaoDTO itemLeilaoDTO) {
         ItemLeilao itemLeilaoExistente = itemLeilaoRepository.findById(id);
         if (itemLeilaoExistente != null) {
-            itemLeilaoExistente.setNome(itemLeilaoDTO.getNome());
-            itemLeilaoExistente.setDescricao(itemLeilaoDTO.getDescricao());
-            itemLeilaoExistente.setCondicao(itemLeilaoDTO.getCondicao());
-            itemLeilaoExistente.setHistoricoReparo(itemLeilaoDTO.getHistoricoReparo());
+            atualizarEntidadeComDTO(itemLeilaoExistente, itemLeilaoDTO);
         }
         return itemLeilaoExistente;
     }
 
     @Transactional
-    public void excluirItemLeilao(Long id) {
+    public boolean excluirItemLeilao(Long id) {
         ItemLeilao itemLeilaoExistente = itemLeilaoRepository.findById(id);
         if (itemLeilaoExistente != null) {
             itemLeilaoRepository.delete(itemLeilaoExistente);
         }
+        return false;
     }
 
     public ItemLeilao buscarItemLeilaoPorId(Long id) {
@@ -54,4 +52,20 @@ public class ItemLeilaoService {
     public List<ItemLeilao> listarTodosOsItensLeilao() {
         return itemLeilaoRepository.listAll();
     }
-}
+
+    private void atualizarEntidadeComDTO(ItemLeilao itemLeilao, ItemLeilaoDTO itemLeilaoDTO) {
+        itemLeilao.setNome(itemLeilaoDTO.getNome());
+        itemLeilao.setDescricao(itemLeilaoDTO.getDescricao());
+        itemLeilao.setCondicao(itemLeilaoDTO.getCondicao());
+        itemLeilao.setHistoricoReparo(itemLeilaoDTO.getHistoricoReparo());
+
+        if (itemLeilaoDTO.getIdLeilao() != null) {
+            Leilao leilao = leilaoRepository.findById(itemLeilaoDTO.getIdLeilao());
+            if (leilao != null) {
+                itemLeilao.setLeilao(leilao);
+            } else {
+                throw new IllegalArgumentException("Leilão com ID " + itemLeilaoDTO.getIdLeilao() + " não encontrado.");
+            }
+    }
+
+}}

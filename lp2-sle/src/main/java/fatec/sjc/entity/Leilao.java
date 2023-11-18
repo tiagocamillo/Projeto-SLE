@@ -18,11 +18,11 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Entity
 @Data
+@Entity
 @Table(name = "Leilao")
 @EqualsAndHashCode(callSuper = false)
-public class Leilao  {
+public class Leilao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,12 +42,15 @@ public class Leilao  {
     private int idEntidadeFinanceiraAssociada;
 
     @ManyToOne
-    @JoinColumn(name = "IDEntidadeFinanceiraAssociada", referencedColumnName = "IDEntidadeFinanceira", insertable = false, updatable = false)
+    @JoinColumn(name = "IDEntidadeFinanceiraAssociada", referencedColumnName = "idEntidadeFinanceira", insertable = false, updatable = false)
     private EntidadeFinanceira entidadeFinanceiraAssociada;
 
     @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LanceCliente> lances = new ArrayList<>();
 
-    public void setId(Long idLeilao) {
-    }
+    @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemLeilao> itensLeilao = new ArrayList<>();
+
+
+
 }

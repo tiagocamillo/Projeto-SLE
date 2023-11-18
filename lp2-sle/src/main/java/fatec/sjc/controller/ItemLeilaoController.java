@@ -5,14 +5,17 @@ import fatec.sjc.entity.ItemLeilao;
 import fatec.sjc.service.ItemLeilaoService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.net.URI;  // Add this import statement
 
 import java.util.List;
 
-@Path("/itemleilao")
+
+
+
+@Path("/itens-leilao")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ItemLeilaoController {
@@ -23,40 +26,42 @@ public class ItemLeilaoController {
     @POST
     public Response criarItemLeilao(@Valid ItemLeilaoDTO itemLeilaoDTO) {
         try {
-            ItemLeilao novoItemLeilao = itemLeilaoService.criarItemLeilao(itemLeilaoDTO);
-            return Response.status(Response.Status.CREATED).entity(novoItemLeilao).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o item do leilão.").build();
+            ItemLeilao itemLeilao = itemLeilaoService.criarItemLeilao(itemLeilaoDTO);
+            return Response.status(Response.Status.CREATED)
+                    .location(URI.create("/itens-leilao/" + itemLeilao.getLeilao()))
+                    .entity(itemLeilao)
+                    .build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(e.getMessage())
+                    .build();
         }
     }
-
     @PUT
     @Path("/{id}")
-    public Response atualizarItemLeilao(@PathParam("id") Long id, @Valid ItemLeilaoDTO itemLeilaoDTO) {
+    public Response atualizarItemLeilao(
+            @PathParam("id") Long id,
+            @Valid ItemLeilaoDTO itemLeilaoDTO) {
         try {
-            ItemLeilao itemLeilaoAtualizado = itemLeilaoService.atualizarItemLeilao(id, itemLeilaoDTO);
-            if (itemLeilaoAtualizado != null) {
-                return Response.ok(itemLeilaoAtualizado).build();
+            ItemLeilao itemLeilao = itemLeilaoService.atualizarItemLeilao(id, itemLeilaoDTO);
+            if (itemLeilao != null) {
+                return Response.ok(itemLeilao).build();
             } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Item do leilão não encontrado.").build();
+                return Response.status(Response.Status.NOT_FOUND).build();
             }
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o item do leilão.").build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
     }
 
     @DELETE
     @Path("/{id}")
     public Response excluirItemLeilao(@PathParam("id") Long id) {
-        try {
-            itemLeilaoService.excluirItemLeilao(id);
+        boolean sucesso = itemLeilaoService.excluirItemLeilao(id);
+        if (sucesso) {
             return Response.noContent().build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o item do leilão.").build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
 
@@ -67,17 +72,12 @@ public class ItemLeilaoController {
         if (itemLeilao != null) {
             return Response.ok(itemLeilao).build();
         } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Item do leilão não encontrado.").build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
 
     @GET
-    public Response listarTodosOsItensLeilao() {
-        try {
-            List<ItemLeilao> itensLeilao = itemLeilaoService.listarTodosOsItensLeilao();
-            return Response.ok(itensLeilao).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os itens do leilão.").build();
-        }
+    public List<ItemLeilao> listarTodosOsItensLeilao() {
+        return itemLeilaoService.listarTodosOsItensLeilao();
     }
 }
