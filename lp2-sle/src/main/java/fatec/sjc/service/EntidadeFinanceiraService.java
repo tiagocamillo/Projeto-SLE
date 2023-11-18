@@ -2,7 +2,9 @@ package fatec.sjc.service;
 
 import fatec.sjc.dto.EntidadeFinanceiraDTO;
 import fatec.sjc.entity.EntidadeFinanceira;
+import fatec.sjc.entity.Leilao;
 import fatec.sjc.repository.EntidadeFinanceiraRepository;
+import fatec.sjc.repository.LeilaoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -14,17 +16,21 @@ public class EntidadeFinanceiraService {
 
     private final EntidadeFinanceiraRepository entidadeFinanceiraRepository;
 
+    private final LeilaoRepository leilaoRepository;
+    
     @Inject
-    public EntidadeFinanceiraService(EntidadeFinanceiraRepository entidadeFinanceiraRepository) {
+    public EntidadeFinanceiraService(EntidadeFinanceiraRepository entidadeFinanceiraRepository, LeilaoRepository leilaoRepository) {
         this.entidadeFinanceiraRepository = entidadeFinanceiraRepository;
+        this.leilaoRepository = leilaoRepository;
     }
 
     @Transactional
     public EntidadeFinanceira salvarEntidadeFinanceira(EntidadeFinanceiraDTO entidadeFinanceiraDTO) {
-        EntidadeFinanceira entidadeFinanceira = new EntidadeFinanceira();
+    	EntidadeFinanceira entidadeFinanceira = new EntidadeFinanceira();
         entidadeFinanceira.setCnpj(entidadeFinanceiraDTO.getCnpj());
         entidadeFinanceira.setNome(entidadeFinanceiraDTO.getNome());
         entidadeFinanceira.setDetalhesContato(entidadeFinanceiraDTO.getDetalhesContato());
+
         entidadeFinanceiraRepository.persist(entidadeFinanceira);
         return entidadeFinanceira;
     }

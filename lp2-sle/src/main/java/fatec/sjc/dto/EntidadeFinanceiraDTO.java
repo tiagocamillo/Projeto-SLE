@@ -1,6 +1,5 @@
 package fatec.sjc.dto;
 
-import jakarta.ws.rs.Path;
 import lombok.Data;
 
 @Data

@@ -1,22 +1,30 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
 import fatec.sjc.dto.LeilaoDTO;
+import fatec.sjc.entity.EntidadeFinanceira;
 import fatec.sjc.entity.Leilao;
+import fatec.sjc.entity.Produto;
+import fatec.sjc.repository.EntidadeFinanceiraRepository;
 import fatec.sjc.repository.LeilaoRepository;
+import fatec.sjc.repository.ProdutoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import java.util.List;
-
 @ApplicationScoped
 public class LeilaoService {
 
-    private final LeilaoRepository leilaoRepository;
+	private final LeilaoRepository leilaoRepository;
+    private final ProdutoRepository produtoRepository;
+    private final EntidadeFinanceiraRepository entidadeFinanceiraRepository;
 
-    @Inject
-    public LeilaoService(LeilaoRepository leilaoRepository) {
+    public LeilaoService(LeilaoRepository leilaoRepository, ProdutoRepository produtoRepository,
+                         EntidadeFinanceiraRepository entidadeFinanceiraRepository) {
         this.leilaoRepository = leilaoRepository;
+        this.produtoRepository = produtoRepository;
+        this.entidadeFinanceiraRepository = entidadeFinanceiraRepository;
     }
 
     @Transactional
@@ -26,11 +34,17 @@ public class LeilaoService {
         leilao.setDataVisita(leilaoDTO.getDataVisita());
         leilao.setLocal(leilaoDTO.getLocal());
         leilao.setStatus(leilaoDTO.getStatus());
-        leilao.setProdutos(leilaoDTO.getProdutos());
-        leilao.setInstituicaoFinanceira(leilaoDTO.getInstituicaoFinanceira());
+
+        List<Produto> produtos = produtoRepository.findByIds(leilaoDTO.getProdutosIds());
+        leilao.setProdutos(produtos);
+
+        EntidadeFinanceira entidadeFinanceira = entidadeFinanceiraRepository.findById(leilaoDTO.getEntidadeFinanceira().getId());
+        leilao.setInstituicaoFinanceira(entidadeFinanceira);
+
         leilaoRepository.persist(leilao);
         return leilao;
     }
+
 
     public List<Leilao> listarLeiloes() {
         return leilaoRepository.listAll();
@@ -43,13 +57,17 @@ public class LeilaoService {
     @Transactional
     public void atualizarLeilao(LeilaoDTO leilaoDTO) {
         Leilao leilao = new Leilao();
-        leilao.setId(leilaoDTO.getId());
         leilao.setDataOcorrencia(leilaoDTO.getDataOcorrencia());
         leilao.setDataVisita(leilaoDTO.getDataVisita());
         leilao.setLocal(leilaoDTO.getLocal());
         leilao.setStatus(leilaoDTO.getStatus());
-        leilao.setProdutos(leilaoDTO.getProdutos());
-        leilao.setInstituicaoFinanceira(leilaoDTO.getInstituicaoFinanceira());
+        
+        List<Produto> produtos = produtoRepository.findByIds(leilaoDTO.getProdutosIds());
+        leilao.setProdutos(produtos);
+
+        EntidadeFinanceira entidadeFinanceira = entidadeFinanceiraRepository.findById(leilaoDTO.getEntidadeFinanceira().getId());
+        leilao.setInstituicaoFinanceira(entidadeFinanceira);
+
         leilaoRepository.persist(leilao);
     }
 

@@ -11,6 +11,8 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Data
 @Entity
 @Table(name = "LanceCliente")
@@ -22,9 +24,11 @@ public class LanceCliente {
 
     private double valor;
 
+    @JsonBackReference
     @ManyToOne
     private Produto produto;
 
+    @JsonBackReference
     @ManyToOne
     private Cliente cliente;
 

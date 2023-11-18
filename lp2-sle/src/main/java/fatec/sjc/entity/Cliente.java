@@ -4,6 +4,8 @@ import lombok.Data;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Data
 @Entity
 @Table(name = "Cliente")
@@ -17,6 +19,8 @@ public class Cliente {
 
     private String nome;
     private String detalhesContato;
+    
+    @JsonManagedReference
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<LanceCliente> lances;
 

@@ -1,6 +1,5 @@
 package fatec.sjc.dto;
 
-import fatec.sjc.entity.Leilao;
 import lombok.Data;
 
 @Data
@@ -10,5 +9,4 @@ public class ProdutoDTO {
     private double valorInicial;
     private String status;
     private String tipo;
-    private Leilao leilao;
 }

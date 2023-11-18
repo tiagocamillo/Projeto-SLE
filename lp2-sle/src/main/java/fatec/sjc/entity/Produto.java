@@ -1,5 +1,7 @@
 package fatec.sjc.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,6 +19,7 @@ public class Produto {
     private String status;
     private String tipo;
 
+    @JsonBackReference
     @ManyToOne
     private Leilao leilao;
 
