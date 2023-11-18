@@ -10,5 +10,4 @@ public class VeiculoDTO {
     private String ano;
     private String acessorios;
 
-    // Constructors, getters, and setters
 }

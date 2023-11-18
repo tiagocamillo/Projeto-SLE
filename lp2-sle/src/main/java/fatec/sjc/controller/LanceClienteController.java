@@ -87,7 +87,6 @@ public class LanceClienteController {
 
     private LanceClienteDTO convertEntityToDTO(LanceCliente lanceCliente) {
         LanceClienteDTO lanceClienteDTO = new LanceClienteDTO();
-        lanceClienteDTO.setId(lanceCliente.getId());
         lanceClienteDTO.setIdCliente(lanceCliente.getCliente().getId());
         lanceClienteDTO.setIdLeilao(lanceCliente.getLeilao().getIdLeilao());
         lanceClienteDTO.setValorLance(lanceCliente.getValorLance());

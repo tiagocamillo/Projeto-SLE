@@ -52,7 +52,6 @@ public class LanceClienteService {
 
     private LanceCliente convertDTOToEntity(LanceClienteDTO lanceClienteDTO) {
         LanceCliente lanceCliente = new LanceCliente();
-        lanceCliente.setId(lanceClienteDTO.getId());
 
         Cliente cliente = new Cliente();
         cliente.setId(lanceClienteDTO.getIdCliente());
