@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -32,15 +33,11 @@ public class Leilao {
     private String local;
     private String status;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL)
     private List<Produto> produtos;
 
-
-    @JsonBackReference
     @ManyToOne
     private EntidadeFinanceira instituicaoFinanceira;
-
-
 
 }

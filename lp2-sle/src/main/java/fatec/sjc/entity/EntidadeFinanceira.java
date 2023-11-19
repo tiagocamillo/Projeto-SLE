@@ -20,6 +20,6 @@ public class EntidadeFinanceira {
     private String detalhesContato;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "instituicaoFinanceira", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "instituicaoFinanceira", cascade = CascadeType.ALL,  fetch = FetchType.EAGER)
     private List<Leilao> leiloes;
 }

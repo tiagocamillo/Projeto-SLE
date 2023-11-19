@@ -1,17 +1,11 @@
 package fatec.sjc.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -24,14 +18,14 @@ public class LanceCliente {
 
     private double valor;
 
-    @JsonBackReference
+    @JsonIgnore
     @ManyToOne
     private Produto produto;
 
-    @JsonBackReference
     @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    @JsonIgnore
     private Cliente cliente;
 
     private LocalDateTime dataHoraLance;
-
 }
