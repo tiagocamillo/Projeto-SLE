@@ -29,7 +29,8 @@ public class Produto {
     private Leilao leilao;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<LanceCliente> lances;
+
 
 }

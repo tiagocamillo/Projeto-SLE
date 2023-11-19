@@ -19,9 +19,10 @@ public class Cliente {
 
     private String nome;
     private String detalhesContato;
-    
+
     @JsonManagedReference
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<LanceCliente> lances;
+
 
 }
