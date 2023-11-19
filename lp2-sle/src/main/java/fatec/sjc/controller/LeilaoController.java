@@ -1,14 +1,22 @@
 package fatec.sjc.controller;
 
+import java.util.List;
+
 import fatec.sjc.dto.LeilaoDTO;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.entity.Produto;
 import fatec.sjc.service.LeilaoService;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-
-import java.util.List;
+import jakarta.ws.rs.core.Response;
 @Path("/leiloes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -52,4 +60,16 @@ public class LeilaoController {
     public void excluirLeilao(@PathParam("id") Long id) {
         leilaoService.excluirLeilao(id);
     }
+    
+    @GET
+    @Path("/listarOrdenadosPorData")
+    public Response listarLeiloesOrdenadosPorData() {
+        try {
+            List<Leilao> leiloesOrdenados = leilaoService.listarLeiloesOrdenadosPorData();
+            return Response.ok(leiloesOrdenados).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro ao listar os leilões.").build();
+        }
+    }
+    
 }

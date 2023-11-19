@@ -1,6 +1,7 @@
 package fatec.sjc.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import fatec.sjc.dto.LeilaoDTO;
 import fatec.sjc.entity.EntidadeFinanceira;
@@ -86,4 +87,13 @@ public class LeilaoService {
     public void excluirLeilao(Long id) {
         leilaoRepository.deleteById(id);
     }
+    
+    public List<Leilao> listarLeiloesOrdenadosPorData() {
+        List<Leilao> leiloesOrdenados = leilaoRepository.listAll()
+                .stream()
+                .sorted((leilao1, leilao2) -> leilao1.getDataOcorrencia().compareTo(leilao2.getDataOcorrencia()))
+                .collect(Collectors.toList());
+        return leiloesOrdenados;
+    }
+    
 }
