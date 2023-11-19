@@ -1,12 +1,13 @@
 package fatec.sjc.service;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import fatec.sjc.dto.DetalhesLeilaoDTO;
+import fatec.sjc.dto.EntidadeFinanceiraDTO;
 import fatec.sjc.dto.LeilaoDTO;
 import fatec.sjc.entity.EntidadeFinanceira;
 import fatec.sjc.entity.Leilao;
@@ -125,6 +126,37 @@ public class LeilaoService {
 
         leiloes.forEach(leilaoRepository::persist);
     }
+    
+    
+    public DetalhesLeilaoDTO detalharLeilao(Long leilaoId) {
+        Leilao leilao = leilaoRepository.findById(leilaoId);
 
+        if (leilao != null) {
+            List<Produto> produtosOrdenados = leilao.getProdutos().stream()
+                    .sorted(Comparator.comparing(Produto::getNome))
+                    .collect(Collectors.toList());
 
+            DetalhesLeilaoDTO detalhesLeilaoDTO = new DetalhesLeilaoDTO();
+            detalhesLeilaoDTO.setDataOcorrencia(leilao.getDataOcorrencia());
+            detalhesLeilaoDTO.setDataFim(leilao.getDataFim());
+            detalhesLeilaoDTO.setLocal(leilao.getLocal());
+            detalhesLeilaoDTO.setStatus(leilao.getStatus());
+            detalhesLeilaoDTO.setQuantidadeTotalProdutos(produtosOrdenados.size());
+            detalhesLeilaoDTO.setProdutos(produtosOrdenados);
+
+            EntidadeFinanceiraDTO entidadeFinanceiraDTO = new EntidadeFinanceiraDTO();
+            //entidadeFinanceiraDTO.setId(leilao.getInstituicaoFinanceira().getId());
+            entidadeFinanceiraDTO.setCnpj(leilao.getInstituicaoFinanceira().getCnpj());
+            entidadeFinanceiraDTO.setNome(leilao.getInstituicaoFinanceira().getNome());
+            entidadeFinanceiraDTO.setDetalhesContato(leilao.getInstituicaoFinanceira().getDetalhesContato());
+
+            detalhesLeilaoDTO.setEntidadeFinanceira(entidadeFinanceiraDTO);
+
+            return detalhesLeilaoDTO;
+        }
+
+        return null;
+    }
+    
+    
 }

@@ -2,6 +2,7 @@ package fatec.sjc.controller;
 
 import java.util.List;
 
+import fatec.sjc.dto.DetalhesLeilaoDTO;
 import fatec.sjc.dto.LeilaoDTO;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.entity.Produto;
@@ -72,6 +73,12 @@ public class LeilaoController {
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro ao listar os leilões.").build();
         }
+    } 
+    
+    @GET
+    @Path("/{id}/detalhes")
+    public DetalhesLeilaoDTO detalharLeilao(@PathParam("id") Long id) {
+        return leilaoService.detalharLeilao(id);
     }
     
 }
