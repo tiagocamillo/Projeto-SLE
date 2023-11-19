@@ -242,8 +242,8 @@ public class LeilaoService {
         for (Produto produto : produtosVendidos) {
             List<LanceCliente> lances = produto.getLances();
             if (!lances.isEmpty()) {
-                lances.sort((l1, l2) -> Double.compare(l2.getValor(), l1.getValor())); 
-                LanceCliente lanceVencedor = lances.get(0); 
+                lances.sort((l1, l2) -> Double.compare(l2.getValor(), l1.getValor()));
+                LanceCliente lanceVencedor = lances.get(0);
 
                 valorLanceVencedor += lanceVencedor.getValor();
                 produtosFinalizados.add(produto);

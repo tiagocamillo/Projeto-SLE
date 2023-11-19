@@ -2,6 +2,7 @@ package fatec.sjc.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -26,7 +27,7 @@ public class EntidadeFinanceira {
     private String nome;
     private String detalhesContato;
 
-    @JsonManagedReference
+    @JsonBackReference
     @OneToMany(mappedBy = "instituicaoFinanceira", cascade = CascadeType.ALL,  fetch = FetchType.EAGER)
     private List<Leilao> leiloes;
 }

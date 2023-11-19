@@ -52,17 +52,6 @@ public class ProdutoService {
             produtoDTO.setLanceInicial(produto.getLanceInicial());
             produtoDTO.setLanceAdicional(produto.getLanceAdicional());
 
-//            if (leilaoAssociado != null) {
-//                produtoDTO.setLeilaoId(leilaoAssociado.getId());
-//                produtoDTO.setDataOcorrenciaLeilao(leilaoAssociado.getDataOcorrencia());
-//                produtoDTO.setLocalLeilao(leilaoAssociado.getLocal());
-//                produtoDTO.setStatusLeilao(leilaoAssociado.getStatus());
-//            } else {
-//                produtoDTO.setLeilaoId(null);
-//                produtoDTO.setDataOcorrenciaLeilao(null);
-//                produtoDTO.setLocalLeilao(null);
-//                produtoDTO.setStatusLeilao(null);
-//            }
 
             return produtoDTO;
         } else {

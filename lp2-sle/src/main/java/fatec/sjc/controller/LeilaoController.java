@@ -1,11 +1,14 @@
 package fatec.sjc.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import fatec.sjc.dto.DetalhesLeilaoDTO;
+import fatec.sjc.dto.DetalhesLeilaoExport;
 import fatec.sjc.dto.LeilaoDTO;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.entity.Produto;
+import fatec.sjc.service.ExportacaoService;
 import fatec.sjc.service.LeilaoService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -26,10 +29,12 @@ import jakarta.ws.rs.core.Response;
 public class LeilaoController {
 
     private final LeilaoService leilaoService;
+    private final ExportacaoService exportacaoService;
 
     @Inject
-    public LeilaoController(LeilaoService leilaoService) {
+    public LeilaoController(LeilaoService leilaoService, ExportacaoService exportacaoService) {
         this.leilaoService = leilaoService;
+        this.exportacaoService = exportacaoService;
     }
 
     @POST
@@ -56,7 +61,17 @@ public class LeilaoController {
                     .build();
         }
     }
+    @GET
+    @Path("/detalhesEmAndamento")
+    @Produces(MediaType.APPLICATION_JSON)
 
+    public DetalhesLeilaoDTO obterDetalhesLeilaoEmAndamento() {
+        leilaoService.atualizarStatusLeiloes();
+
+        DetalhesLeilaoDTO detalhesLeilao = leilaoService.detalhesLeilaoEmAndamento();
+
+        return detalhesLeilao;
+    }
     @GET
     @Path("/{id}")
     public Response buscarPorId(@PathParam("id") Long id) {
@@ -73,6 +88,8 @@ public class LeilaoController {
     @GET
     @Path("/{leilaoId}/produtos/{produtoId}")
     public Response detalharProduto(@PathParam("leilaoId") Long leilaoId, @PathParam("produtoId") Long produtoId) {
+        leilaoService.atualizarStatusLeiloes();
+
         try {
             Produto produto = leilaoService.detalharProduto(leilaoId, produtoId);
             return Response.ok(produto).build();
@@ -86,6 +103,8 @@ public class LeilaoController {
     @PUT
     @Path("/{id}")
     public Response atualizarLeilao(@PathParam("id") Long id, LeilaoDTO leilaoDTO) {
+        leilaoService.atualizarStatusLeiloes();
+
         try {
             leilaoService.atualizarLeilao(leilaoDTO);
             return Response.noContent().build();
@@ -112,6 +131,7 @@ public class LeilaoController {
     @GET
     @Path("/listarOrdenadosPorData")
     public Response listarLeiloesOrdenadosPorData() {
+        leilaoService.atualizarStatusLeiloes();
         try {
             List<Leilao> leiloesOrdenados = leilaoService.listarLeiloesOrdenadosPorData();
             return Response.ok(leiloesOrdenados).build();
@@ -170,6 +190,24 @@ public class LeilaoController {
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Erro ao buscar detalhes do leilão após o término: " + e.getMessage())
+                    .build();
+        }
+    }
+
+
+    @GET
+    @Path("/{id}/exportarDetalhes")
+    public Response exportarDetalhesLeilao(@PathParam("id") Long id) {
+        try {
+            Optional<DetalhesLeilaoExport> detalhesLeilaoExport = exportacaoService.exportarDetalhesLeilao(id);
+            if (detalhesLeilaoExport.isPresent()) {
+                return Response.ok(detalhesLeilaoExport.get()).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("Detalhes do leilão não encontrados para exportação.").build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao exportar detalhes do leilão: " + e.getMessage())
                     .build();
         }
     }

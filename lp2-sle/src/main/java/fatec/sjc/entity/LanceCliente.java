@@ -24,7 +24,7 @@ public class LanceCliente {
 
     private double valor;
 
-    @JsonIgnore
+
     @ManyToOne
     private Produto produto;
 

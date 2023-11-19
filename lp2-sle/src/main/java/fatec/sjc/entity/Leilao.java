@@ -5,14 +5,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -31,11 +26,15 @@ public class Leilao {
     private String local;
     private String status;
 
-    @JsonIgnore
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+
     @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL)
     private List<Produto> produtos;
 
     @ManyToOne
-    private EntidadeFinanceira instituicaoFinanceira;
+    @JoinColumn(name = "instituicao_id")
+    @JsonbTransient
+    public EntidadeFinanceira instituicaoFinanceira;
 
 }

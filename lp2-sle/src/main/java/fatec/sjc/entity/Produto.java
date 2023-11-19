@@ -38,7 +38,7 @@ public class Produto {
     @JoinColumn(name = "leilao_id")
     private Leilao leilao;
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<LanceCliente> lances;
 }
