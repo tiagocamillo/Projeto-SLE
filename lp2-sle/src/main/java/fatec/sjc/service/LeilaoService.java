@@ -1,6 +1,8 @@
 package fatec.sjc.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -9,7 +11,9 @@ import java.util.stream.Collectors;
 import fatec.sjc.dto.DetalhesLeilaoDTO;
 import fatec.sjc.dto.EntidadeFinanceiraDTO;
 import fatec.sjc.dto.LeilaoDTO;
+import fatec.sjc.entity.Cliente;
 import fatec.sjc.entity.EntidadeFinanceira;
+import fatec.sjc.entity.LanceCliente;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.entity.Produto;
 import fatec.sjc.repository.EntidadeFinanceiraRepository;
@@ -156,6 +160,103 @@ public class LeilaoService {
         }
 
         return null;
+    }
+    
+    public List<Produto> buscarProdutosPorFiltro(Long idLeilao, double minLanceInicial, double maxLanceInicial,
+            double minLanceTotal, double maxLanceTotal, String palavraChave,
+            String tipoProduto) {
+			Leilao leilao = leilaoRepository.findById(idLeilao);
+			
+			if (leilao != null) {
+				List<Produto> produtos = leilao.getProdutos();
+			
+				return produtos.stream()
+				.filter(produto -> produto.getLanceInicial() >= minLanceInicial && produto.getLanceInicial() <= maxLanceInicial)
+				.filter(produto -> (produto.getLanceInicial() + produto.getLanceAdicional()) >= minLanceTotal &&
+				(produto.getLanceInicial() + produto.getLanceAdicional()) <= maxLanceTotal)
+				.filter(produto -> produto.getNome().toLowerCase().contains(palavraChave.toLowerCase()))
+				.filter(produto -> tipoProduto.equals(produto.getTipo()))
+				.collect(Collectors.toList());
+			} else {
+				return Collections.emptyList(); 
+			}
+	}    
+    
+    public DetalhesLeilaoDTO buscarDetalhesLeilaoAposTermino(Long leilaoId) {
+        Leilao leilao = leilaoRepository.findById(leilaoId);
+
+        if (leilao != null && leilao.getStatus().equals("FINALIZADO")) {
+            DetalhesLeilaoDTO detalhesLeilaoDTO = new DetalhesLeilaoDTO();
+            detalhesLeilaoDTO.setDataOcorrencia(leilao.getDataOcorrencia());
+            detalhesLeilaoDTO.setDataFim(leilao.getDataFim());
+            detalhesLeilaoDTO.setLocal(leilao.getLocal());
+            detalhesLeilaoDTO.setStatus(leilao.getStatus());
+
+            List<Produto> produtos = leilao.getProdutos();
+            detalhesLeilaoDTO.setProdutos(produtos);
+            detalhesLeilaoDTO.setQuantidadeTotalProdutos(produtos.size());
+
+            return detalhesLeilaoDTO;
+        } else {
+            return null;
+        }
+    }
+
+    public DetalhesLeilaoDTO detalhesLeilaoEmAndamento() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Leilao> leiloesEmAndamento = leilaoRepository.listAll()
+                .stream()
+                .filter(leilao -> leilao.getDataOcorrencia() != null && leilao.getDataFim() != null &&
+                        leilao.getDataOcorrencia().isBefore(now) && leilao.getDataFim().isAfter(now))
+                .collect(Collectors.toList());
+
+        if (leiloesEmAndamento.isEmpty()) {
+            return null; 
+        }
+
+        Leilao leilaoEmAndamento = leiloesEmAndamento.get(0); 
+
+        DetalhesLeilaoDTO detalhesLeilao = new DetalhesLeilaoDTO();
+        detalhesLeilao.setDataOcorrencia(leilaoEmAndamento.getDataOcorrencia());
+        detalhesLeilao.setDataFim(leilaoEmAndamento.getDataFim());
+        detalhesLeilao.setLocal(leilaoEmAndamento.getLocal());
+        detalhesLeilao.setStatus(leilaoEmAndamento.getStatus());
+
+        List<Produto> produtosLeilao = leilaoEmAndamento.getProdutos();
+        detalhesLeilao.setProdutos(produtosLeilao);
+        detalhesLeilao.setQuantidadeTotalProdutos(produtosLeilao.size());
+
+        List<Produto> produtosVendidos = produtosLeilao
+                .stream()
+                .filter(produto -> produto.getStatus().equals("VENDIDO"))
+                .collect(Collectors.toList());
+
+        List<Produto> produtosNaoVendidos = produtosLeilao
+                .stream()
+                .filter(produto -> produto.getStatus().equals("NAO_VENDIDO"))
+                .collect(Collectors.toList());
+
+        List<Produto> produtosFinalizados = new ArrayList<>();
+        List<Cliente> clientesGanhadores = new ArrayList<>();
+        double valorLanceVencedor = 0.0;
+
+        for (Produto produto : produtosVendidos) {
+            List<LanceCliente> lances = produto.getLances();
+            if (!lances.isEmpty()) {
+                lances.sort((l1, l2) -> Double.compare(l2.getValor(), l1.getValor())); 
+                LanceCliente lanceVencedor = lances.get(0); 
+
+                valorLanceVencedor += lanceVencedor.getValor();
+                produtosFinalizados.add(produto);
+                clientesGanhadores.add(lanceVencedor.getCliente());
+            }
+        }
+
+        detalhesLeilao.setProdutos(produtosFinalizados);
+        detalhesLeilao.setClientesGanhadores(clientesGanhadores);
+        detalhesLeilao.setValorLanceVencedor(valorLanceVencedor);
+
+        return detalhesLeilao;
     }
     
     

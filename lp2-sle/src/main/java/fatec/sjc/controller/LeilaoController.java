@@ -16,6 +16,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 @Path("/leiloes")
@@ -79,6 +80,32 @@ public class LeilaoController {
     @Path("/{id}/detalhes")
     public DetalhesLeilaoDTO detalharLeilao(@PathParam("id") Long id) {
         return leilaoService.detalharLeilao(id);
+    }
+    
+    @GET
+    @Path("/{id}/produtos/filtrar")
+    public List<Produto> filtrarProdutos(@PathParam("id") Long id,
+                                         @QueryParam("minLanceInicial") double minLanceInicial,
+                                         @QueryParam("maxLanceInicial") double maxLanceInicial,
+                                         @QueryParam("minLanceTotal") double minLanceTotal,
+                                         @QueryParam("maxLanceTotal") double maxLanceTotal,
+                                         @QueryParam("palavraChave") String palavraChave,
+                                         @QueryParam("tipoProduto") String tipoProduto) {
+        return leilaoService.buscarProdutosPorFiltro(id, minLanceInicial, maxLanceInicial,
+                                                     minLanceTotal, maxLanceTotal, palavraChave,
+                                                     tipoProduto);
+    }
+    
+    @GET
+    @Path("/{id}/detalhes-apos-termino")
+    public Response detalhesLeilaoAposTermino(@PathParam("id") Long id) {
+        DetalhesLeilaoDTO detalhesLeilaoDTO = leilaoService.buscarDetalhesLeilaoAposTermino(id);
+
+        if (detalhesLeilaoDTO != null) {
+            return Response.ok(detalhesLeilaoDTO).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).entity("Detalhes do leilão não encontrados.").build();
+        }
     }
     
 }
