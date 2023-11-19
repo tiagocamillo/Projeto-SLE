@@ -2,6 +2,7 @@ package fatec.sjc.controller;
 
 import fatec.sjc.dto.LeilaoDTO;
 import fatec.sjc.entity.Leilao;
+import fatec.sjc.entity.Produto;
 import fatec.sjc.service.LeilaoService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -35,7 +36,11 @@ public class LeilaoController {
     public Leilao buscarPorId(@PathParam("id") Long id) {
         return leilaoService.buscarPorId(id);
     }
-
+    @GET
+    @Path("/{leilaoId}/produtos/{produtoId}")
+    public Produto detalharProduto(@PathParam("leilaoId") Long leilaoId, @PathParam("produtoId") Long produtoId) {
+        return leilaoService.detalharProduto(leilaoId, produtoId);
+    }
     @PUT
     @Path("/{id}")
     public void atualizarLeilao(@PathParam("id") Long id, LeilaoDTO leilaoDTO) {

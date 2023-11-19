@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class ProdutoService {
@@ -35,11 +36,41 @@ public class ProdutoService {
         return produto;
     }
 
+    public ProdutoDTO detalharProduto(Long id) {
+        Optional<Produto> produtoOptional = Optional.ofNullable(produtoRepository.findById(id));
 
+        if (produtoOptional.isPresent()) {
+            Produto produto = produtoOptional.get();
+            Leilao leilaoAssociado = produto.getLeilao();
+
+            ProdutoDTO produtoDTO = new ProdutoDTO();
+            produtoDTO.setNome(produto.getNome());
+            produtoDTO.setDescricao(produto.getDescricao());
+            produtoDTO.setStatus(produto.getStatus());
+            produtoDTO.setTipo(produto.getTipo());
+            produtoDTO.setLanceInicial(produto.getLanceInicial());
+            produtoDTO.setLanceAdicional(produto.getLanceAdicional());
+
+//            if (leilaoAssociado != null) {
+//                produtoDTO.setLeilaoId(leilaoAssociado.getId());
+//                produtoDTO.setDataOcorrenciaLeilao(leilaoAssociado.getDataOcorrencia());
+//                produtoDTO.setLocalLeilao(leilaoAssociado.getLocal());
+//                produtoDTO.setStatusLeilao(leilaoAssociado.getStatus());
+//            } else {
+//                produtoDTO.setLeilaoId(null);
+//                produtoDTO.setDataOcorrenciaLeilao(null);
+//                produtoDTO.setLocalLeilao(null);
+//                produtoDTO.setStatusLeilao(null);
+//            }
+
+            return produtoDTO;
+        } else {
+            throw new RuntimeException("Produto não encontrado com o ID: " + id);
+        }
+    }
     public List<Produto> listarProdutos() {
         return produtoRepository.listAll();
     }
-
     public Produto buscarPorId(Long id) {
         return produtoRepository.findById(id);
     }

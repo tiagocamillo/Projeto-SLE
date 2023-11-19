@@ -10,5 +10,7 @@ public class ProdutoDTO {
     private String tipo;
     private double lanceInicial;
     private double lanceAdicional;
+
+
 }
 

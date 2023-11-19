@@ -43,7 +43,20 @@ public class LeilaoService {
         leilaoRepository.persist(leilao);
         return leilao;
     }
+    public Produto detalharProduto(Long leilaoId, Long produtoId) {
+        Leilao leilao = leilaoRepository.findById(leilaoId);
 
+        if (leilao != null) {
+            List<Produto> produtos = leilao.getProdutos();
+            for (Produto produto : produtos) {
+                if (produto.getId().equals(produtoId)) {
+                    return produto;
+                }
+            }
+        }
+        return null;
+
+    }
     public List<Leilao> listarLeiloes() {
         return leilaoRepository.listAll();
     }
