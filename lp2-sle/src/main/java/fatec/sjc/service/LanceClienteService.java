@@ -29,25 +29,25 @@ public class LanceClienteService {
     }
 
     @Transactional
-    public LanceCliente salvarLanceCliente(LanceClienteDTO lanceClienteDTO) {
-        LanceCliente lanceCliente = new LanceCliente();
-        lanceCliente.setValor(lanceClienteDTO.getValor());
-        lanceCliente.setDataHoraLance(LocalDateTime.now());
-
-        Produto produto = produtoRepository.findById(lanceClienteDTO.getIdProduto());
+    public LanceCliente salvarLanceCliente(Long idProduto, Long idCliente, double valor) {
+        Produto produto = produtoRepository.findById(idProduto);
         if (produto == null) {
-            throw new RuntimeException("Produto não encontrado com o ID: " + lanceClienteDTO.getIdProduto());
+            throw new RuntimeException("Produto não encontrado com o ID: " + idProduto);
         }
-        lanceCliente.setProduto(produto);
 
-        Cliente cliente = clienteRepository.findById(lanceClienteDTO.getIdCliente());
+        Cliente cliente = clienteRepository.findById(idCliente);
         if (cliente == null) {
-            throw new RuntimeException("Cliente não encontrado com o ID: " + lanceClienteDTO.getIdCliente());
+            throw new RuntimeException("Cliente não encontrado com o ID: " + idCliente);
         }
-        lanceCliente.setCliente(cliente);
 
-        lanceClienteRepository.persist(lanceCliente);
-        return lanceCliente;
+        LanceCliente novoLance = new LanceCliente();
+        novoLance.setValor(valor);
+        novoLance.setDataHoraLance(LocalDateTime.now());
+        novoLance.setProduto(produto);
+        novoLance.setCliente(cliente);
+
+        lanceClienteRepository.persist(novoLance);
+        return novoLance;
     }
 
     public List<LanceCliente> listarLancesClientes() {
@@ -87,4 +87,5 @@ public class LanceClienteService {
     public void excluirLanceCliente(Long id) {
         lanceClienteRepository.deleteById(id);
     }
+    
 }

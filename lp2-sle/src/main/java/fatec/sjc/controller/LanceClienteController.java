@@ -22,8 +22,11 @@ public class LanceClienteController {
     }
 
     @POST
-    public LanceCliente salvarLanceCliente(LanceClienteDTO lanceClienteDTO) {
-        return lanceClienteService.salvarLanceCliente(lanceClienteDTO);
+    @Path("/produto/{idProduto}/cliente/{idCliente}/lance/{valor}")
+    public LanceCliente salvarLanceCliente(@PathParam("idProduto") Long idProduto,
+                                           @PathParam("idCliente") Long idCliente,
+                                           @PathParam("valor") double valor) {
+        return lanceClienteService.salvarLanceCliente(idProduto, idCliente, valor);
     }
 
     @GET
@@ -48,4 +51,8 @@ public class LanceClienteController {
     public void excluirLanceCliente(@PathParam("id") Long id) {
         lanceClienteService.excluirLanceCliente(id);
     }
+    
+    
+    
+    
 }
