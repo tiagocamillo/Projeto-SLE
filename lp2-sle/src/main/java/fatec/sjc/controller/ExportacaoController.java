@@ -24,7 +24,7 @@ public class ExportacaoController {
     @Path("/leilao/{leilaoId}")
     public Response exportarDetalhesLeilao(@PathParam("leilaoId") Long leilaoId) {
         Optional<DetalhesLeilaoExport> detalhesLeilaoExport = exportacaoService.exportarDetalhesLeilao(leilaoId);
-
+        exportacaoService.atualizarStatusLeiloes();
         if (detalhesLeilaoExport != null) {
             return Response.ok(detalhesLeilaoExport).build();
         } else {

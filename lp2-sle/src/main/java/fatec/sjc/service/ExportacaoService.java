@@ -15,7 +15,10 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -70,7 +73,29 @@ public class ExportacaoService {
 
         return produtoDTO;
     }
+    @Transactional
+    public void atualizarStatusLeiloes() {
+        List<Leilao> leiloes = leilaoRepository.listAll();
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
+        for (Leilao leilao : leiloes) {
+            LocalDateTime dataOcorrencia = leilao.getDataOcorrencia();
+            LocalDateTime dataFim = leilao.getDataFim();
+
+            if (dataOcorrencia != null && dataFim != null) {
+                if (dataOcorrencia.isAfter(currentDateTime)) {
+                    leilao.setStatus("EM ABERTO");
+                } else if (dataOcorrencia.isBefore(currentDateTime) && dataFim.isAfter(currentDateTime)) {
+                    leilao.setStatus("EM ANDAMENTO");
+                } else {
+                    leilao.setStatus("FINALIZADO");
+                }
+            } else {
+                Logger logger = Logger.getLogger(LeilaoService.class.getName());
+                logger.warning("Leilao with ID " + leilao.getId() + " has null occurrence or end date.");
+            }
+        }
+    }
     private LanceClienteDTO mapLanceClienteToDTO(LanceCliente lance) {
         LanceClienteDTO lanceDTO = new LanceClienteDTO();
         lanceDTO.setValor(lance.getValor());
