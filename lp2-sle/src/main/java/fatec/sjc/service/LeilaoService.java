@@ -1,6 +1,10 @@
 package fatec.sjc.service;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import fatec.sjc.dto.LeilaoDTO;
@@ -31,7 +35,7 @@ public class LeilaoService {
     public Leilao salvarLeilao(LeilaoDTO leilaoDTO) {
     	Leilao leilao = new Leilao();
         leilao.setDataOcorrencia(leilaoDTO.getDataOcorrencia());
-        leilao.setDataVisita(leilaoDTO.getDataVisita());
+        leilao.setDataFim(leilaoDTO.getDataFim());
         leilao.setLocal(leilaoDTO.getLocal());
         leilao.setStatus(leilaoDTO.getStatus());
 
@@ -59,6 +63,7 @@ public class LeilaoService {
 
     }
     public List<Leilao> listarLeiloes() {
+
         return leilaoRepository.listAll();
     }
 
@@ -70,7 +75,7 @@ public class LeilaoService {
     public void atualizarLeilao(LeilaoDTO leilaoDTO) {
     	Leilao leilao = new Leilao();
         leilao.setDataOcorrencia(leilaoDTO.getDataOcorrencia());
-        leilao.setDataVisita(leilaoDTO.getDataVisita());
+        leilao.setDataFim(leilaoDTO.getDataFim());
         leilao.setLocal(leilaoDTO.getLocal());
         leilao.setStatus(leilaoDTO.getStatus());
 
@@ -95,5 +100,31 @@ public class LeilaoService {
                 .collect(Collectors.toList());
         return leiloesOrdenados;
     }
-    
+    @Transactional
+    public void atualizarStatusLeiloes() {
+        List<Leilao> leiloes = leilaoRepository.listAll();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        for (Leilao leilao : leiloes) {
+            LocalDateTime dataOcorrencia = leilao.getDataOcorrencia();
+            LocalDateTime dataFim = leilao.getDataFim();
+
+            if (dataOcorrencia != null && dataFim != null) {
+                if (dataOcorrencia.isAfter(currentDateTime)) {
+                    leilao.setStatus("EM ABERTO");
+                } else if (dataOcorrencia.isBefore(currentDateTime) && dataFim.isAfter(currentDateTime)) {
+                    leilao.setStatus("EM ANDAMENTO");
+                } else {
+                    leilao.setStatus("FINALIZADO");
+                }
+            } else {
+                Logger logger = Logger.getLogger(LeilaoService.class.getName());
+                logger.warning("Leilao with ID " + leilao.getId() + " has null occurrence or end date.");
+            }
+        }
+
+        leiloes.forEach(leilaoRepository::persist);
+    }
+
+
 }

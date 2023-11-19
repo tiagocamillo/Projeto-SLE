@@ -36,6 +36,8 @@ public class LeilaoController {
 
     @GET
     public List<Leilao> listarLeiloes() {
+        leilaoService.atualizarStatusLeiloes();
+
         return leilaoService.listarLeiloes();
     }
 

@@ -1,5 +1,6 @@
 package fatec.sjc.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -26,15 +27,16 @@ public class Leilao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String dataOcorrencia;
-    private String dataVisita;
+    private LocalDateTime dataOcorrencia;
+    private LocalDateTime dataFim;
     private String local;
     private String status;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL)
     private List<Produto> produtos;
-    
+
+
     @JsonBackReference
     @ManyToOne
     private EntidadeFinanceira instituicaoFinanceira;
