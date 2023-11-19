@@ -14,7 +14,7 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class LanceClienteController {
 
-    private final LanceClienteService lanceClienteService;
+	private final LanceClienteService lanceClienteService;
 
     @Inject
     public LanceClienteController(LanceClienteService lanceClienteService) {
@@ -40,7 +40,7 @@ public class LanceClienteController {
     @PUT
     @Path("/{id}")
     public void atualizarLanceCliente(@PathParam("id") Long id, LanceClienteDTO lanceClienteDTO) {
-        lanceClienteService.atualizarLanceCliente(lanceClienteDTO);
+        lanceClienteService.atualizarLanceCliente(id, lanceClienteDTO);
     }
 
     @DELETE

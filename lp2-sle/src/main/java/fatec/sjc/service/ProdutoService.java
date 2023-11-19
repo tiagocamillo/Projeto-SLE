@@ -1,15 +1,16 @@
 package fatec.sjc.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import fatec.sjc.dto.ProdutoDTO;
+import fatec.sjc.entity.LanceCliente;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.entity.Produto;
 import fatec.sjc.repository.ProdutoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @ApplicationScoped
 public class ProdutoService {
@@ -93,4 +94,16 @@ public class ProdutoService {
     public void excluirProduto(Long id) {
         produtoRepository.deleteById(id);
     }
+    
+    public List<LanceCliente> detalharHistoricoLances(Long idProduto) {
+        Produto produto = produtoRepository.findById(idProduto);
+
+        if (produto != null) {
+            return produto.getLances();
+        } else {
+            throw new RuntimeException("Produto não encontrado com o ID: " + idProduto);
+        }
+    }
+    
+    
 }

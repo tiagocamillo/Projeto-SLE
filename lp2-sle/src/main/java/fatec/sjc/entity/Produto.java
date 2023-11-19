@@ -1,6 +1,9 @@
 package fatec.sjc.entity;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,7 +13,7 @@ import lombok.Data;
 @Table(name = "Produto")
 public class Produto {
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -20,10 +23,13 @@ public class Produto {
     private String tipo;
     private double lanceInicial;
     private double lanceAdicional;
-    
 
     @JsonBackReference
     @ManyToOne
     private Leilao leilao;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    private List<LanceCliente> lances;
 
 }
