@@ -1,13 +1,13 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
 import fatec.sjc.dto.ServidorDTO;
 import fatec.sjc.entity.Servidor;
 import fatec.sjc.repository.ServidorRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.util.List;
 
 @ApplicationScoped
 public class ServidorService {

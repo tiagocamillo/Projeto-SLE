@@ -7,7 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 
 @ApplicationScoped
-
 public class ProdutoRepository implements PanacheRepository<Produto> {
 	
 	private final EntityManager em;

@@ -1,13 +1,13 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
 import fatec.sjc.dto.ClienteDTO;
 import fatec.sjc.entity.Cliente;
 import fatec.sjc.repository.ClienteRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.util.List;
 
 @ApplicationScoped
 public class ClienteService {
@@ -18,8 +18,6 @@ public class ClienteService {
     public ClienteService(ClienteRepository clienteRepository) {
         this.clienteRepository = clienteRepository;
     }
-
-
 
     public List<Cliente> listarClientes() {
         return clienteRepository.listAll();
@@ -39,9 +37,9 @@ public class ClienteService {
 
         clienteRepository.persist(cliente);
     }
+    
     @Transactional
     public Cliente salvarCliente(ClienteDTO clienteDTO) {
-        // Criar uma nova instância de Cliente a partir do DTO
         Cliente novoCliente = new Cliente();
         novoCliente.setNome(clienteDTO.getNome());
         novoCliente.setDetalhesContato(clienteDTO.getDetalhesContato());

@@ -1,5 +1,11 @@
 package fatec.sjc.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import fatec.sjc.dto.DetalhesLeilaoExport;
 import fatec.sjc.dto.LanceClienteDTO;
 import fatec.sjc.dto.ProdutoExportDTO;
@@ -13,13 +19,6 @@ import fatec.sjc.repository.ProdutoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ExportacaoService {
@@ -47,8 +46,6 @@ public class ExportacaoService {
         detalhesLeilaoExport.setDataFim(leilao.getDataFim());
         detalhesLeilaoExport.setLocal(leilao.getLocal());
         detalhesLeilaoExport.setStatusLeilao(leilao.getStatus());
-
-//        detalhesLeilaoExport.setCnpjEntidadeFinanceira(leilao.getInstituicaoFinanceira().getCnpj());
 
         detalhesLeilaoExport.setProdutos(leilao.getProdutos().stream()
                 .map(this::mapProdutoToDTO)

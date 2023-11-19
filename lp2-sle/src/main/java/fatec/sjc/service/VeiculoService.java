@@ -1,13 +1,13 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
 import fatec.sjc.dto.VeiculoDTO;
 import fatec.sjc.entity.Veiculo;
 import fatec.sjc.repository.VeiculoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.util.List;
 
 @ApplicationScoped
 public class VeiculoService {

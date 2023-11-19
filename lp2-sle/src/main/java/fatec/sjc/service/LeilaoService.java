@@ -149,7 +149,6 @@ public class LeilaoService {
             detalhesLeilaoDTO.setProdutos(produtosOrdenados);
 
             EntidadeFinanceiraDTO entidadeFinanceiraDTO = new EntidadeFinanceiraDTO();
-            //entidadeFinanceiraDTO.setId(leilao.getInstituicaoFinanceira().getId());
             entidadeFinanceiraDTO.setCnpj(leilao.getInstituicaoFinanceira().getCnpj());
             entidadeFinanceiraDTO.setNome(leilao.getInstituicaoFinanceira().getNome());
             entidadeFinanceiraDTO.setDetalhesContato(leilao.getInstituicaoFinanceira().getDetalhesContato());

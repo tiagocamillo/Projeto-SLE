@@ -1,15 +1,14 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
 import fatec.sjc.dto.EntidadeFinanceiraDTO;
 import fatec.sjc.entity.EntidadeFinanceira;
-import fatec.sjc.entity.Leilao;
 import fatec.sjc.repository.EntidadeFinanceiraRepository;
 import fatec.sjc.repository.LeilaoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.util.List;
 
 @ApplicationScoped
 public class EntidadeFinanceiraService {

@@ -1,12 +1,12 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
 import fatec.sjc.dto.DispositivoDTO;
 import fatec.sjc.entity.Dispositivo;
 import fatec.sjc.repository.DispositivoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
-
-import java.util.List;
 
 @ApplicationScoped
 public class DispositivoService {
@@ -39,7 +39,7 @@ public class DispositivoService {
     @Transactional
     public void atualizarDispositivo(DispositivoDTO dispositivoDTO) {
         Dispositivo dispositivo = new Dispositivo();
-        dispositivo.setId(dispositivoDTO.getId());  // Assuming you have an 'id' field in DispositivoDTO
+        dispositivo.setId(dispositivoDTO.getId()); 
         dispositivo.setNome(dispositivoDTO.getNome());
         dispositivo.setDescricao(dispositivoDTO.getDescricao());
         dispositivo.setStatus(dispositivoDTO.getStatus());

@@ -1,13 +1,13 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
 import fatec.sjc.dto.TabletDTO;
 import fatec.sjc.entity.Tablet;
 import fatec.sjc.repository.TabletRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.util.List;
 
 @ApplicationScoped
 public class TabletService {

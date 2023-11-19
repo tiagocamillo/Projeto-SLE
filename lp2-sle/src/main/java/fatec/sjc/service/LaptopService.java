@@ -1,13 +1,13 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
 import fatec.sjc.dto.LaptopDTO;
 import fatec.sjc.entity.Laptop;
 import fatec.sjc.repository.LaptopRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
-import java.util.List;
 
 @ApplicationScoped
 public class LaptopService {
