@@ -39,7 +39,6 @@ public class LeilaoController {
     @PUT
     @Path("/{id}")
     public void atualizarLeilao(@PathParam("id") Long id, LeilaoDTO leilaoDTO) {
-        leilaoDTO.setId(id);
         leilaoService.atualizarLeilao(leilaoDTO);
     }
 

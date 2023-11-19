@@ -6,7 +6,9 @@ import lombok.Data;
 public class ProdutoDTO {
     private String nome;
     private String descricao;
-    private double valorInicial;
     private String status;
     private String tipo;
+    private double lanceInicial;
+    private double lanceAdicional;
 }
+

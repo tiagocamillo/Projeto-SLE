@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Cliente")
+@Table(name = "Produto")
 public class Produto {
 
     @Id
@@ -18,6 +18,9 @@ public class Produto {
     private String descricao;
     private String status;
     private String tipo;
+    private double lanceInicial;
+    private double lanceAdicional;
+    
 
     @JsonBackReference
     @ManyToOne

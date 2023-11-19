@@ -27,6 +27,8 @@ public class ProdutoService {
         produto.setDescricao(produtoDTO.getDescricao());
         produto.setStatus(produtoDTO.getStatus());
         produto.setTipo(produtoDTO.getTipo());
+        produto.setLanceInicial(produtoDTO.getLanceInicial());
+        produto.setLanceAdicional(produtoDTO.getLanceAdicional());
 
         produtoRepository.persist(produto);
 
@@ -49,7 +51,9 @@ public class ProdutoService {
         produto.setDescricao(produtoDTO.getDescricao());
         produto.setStatus(produtoDTO.getStatus());
         produto.setTipo(produtoDTO.getTipo());
-
+        produto.setLanceInicial(produtoDTO.getLanceInicial());
+        produto.setLanceAdicional(produtoDTO.getLanceAdicional());
+        
         produtoRepository.persist(produto);
         
     }
