@@ -7,6 +7,7 @@ import fatec.sjc.service.LanceClienteService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/lances-clientes")
@@ -14,7 +15,7 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class LanceClienteController {
 
-	private final LanceClienteService lanceClienteService;
+    private final LanceClienteService lanceClienteService;
 
     @Inject
     public LanceClienteController(LanceClienteService lanceClienteService) {
@@ -23,36 +24,67 @@ public class LanceClienteController {
 
     @POST
     @Path("/produto/{idProduto}/cliente/{idCliente}/lance/{valor}")
-    public LanceCliente salvarLanceCliente(@PathParam("idProduto") Long idProduto,
-                                           @PathParam("idCliente") Long idCliente,
-                                           @PathParam("valor") double valor) {
-        return lanceClienteService.salvarLanceCliente(idProduto, idCliente, valor);
+    public Response salvarLanceCliente(@PathParam("idProduto") Long idProduto,
+                                       @PathParam("idCliente") Long idCliente,
+                                       @PathParam("valor") double valor) {
+        try {
+            LanceCliente savedLanceCliente = lanceClienteService.salvarLanceCliente(idProduto, idCliente, valor);
+            return Response.status(Response.Status.CREATED).entity(savedLanceCliente).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao salvar lance do cliente: " + e.getMessage())
+                    .build();
+        }
     }
 
     @GET
-    public List<LanceCliente> listarLancesClientes() {
-        return lanceClienteService.listarLancesClientes();
+    public Response listarLancesClientes() {
+        try {
+            List<LanceCliente> lancesClientes = lanceClienteService.listarLancesClientes();
+            return Response.ok(lancesClientes).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao listar lances do cliente: " + e.getMessage())
+                    .build();
+        }
     }
 
     @GET
     @Path("/{id}")
-    public LanceCliente buscarPorId(@PathParam("id") Long id) {
-        return lanceClienteService.buscarPorId(id);
+    public Response buscarPorId(@PathParam("id") Long id) {
+        try {
+            LanceCliente lanceCliente = lanceClienteService.buscarPorId(id);
+            return Response.ok(lanceCliente).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Lance do cliente não encontrado com o ID " + id)
+                    .build();
+        }
     }
 
     @PUT
     @Path("/{id}")
-    public void atualizarLanceCliente(@PathParam("id") Long id, LanceClienteDTO lanceClienteDTO) {
-        lanceClienteService.atualizarLanceCliente(id, lanceClienteDTO);
+    public Response atualizarLanceCliente(@PathParam("id") Long id, LanceClienteDTO lanceClienteDTO) {
+        try {
+            lanceClienteService.atualizarLanceCliente(id, lanceClienteDTO);
+            return Response.noContent().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao atualizar lance do cliente: " + e.getMessage())
+                    .build();
+        }
     }
 
     @DELETE
     @Path("/{id}")
-    public void excluirLanceCliente(@PathParam("id") Long id) {
-        lanceClienteService.excluirLanceCliente(id);
+    public Response excluirLanceCliente(@PathParam("id") Long id) {
+        try {
+            lanceClienteService.excluirLanceCliente(id);
+            return Response.noContent().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao excluir lance do cliente: " + e.getMessage())
+                    .build();
+        }
     }
-    
-    
-    
-    
 }

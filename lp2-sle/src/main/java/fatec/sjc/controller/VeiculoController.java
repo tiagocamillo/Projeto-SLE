@@ -6,6 +6,7 @@ import fatec.sjc.service.VeiculoService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
@@ -22,30 +23,65 @@ public class VeiculoController {
     }
 
     @POST
-    public Veiculo salvarVeiculo(VeiculoDTO veiculoDTO) {
-        return veiculoService.salvarVeiculo(veiculoDTO);
+    public Response salvarVeiculo(VeiculoDTO veiculoDTO) {
+        try {
+            Veiculo savedVeiculo = veiculoService.salvarVeiculo(veiculoDTO);
+            return Response.status(Response.Status.CREATED).entity(savedVeiculo).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao salvar veículo: " + e.getMessage())
+                    .build();
+        }
     }
 
     @GET
-    public List<Veiculo> listarVeiculos() {
-        return veiculoService.listarVeiculos();
+    public Response listarVeiculos() {
+        try {
+            List<Veiculo> veiculos = veiculoService.listarVeiculos();
+            return Response.ok(veiculos).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao listar veículos: " + e.getMessage())
+                    .build();
+        }
     }
 
     @GET
     @Path("/{id}")
-    public Veiculo buscarPorId(@PathParam("id") Long id) {
-        return veiculoService.buscarPorId(id);
+    public Response buscarPorId(@PathParam("id") Long id) {
+        try {
+            Veiculo veiculo = veiculoService.buscarPorId(id);
+            return Response.ok(veiculo).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Veículo não encontrado com o ID " + id)
+                    .build();
+        }
     }
 
     @PUT
     @Path("/{id}")
-    public void atualizarVeiculo(@PathParam("id") Long id, VeiculoDTO veiculoDTO) {
-        veiculoService.atualizarVeiculo(veiculoDTO);
+    public Response atualizarVeiculo(@PathParam("id") Long id, VeiculoDTO veiculoDTO) {
+        try {
+            veiculoService.atualizarVeiculo(veiculoDTO);
+            return Response.noContent().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao atualizar veículo: " + e.getMessage())
+                    .build();
+        }
     }
 
     @DELETE
     @Path("/{id}")
-    public void excluirVeiculo(@PathParam("id") Long id) {
-        veiculoService.excluirVeiculo(id);
+    public Response excluirVeiculo(@PathParam("id") Long id) {
+        try {
+            veiculoService.excluirVeiculo(id);
+            return Response.noContent().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao excluir veículo: " + e.getMessage())
+                    .build();
+        }
     }
 }

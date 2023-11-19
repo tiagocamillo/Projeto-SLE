@@ -43,13 +43,21 @@ public class EntidadeFinanceiraService {
     }
 
     @Transactional
-    public void atualizarEntidadeFinanceira(EntidadeFinanceiraDTO entidadeFinanceiraDTO) {
-        EntidadeFinanceira entidadeFinanceira = new EntidadeFinanceira();
-        entidadeFinanceira.setCnpj(entidadeFinanceiraDTO.getCnpj());
-        entidadeFinanceira.setNome(entidadeFinanceiraDTO.getNome());
-        entidadeFinanceira.setDetalhesContato(entidadeFinanceiraDTO.getDetalhesContato());
-        entidadeFinanceiraRepository.persist(entidadeFinanceira);
+    public void atualizarEntidadeFinanceira(Long id, EntidadeFinanceiraDTO entidadeFinanceiraDTO) throws Exception {
+        EntidadeFinanceira entidadeFinanceira = entidadeFinanceiraRepository.findById(id);
+
+        if (entidadeFinanceira != null) {
+            entidadeFinanceira.setCnpj(entidadeFinanceiraDTO.getCnpj());
+            entidadeFinanceira.setNome(entidadeFinanceiraDTO.getNome());
+            entidadeFinanceira.setDetalhesContato(entidadeFinanceiraDTO.getDetalhesContato());
+
+            entidadeFinanceiraRepository.persist(entidadeFinanceira);
+        } else {
+
+            throw new Exception ("EntidadeFinanceira with ID " + id + " not found");
+        }
     }
+
 
     @Transactional
     public void excluirEntidadeFinanceira(Long id) {

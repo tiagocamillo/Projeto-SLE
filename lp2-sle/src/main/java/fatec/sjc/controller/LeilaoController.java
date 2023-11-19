@@ -19,6 +19,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 @Path("/leiloes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -32,39 +33,82 @@ public class LeilaoController {
     }
 
     @POST
-    public Leilao salvarLeilao(LeilaoDTO leilaoDTO) {
-        return leilaoService.salvarLeilao(leilaoDTO);
+    public Response salvarLeilao(LeilaoDTO leilaoDTO) {
+        try {
+            Leilao savedLeilao = leilaoService.salvarLeilao(leilaoDTO);
+            return Response.status(Response.Status.CREATED).entity(savedLeilao).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao salvar leilão: " + e.getMessage())
+                    .build();
+        }
     }
 
     @GET
-    public List<Leilao> listarLeiloes() {
-        leilaoService.atualizarStatusLeiloes();
-
-        return leilaoService.listarLeiloes();
+    public Response listarLeiloes() {
+        try {
+            leilaoService.atualizarStatusLeiloes();
+            List<Leilao> leiloes = leilaoService.listarLeiloes();
+            return Response.ok(leiloes).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao listar leilões: " + e.getMessage())
+                    .build();
+        }
     }
 
     @GET
     @Path("/{id}")
-    public Leilao buscarPorId(@PathParam("id") Long id) {
-        return leilaoService.buscarPorId(id);
+    public Response buscarPorId(@PathParam("id") Long id) {
+        try {
+            Leilao leilao = leilaoService.buscarPorId(id);
+            return Response.ok(leilao).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Leilão não encontrado com o ID " + id)
+                    .build();
+        }
     }
+
     @GET
     @Path("/{leilaoId}/produtos/{produtoId}")
-    public Produto detalharProduto(@PathParam("leilaoId") Long leilaoId, @PathParam("produtoId") Long produtoId) {
-        return leilaoService.detalharProduto(leilaoId, produtoId);
+    public Response detalharProduto(@PathParam("leilaoId") Long leilaoId, @PathParam("produtoId") Long produtoId) {
+        try {
+            Produto produto = leilaoService.detalharProduto(leilaoId, produtoId);
+            return Response.ok(produto).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Produto não encontrado no leilão com ID " + leilaoId)
+                    .build();
+        }
     }
+
     @PUT
     @Path("/{id}")
-    public void atualizarLeilao(@PathParam("id") Long id, LeilaoDTO leilaoDTO) {
-        leilaoService.atualizarLeilao(leilaoDTO);
+    public Response atualizarLeilao(@PathParam("id") Long id, LeilaoDTO leilaoDTO) {
+        try {
+            leilaoService.atualizarLeilao(leilaoDTO);
+            return Response.noContent().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao atualizar leilão: " + e.getMessage())
+                    .build();
+        }
     }
 
     @DELETE
     @Path("/{id}")
-    public void excluirLeilao(@PathParam("id") Long id) {
-        leilaoService.excluirLeilao(id);
+    public Response excluirLeilao(@PathParam("id") Long id) {
+        try {
+            leilaoService.excluirLeilao(id);
+            return Response.noContent().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao excluir leilão: " + e.getMessage())
+                    .build();
+        }
     }
-    
+
     @GET
     @Path("/listarOrdenadosPorData")
     public Response listarLeiloesOrdenadosPorData() {
@@ -72,40 +116,61 @@ public class LeilaoController {
             List<Leilao> leiloesOrdenados = leilaoService.listarLeiloesOrdenadosPorData();
             return Response.ok(leiloesOrdenados).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro ao listar os leilões.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao listar os leilões ordenados por data: " + e.getMessage())
+                    .build();
         }
-    } 
-    
+    }
+
     @GET
     @Path("/{id}/detalhes")
-    public DetalhesLeilaoDTO detalharLeilao(@PathParam("id") Long id) {
-        return leilaoService.detalharLeilao(id);
+    public Response detalharLeilao(@PathParam("id") Long id) {
+        try {
+            DetalhesLeilaoDTO detalhesLeilaoDTO = leilaoService.detalharLeilao(id);
+            return Response.ok(detalhesLeilaoDTO).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao detalhar leilão: " + e.getMessage())
+                    .build();
+        }
     }
-    
+
     @GET
     @Path("/{id}/produtos/filtrar")
-    public List<Produto> filtrarProdutos(@PathParam("id") Long id,
-                                         @QueryParam("minLanceInicial") double minLanceInicial,
-                                         @QueryParam("maxLanceInicial") double maxLanceInicial,
-                                         @QueryParam("minLanceTotal") double minLanceTotal,
-                                         @QueryParam("maxLanceTotal") double maxLanceTotal,
-                                         @QueryParam("palavraChave") String palavraChave,
-                                         @QueryParam("tipoProduto") String tipoProduto) {
-        return leilaoService.buscarProdutosPorFiltro(id, minLanceInicial, maxLanceInicial,
-                                                     minLanceTotal, maxLanceTotal, palavraChave,
-                                                     tipoProduto);
+    public Response filtrarProdutos(@PathParam("id") Long id,
+                                    @QueryParam("minLanceInicial") double minLanceInicial,
+                                    @QueryParam("maxLanceInicial") double maxLanceInicial,
+                                    @QueryParam("minLanceTotal") double minLanceTotal,
+                                    @QueryParam("maxLanceTotal") double maxLanceTotal,
+                                    @QueryParam("palavraChave") String palavraChave,
+                                    @QueryParam("tipoProduto") String tipoProduto) {
+        try {
+            List<Produto> produtosFiltrados = leilaoService.buscarProdutosPorFiltro(id, minLanceInicial, maxLanceInicial,
+                    minLanceTotal, maxLanceTotal,
+                    palavraChave, tipoProduto);
+            return Response.ok(produtosFiltrados).build();
+        } catch (Exception e) {
+            // Em caso de erro, retorna uma resposta com status de erro interno do servidor
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao filtrar produtos do leilão: " + e.getMessage())
+                    .build();
+        }
     }
-    
+
     @GET
     @Path("/{id}/detalhes-apos-termino")
     public Response detalhesLeilaoAposTermino(@PathParam("id") Long id) {
-        DetalhesLeilaoDTO detalhesLeilaoDTO = leilaoService.buscarDetalhesLeilaoAposTermino(id);
-
-        if (detalhesLeilaoDTO != null) {
-            return Response.ok(detalhesLeilaoDTO).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Detalhes do leilão não encontrados.").build();
+        try {
+            DetalhesLeilaoDTO detalhesLeilaoDTO = leilaoService.buscarDetalhesLeilaoAposTermino(id);
+            if (detalhesLeilaoDTO != null) {
+                return Response.ok(detalhesLeilaoDTO).build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity("Detalhes do leilão não encontrados.").build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao buscar detalhes do leilão após o término: " + e.getMessage())
+                    .build();
         }
     }
-    
 }

@@ -3,10 +3,11 @@ package fatec.sjc.controller;
 import fatec.sjc.dto.EntidadeFinanceiraDTO;
 import fatec.sjc.entity.EntidadeFinanceira;
 import fatec.sjc.service.EntidadeFinanceiraService;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 import java.util.List;
 
 @Path("/entidades-financeiras")
@@ -22,30 +23,63 @@ public class EntidadeFinanceiraController {
     }
 
     @POST
-    public EntidadeFinanceira salvarEntidadeFinanceira(EntidadeFinanceiraDTO entidadeFinanceiraDTO) {
-        return entidadeFinanceiraService.salvarEntidadeFinanceira(entidadeFinanceiraDTO);
+    public Response salvarEntidadeFinanceira(EntidadeFinanceiraDTO entidadeFinanceiraDTO) {
+        try {
+            EntidadeFinanceira savedEntidadeFinanceira = entidadeFinanceiraService.salvarEntidadeFinanceira(entidadeFinanceiraDTO);
+            return Response.status(Response.Status.CREATED).entity(savedEntidadeFinanceira).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao salvar entidade financeira: " + e.getMessage())
+                    .build();
+        }
     }
 
     @GET
-    public List<EntidadeFinanceira> listarEntidadesFinanceiras() {
-        return entidadeFinanceiraService.listarEntidadesFinanceiras();
+    public Response listarEntidadesFinanceiras() {
+        try {
+            List<EntidadeFinanceira> entidadesFinanceiras = entidadeFinanceiraService.listarEntidadesFinanceiras();
+            return Response.ok(entidadesFinanceiras).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao listar entidades financeiras: " + e.getMessage())
+                    .build();
+        }
     }
 
     @GET
     @Path("/{id}")
-    public EntidadeFinanceira buscarPorId(@PathParam("id") Long id) {
-        return entidadeFinanceiraService.buscarPorId(id);
+    public Response buscarPorId(@PathParam("id") Long id) {
+        try {
+            EntidadeFinanceira entidadeFinanceira = entidadeFinanceiraService.buscarPorId(id);
+            return Response.ok(entidadeFinanceira).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Entidade financeira não encontrada com o ID " + id)
+                    .build();
+        }
     }
 
     @PUT
     @Path("/{id}")
-    public void atualizarEntidadeFinanceira(@PathParam("id") Long id, EntidadeFinanceiraDTO entidadeFinanceiraDTO) {
-        entidadeFinanceiraService.atualizarEntidadeFinanceira(entidadeFinanceiraDTO);
+    public Response atualizarEntidadeFinanceira(@PathParam("id") Long id, EntidadeFinanceiraDTO entidadeFinanceiraDTO) {
+        try {
+            entidadeFinanceiraService.atualizarEntidadeFinanceira(id, entidadeFinanceiraDTO);
+            return Response.ok().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }
     }
 
     @DELETE
     @Path("/{id}")
-    public void excluirEntidadeFinanceira(@PathParam("id") Long id) {
-        entidadeFinanceiraService.excluirEntidadeFinanceira(id);
+    public Response excluirEntidadeFinanceira(@PathParam("id") Long id) {
+        try {
+            entidadeFinanceiraService.excluirEntidadeFinanceira(id);
+            return Response.noContent().build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao excluir entidade financeira: " + e.getMessage())
+                    .build();
+        }
     }
 }
