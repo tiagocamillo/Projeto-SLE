@@ -1,26 +1,26 @@
 package fatec.sjc.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import fatec.sjc.dto.DetalhesLeilaoDTO;
-import fatec.sjc.dto.EntidadeFinanceiraDTO;
+import fatec.sjc.dto.DetalhesLeilaoExport;
 import fatec.sjc.dto.LeilaoDTO;
-import fatec.sjc.entity.Cliente;
-import fatec.sjc.entity.EntidadeFinanceira;
-import fatec.sjc.entity.LanceCliente;
-import fatec.sjc.entity.Leilao;
-import fatec.sjc.entity.Produto;
+import fatec.sjc.entity.*;
 import fatec.sjc.repository.EntidadeFinanceiraRepository;
 import fatec.sjc.repository.LeilaoRepository;
 import fatec.sjc.repository.ProdutoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class LeilaoService {
@@ -97,7 +97,7 @@ public class LeilaoService {
     public void excluirLeilao(Long id) {
         leilaoRepository.deleteById(id);
     }
-    
+
     public List<Leilao> listarLeiloesOrdenadosPorData() {
         List<Leilao> leiloesOrdenados = leilaoRepository.listAll()
                 .stream()
@@ -130,45 +130,53 @@ public class LeilaoService {
 
         leiloes.forEach(leilaoRepository::persist);
     }
-    
-    
-    public DetalhesLeilaoDTO detalharLeilao(Long leilaoId) {
-        Leilao leilao = leilaoRepository.findById(leilaoId);
+
+
+    @Transactional
+    public void exportar(Long id) throws IOException {
+        Leilao leilao = leilaoRepository.findById(id);
 
         if (leilao != null) {
-            List<Produto> produtosOrdenados = leilao.getProdutos().stream()
-                    .sorted(Comparator.comparing(Produto::getNome))
-                    .collect(Collectors.toList());
+            DetalhesLeilaoExport detalhesLeilaoExport = convertLeilaoToDetalhesLeilaoExport(leilao);
 
-            DetalhesLeilaoDTO detalhesLeilaoDTO = new DetalhesLeilaoDTO();
-            detalhesLeilaoDTO.setDataOcorrencia(leilao.getDataOcorrencia());
-            detalhesLeilaoDTO.setDataFim(leilao.getDataFim());
-            detalhesLeilaoDTO.setLocal(leilao.getLocal());
-            detalhesLeilaoDTO.setStatus(leilao.getStatus());
-            detalhesLeilaoDTO.setQuantidadeTotalProdutos(produtosOrdenados.size());
-            detalhesLeilaoDTO.setProdutos(produtosOrdenados);
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectWriter objectWriter = objectMapper.writer().withDefaultPrettyPrinter();
+            String json = objectWriter.writeValueAsString(detalhesLeilaoExport);
 
-            EntidadeFinanceiraDTO entidadeFinanceiraDTO = new EntidadeFinanceiraDTO();
-            entidadeFinanceiraDTO.setCnpj(leilao.getInstituicaoFinanceira().getCnpj());
-            entidadeFinanceiraDTO.setNome(leilao.getInstituicaoFinanceira().getNome());
-            entidadeFinanceiraDTO.setDetalhesContato(leilao.getInstituicaoFinanceira().getDetalhesContato());
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("detalhesLeilao" + id + ".det"))) {
+                writer.write(json);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
-            detalhesLeilaoDTO.setEntidadeFinanceira(entidadeFinanceiraDTO);
-
-            return detalhesLeilaoDTO;
+    public DetalhesLeilaoExport convertLeilaoToDetalhesLeilaoExport(Leilao leilao) {
+        if (leilao == null || leilao.getInstituicaoFinanceira() == null) {
+            return null;
         }
 
-        return null;
+        DetalhesLeilaoExport detalhesLeilaoExport = new DetalhesLeilaoExport();
+        detalhesLeilaoExport.setLeilaoId(leilao.getId());
+        detalhesLeilaoExport.setDataOcorrencia(leilao.getDataOcorrencia());
+        detalhesLeilaoExport.setDataFim(leilao.getDataFim());
+        detalhesLeilaoExport.setLocal(leilao.getLocal());
+        detalhesLeilaoExport.setStatusLeilao(leilao.getStatus());
+        detalhesLeilaoExport.setCnpjEntidadeFinanceira(leilao.getInstituicaoFinanceira().getCnpj());
+
+        return detalhesLeilaoExport;
     }
-    
+
+
+
     public List<Produto> buscarProdutosPorFiltro(Long idLeilao, double minLanceInicial, double maxLanceInicial,
             double minLanceTotal, double maxLanceTotal, String palavraChave,
             String tipoProduto) {
 			Leilao leilao = leilaoRepository.findById(idLeilao);
-			
+
 			if (leilao != null) {
 				List<Produto> produtos = leilao.getProdutos();
-			
+
 				return produtos.stream()
 				.filter(produto -> produto.getLanceInicial() >= minLanceInicial && produto.getLanceInicial() <= maxLanceInicial)
 				.filter(produto -> (produto.getLanceInicial() + produto.getLanceAdicional()) >= minLanceTotal &&
@@ -177,10 +185,10 @@ public class LeilaoService {
 				.filter(produto -> tipoProduto.equals(produto.getTipo()))
 				.collect(Collectors.toList());
 			} else {
-				return Collections.emptyList(); 
+				return Collections.emptyList();
 			}
-	}    
-    
+	}
+
     public DetalhesLeilaoDTO buscarDetalhesLeilaoAposTermino(Long leilaoId) {
         Leilao leilao = leilaoRepository.findById(leilaoId);
 
@@ -210,10 +218,10 @@ public class LeilaoService {
                 .collect(Collectors.toList());
 
         if (leiloesEmAndamento.isEmpty()) {
-            return null; 
+            return null;
         }
 
-        Leilao leilaoEmAndamento = leiloesEmAndamento.get(0); 
+        Leilao leilaoEmAndamento = leiloesEmAndamento.get(0);
 
         DetalhesLeilaoDTO detalhesLeilao = new DetalhesLeilaoDTO();
         detalhesLeilao.setDataOcorrencia(leilaoEmAndamento.getDataOcorrencia());
@@ -257,6 +265,6 @@ public class LeilaoService {
 
         return detalhesLeilao;
     }
-    
-    
+
+
 }

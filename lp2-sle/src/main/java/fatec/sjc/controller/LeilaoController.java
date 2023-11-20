@@ -1,27 +1,18 @@
 package fatec.sjc.controller;
 
-import java.util.List;
-import java.util.Optional;
-
 import fatec.sjc.dto.DetalhesLeilaoDTO;
-import fatec.sjc.dto.DetalhesLeilaoExport;
 import fatec.sjc.dto.LeilaoDTO;
 import fatec.sjc.entity.Leilao;
 import fatec.sjc.entity.Produto;
 import fatec.sjc.service.ExportacaoService;
 import fatec.sjc.service.LeilaoService;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.io.IOException;
+import java.util.List;
 
 @Path("/leiloes")
 @Produces(MediaType.APPLICATION_JSON)
@@ -143,18 +134,16 @@ public class LeilaoController {
     }
 
     @GET
-    @Path("/{id}/detalhes")
-    public Response detalharLeilao(@PathParam("id") Long id) {
+    @Path("/exportar/{id}")
+    public Response exportLeilaoData(@PathParam("id") Long id) {
         try {
-            DetalhesLeilaoDTO detalhesLeilaoDTO = leilaoService.detalharLeilao(id);
-            return Response.ok(detalhesLeilaoDTO).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro ao detalhar leilão: " + e.getMessage())
-                    .build();
+            leilaoService.exportar(id);
+            return Response.ok("Leilao data exported successfully.").build();
+        } catch (IOException e) {
+            e.printStackTrace(); // Log the exception or handle it appropriately
+            return Response.serverError().entity("Failed to export leilao data.").build();
         }
     }
-
     @GET
     @Path("/{id}/produtos/filtrar")
     public Response filtrarProdutos(@PathParam("id") Long id,
@@ -194,21 +183,4 @@ public class LeilaoController {
         }
     }
 
-
-    @GET
-    @Path("/{id}/exportarDetalhes")
-    public Response exportarDetalhesLeilao(@PathParam("id") Long id) {
-        try {
-            Optional<DetalhesLeilaoExport> detalhesLeilaoExport = exportacaoService.exportarDetalhesLeilao(id);
-            if (detalhesLeilaoExport.isPresent()) {
-                return Response.ok(detalhesLeilaoExport.get()).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Detalhes do leilão não encontrados para exportação.").build();
-            }
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Erro ao exportar detalhes do leilão: " + e.getMessage())
-                    .build();
-        }
-    }
 }
