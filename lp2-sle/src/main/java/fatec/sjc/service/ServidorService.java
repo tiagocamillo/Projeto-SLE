@@ -1,47 +1,51 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
+import fatec.sjc.dto.ServidorDTO;
 import fatec.sjc.entity.Servidor;
 import fatec.sjc.repository.ServidorRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.util.List;
 
 @ApplicationScoped
 public class ServidorService {
 
+    private final ServidorRepository servidorRepository;
+
     @Inject
-    ServidorRepository servidorRepository;
+    public ServidorService(ServidorRepository servidorRepository) {
+        this.servidorRepository = servidorRepository;
+    }
 
     @Transactional
-    public Servidor criarServidor(Servidor servidor) {
+    public Servidor salvarServidor(ServidorDTO servidorDTO) {
+        Servidor servidor = new Servidor();
+        servidor.setTamanhoRack(servidorDTO.getTamanhoRack());
+        servidor.setQuantidadeProcessadores(servidorDTO.getQuantidadeProcessadores());
         servidorRepository.persist(servidor);
         return servidor;
     }
 
+    public List<Servidor> listarServidores() {
+        return servidorRepository.listAll();
+    }
+
+    public Servidor buscarPorId(Long id) {
+        return servidorRepository.findById(id);
+    }
+
     @Transactional
-    public Servidor atualizarServidor(Long id, Servidor servidorAtualizado) {
-        Servidor servidorExistente = servidorRepository.findById(id);
-        if (servidorExistente != null) {
-            servidorExistente.setProcessador(servidorAtualizado.getProcessador());
-            servidorExistente.setCapacidadeArmazenamento(servidorAtualizado.getCapacidadeArmazenamento());
-        }
-        return servidorExistente;
+    public void atualizarServidor(ServidorDTO servidorDTO) {
+        Servidor servidor = new Servidor();
+        servidor.setTamanhoRack(servidorDTO.getTamanhoRack());
+        servidor.setQuantidadeProcessadores(servidorDTO.getQuantidadeProcessadores());
+        servidorRepository.persist(servidor);
     }
 
     @Transactional
     public void excluirServidor(Long id) {
-        Servidor servidorExistente = servidorRepository.findById(id);
-        if (servidorExistente != null) {
-            servidorRepository.delete(servidorExistente);
-        }
-    }
-
-    public Servidor buscarServidorPorId(Long id) {
-        return servidorRepository.findById(id);
-    }
-
-    public List<Servidor> listarTodosOsServidores() {
-        return servidorRepository.listAll();
+        servidorRepository.deleteById(id);
     }
 }

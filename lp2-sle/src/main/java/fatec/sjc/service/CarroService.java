@@ -1,46 +1,51 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
+import fatec.sjc.dto.CarroDTO;
 import fatec.sjc.entity.Carro;
 import fatec.sjc.repository.CarroRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.util.List;
 
 @ApplicationScoped
 public class CarroService {
 
+    private final CarroRepository carroRepository;
+
     @Inject
-    CarroRepository carroRepository;
+    public CarroService(CarroRepository carroRepository) {
+        this.carroRepository = carroRepository;
+    }
 
     @Transactional
-    public Carro criarCarro(Carro carro) {
+    public Carro salvarCarro(CarroDTO carroDTO) {
+        Carro carro = new Carro();
+        carro.setQuantidadeAssentos(carroDTO.getQuantidadeAssentos());
+        carro.setTipoCombustivel(carroDTO.getTipoCombustivel());
         carroRepository.persist(carro);
         return carro;
     }
 
+    public List<Carro> listarCarros() {
+        return carroRepository.listAll();
+    }
+
+    public Carro buscarPorId(Long id) {
+        return carroRepository.findById(id);
+    }
+
     @Transactional
-    public Carro atualizarCarro(Long id, Carro carroAtualizado) {
-        Carro carroExistente = carroRepository.findById(id);
-        if (carroExistente != null) {
-            carroExistente.setNumeroPortas(carroAtualizado.getNumeroPortas());
-        }
-        return carroExistente;
+    public void atualizarCarro(CarroDTO carroDTO) {
+        Carro carro = new Carro();
+        carro.setQuantidadeAssentos(carroDTO.getQuantidadeAssentos());
+        carro.setTipoCombustivel(carroDTO.getTipoCombustivel());
+        carroRepository.persist(carro);
     }
 
     @Transactional
     public void excluirCarro(Long id) {
-        Carro carroExistente = carroRepository.findById(id);
-        if (carroExistente != null) {
-            carroRepository.delete(carroExistente);
-        }
-    }
-
-    public Carro buscarCarroPorId(Long id) {
-        return carroRepository.findById(id);
-    }
-
-    public List<Carro> listarTodosOsCarros() {
-        return carroRepository.listAll();
+        carroRepository.deleteById(id);
     }
 }

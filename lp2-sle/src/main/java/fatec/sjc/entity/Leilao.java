@@ -1,54 +1,40 @@
 package fatec.sjc.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Entity
 @Data
+@Entity
 @Table(name = "Leilao")
 @EqualsAndHashCode(callSuper = false)
-public class Leilao  {
+public class Leilao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IDLeilao")
-    private Long idLeilao;
+    private Long id;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "DataInicio")
-    private Date dataInicio;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "DataFim")
-    private Date dataFim;
-
-    @Column(name = "Status", length = 20)
+    private LocalDateTime dataOcorrencia;
+    private LocalDateTime dataFim;
+    private String local;
     private String status;
 
-    @Column(name = "IDEntidadeFinanceiraAssociada")
-    private int idEntidadeFinanceiraAssociada;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+
+    @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL)
+    private List<Produto> produtos;
 
     @ManyToOne
-    @JoinColumn(name = "IDEntidadeFinanceiraAssociada", referencedColumnName = "IDEntidadeFinanceira", insertable = false, updatable = false)
-    private EntidadeFinanceira entidadeFinanceiraAssociada;
+    @JoinColumn(name = "instituicao_id")
+    @JsonbTransient
+    public EntidadeFinanceira instituicaoFinanceira;
 
-    @OneToMany(mappedBy = "leilao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LanceCliente> lances = new ArrayList<>();
-    
 }

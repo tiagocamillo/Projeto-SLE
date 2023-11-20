@@ -1,59 +1,74 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.CarroDTO;
 import fatec.sjc.entity.Carro;
 import fatec.sjc.service.CarroService;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.ws.rs.Path;
+
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-
-import jakarta.ws.rs.core.*;
-import jakarta.validation.Valid;
-
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-
-@Path("/carro")
+@Path("/carros")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class CarroController {
 
+    private final CarroService carroService;
+
     @Inject
-    CarroService carroService;
+    public CarroController(CarroService carroService) {
+        this.carroService = carroService;
+    }
 
     @POST
-    public Response criarCarro(@Valid Carro carro) {
+    public Response salvarCarro(CarroDTO carroDTO) {
         try {
-            Carro novoCarro = carroService.criarCarro(carro);
-            return Response.status(Response.Status.CREATED).entity(novoCarro).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
+            Carro savedCarro = carroService.salvarCarro(carroDTO);
+            return Response.status(Response.Status.CREATED).entity(savedCarro).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o carro.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error ao salvar carro: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @GET
+    public Response listarCarros() {
+        try {
+            List<Carro> carros = carroService.listarCarros();
+            return Response.ok(carros).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error ao listar carros: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response buscarPorId(@PathParam("id") Long id) {
+        try {
+            Carro carro = carroService.buscarPorId(id);
+            return Response.ok(carro).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Carro não encontrado pelo id " + id)
+                    .build();
         }
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizarCarro(@PathParam("id") Long id, @Valid Carro carro) {
+    public Response atualizarCarro(@PathParam("id") Long id, CarroDTO carroDTO) {
         try {
-            Carro carroAtualizado = carroService.atualizarCarro(id, carro);
-            if (carroAtualizado != null) {
-                return Response.ok(carroAtualizado).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Carro não encontrado.").build();
-            }
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
+            carroService.atualizarCarro(carroDTO);
+            return Response.noContent().build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o carro.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error ao atualizar carro: " + e.getMessage())
+                    .build();
         }
     }
 
@@ -64,29 +79,9 @@ public class CarroController {
             carroService.excluirCarro(id);
             return Response.noContent().build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o carro.").build();
-        }
-    }
-
-    @GET
-    @Path("/{id}")
-    public Response buscarCarroPorId(@PathParam("id") Long id) {
-        Carro carro = carroService.buscarCarroPorId(id);
-        if (carro != null) {
-            return Response.ok(carro).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Carro não encontrado.").build();
-        }
-    }
-
-    @GET
-    public Response listarCarros() {
-        try {
-            List<Carro> carros = carroService.listarTodosOsCarros();
-            return Response.ok(carros).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os carros.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Error ao deletar carro: " + e.getMessage())
+                    .build();
         }
     }
 }
-

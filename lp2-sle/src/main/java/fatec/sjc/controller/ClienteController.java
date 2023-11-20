@@ -1,49 +1,82 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.ClienteDTO;
 import fatec.sjc.entity.Cliente;
 import fatec.sjc.service.ClienteService;
+
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/cliente")
+@Path("/clientes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ClienteController {
 
+    private final ClienteService clienteService;
+
     @Inject
-    ClienteService clienteService;
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
+    }
 
     @POST
-    public Response criarCliente(@Valid Cliente cliente) {
+    public Response salvarCliente(ClienteDTO clienteDTO) {
         try {
-            Cliente novoCliente = clienteService.criarCliente(cliente);
-            return Response.status(Response.Status.CREATED).entity(novoCliente).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
+            // Tenta salvar o cliente
+            Cliente savedCliente = clienteService.salvarCliente(clienteDTO);
+            return Response.status(Response.Status.CREATED).entity(savedCliente).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o cliente.").build();
+            // Em caso de erro, retorna uma resposta com status de erro interno do servidor
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao salvar cliente: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @GET
+    public Response listarClientes() {
+        try {
+            // Tenta obter a lista de clientes
+            List<Cliente> clientes = clienteService.listarClientes();
+            return Response.ok(clientes).build();
+        } catch (Exception e) {
+            // Em caso de erro, retorna uma resposta com status de erro interno do servidor
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao listar clientes: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response buscarPorId(@PathParam("id") Long id) {
+        try {
+            // Tenta buscar um cliente por ID
+            Cliente cliente = clienteService.buscarPorId(id);
+            return Response.ok(cliente).build();
+        } catch (Exception e) {
+            // Em caso de erro ou cliente não encontrado, retorna uma resposta com status não encontrado
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Cliente não encontrado com o ID " + id)
+                    .build();
         }
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizarCliente(@PathParam("id") Long id, @Valid Cliente cliente) {
+    public Response atualizarCliente(@PathParam("id") Long id, ClienteDTO clienteDTO) {
         try {
-            Cliente clienteAtualizado = clienteService.atualizarCliente(id, cliente);
-            if (clienteAtualizado != null) {
-                return Response.ok(clienteAtualizado).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Cliente não encontrado.").build();
-            }
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
+            // Tenta atualizar o cliente
+            clienteService.atualizarCliente(id, clienteDTO);
+            return Response.noContent().build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o cliente.").build();
+            // Em caso de erro, retorna uma resposta com status de erro interno do servidor
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao atualizar cliente: " + e.getMessage())
+                    .build();
         }
     }
 
@@ -51,31 +84,14 @@ public class ClienteController {
     @Path("/{id}")
     public Response excluirCliente(@PathParam("id") Long id) {
         try {
+            // Tenta excluir o cliente
             clienteService.excluirCliente(id);
             return Response.noContent().build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o cliente.").build();
-        }
-    }
-
-    @GET
-    @Path("/{id}")
-    public Response buscarClientePorId(@PathParam("id") Long id) {
-        Cliente cliente = clienteService.buscarClientePorId(id);
-        if (cliente != null) {
-            return Response.ok(cliente).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Cliente não encontrado.").build();
-        }
-    }
-
-    @GET
-    public Response listarTodosOsClientes() {
-        try {
-            List<Cliente> clientes = clienteService.listarTodosOsClientes();
-            return Response.ok(clientes).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os clientes.").build();
+            // Em caso de erro, retorna uma resposta com status de erro interno do servidor
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao excluir cliente: " + e.getMessage())
+                    .build();
         }
     }
 }

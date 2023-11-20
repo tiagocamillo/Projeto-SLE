@@ -1,5 +1,9 @@
 package fatec.sjc.entity;
 
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,14 +22,16 @@ public class LanceCliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private double valor;
+
+
     @ManyToOne
-    @JoinColumn(name = "id_cliente")
+    private Produto produto;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    @JsonIgnore
     private Cliente cliente;
 
-    @ManyToOne
-    @JoinColumn(name = "id_leilao")
-    private Leilao leilao;
-
-    private Double valorLance;
-
+    private LocalDateTime dataHoraLance;
 }

@@ -1,49 +1,57 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
+import fatec.sjc.dto.VeiculoDTO;
 import fatec.sjc.entity.Veiculo;
 import fatec.sjc.repository.VeiculoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.util.List;
 
 @ApplicationScoped
 public class VeiculoService {
 
+    private final VeiculoRepository veiculoRepository;
+
     @Inject
-    VeiculoRepository veiculoRepository;
+    public VeiculoService(VeiculoRepository veiculoRepository) {
+        this.veiculoRepository = veiculoRepository;
+    }
 
     @Transactional
-    public Veiculo criarVeiculo(Veiculo veiculo) {
+    public Veiculo salvarVeiculo(VeiculoDTO veiculoDTO) {
+        Veiculo veiculo = new Veiculo();
+        atualizarVeiculoFromDTO(veiculo, veiculoDTO);
         veiculoRepository.persist(veiculo);
         return veiculo;
     }
 
+    public List<Veiculo> listarVeiculos() {
+        return veiculoRepository.listAll();
+    }
+
+    public Veiculo buscarPorId(Long id) {
+        return veiculoRepository.findById(id);
+    }
+
     @Transactional
-    public Veiculo atualizarVeiculo(Long id, Veiculo veiculoAtualizado) {
-        Veiculo veiculoExistente = veiculoRepository.findById(id);
-        if (veiculoExistente != null) {
-            veiculoExistente.setTipo(veiculoAtualizado.getTipo());
-            veiculoExistente.setMarca(veiculoAtualizado.getMarca());
-            veiculoExistente.setAno(veiculoAtualizado.getAno());
-            veiculoExistente.setAcessorios(veiculoAtualizado.getAcessorios());
+    public void atualizarVeiculo(VeiculoDTO veiculoDTO) {
+        Veiculo veiculo = veiculoRepository.findById(veiculoDTO.getId());
+        if (veiculo != null) {
+            atualizarVeiculoFromDTO(veiculo, veiculoDTO);
         }
-        return veiculoExistente;
     }
 
     @Transactional
     public void excluirVeiculo(Long id) {
-        Veiculo veiculoExistente = veiculoRepository.findById(id);
-        if (veiculoExistente != null) {
-            veiculoRepository.delete(veiculoExistente);
-        }
+        veiculoRepository.deleteById(id);
     }
 
-    public Veiculo buscarVeiculoPorId(Long id) {
-        return veiculoRepository.findById(id);
-    }
-
-    public List<Veiculo> listarTodosOsVeiculos() {
-        return veiculoRepository.listAll();
+    private void atualizarVeiculoFromDTO(Veiculo veiculo, VeiculoDTO veiculoDTO) {
+        veiculo.setNome(veiculoDTO.getNome());
+        veiculo.setDescricao(veiculoDTO.getDescricao());
+        veiculo.setStatus(veiculoDTO.getStatus());
+        veiculo.setTipo(veiculoDTO.getTipo());
     }
 }

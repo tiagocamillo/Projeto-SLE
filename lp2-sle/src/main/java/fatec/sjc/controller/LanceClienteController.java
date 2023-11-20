@@ -1,49 +1,77 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.LanceClienteDTO;
 import fatec.sjc.entity.LanceCliente;
 import fatec.sjc.service.LanceClienteService;
+
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/lancecliente")
+@Path("/lances-clientes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class LanceClienteController {
 
+    private final LanceClienteService lanceClienteService;
+
     @Inject
-    LanceClienteService lanceClienteService;
+    public LanceClienteController(LanceClienteService lanceClienteService) {
+        this.lanceClienteService = lanceClienteService;
+    }
 
     @POST
-    public Response criarLanceCliente(@Valid LanceCliente lanceCliente) {
+    @Path("/produto/{idProduto}/cliente/{idCliente}/lance/{valor}")
+    public Response salvarLanceCliente(@PathParam("idProduto") Long idProduto,
+                                       @PathParam("idCliente") Long idCliente,
+                                       @PathParam("valor") double valor) {
         try {
-            LanceCliente novoLanceCliente = lanceClienteService.criarLanceCliente(lanceCliente);
-            return Response.status(Response.Status.CREATED).entity(novoLanceCliente).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
+            LanceCliente savedLanceCliente = lanceClienteService.salvarLanceCliente(idProduto, idCliente, valor);
+            return Response.status(Response.Status.CREATED).entity(savedLanceCliente).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o lance do cliente.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao salvar lance do cliente: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @GET
+    public Response listarLancesClientes() {
+        try {
+            List<LanceCliente> lancesClientes = lanceClienteService.listarLancesClientes();
+            return Response.ok(lancesClientes).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao listar lances do cliente: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response buscarPorId(@PathParam("id") Long id) {
+        try {
+            LanceCliente lanceCliente = lanceClienteService.buscarPorId(id);
+            return Response.ok(lanceCliente).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Lance do cliente não encontrado com o ID " + id)
+                    .build();
         }
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizarLanceCliente(@PathParam("id") Long id, @Valid LanceCliente lanceCliente) {
+    public Response atualizarLanceCliente(@PathParam("id") Long id, LanceClienteDTO lanceClienteDTO) {
         try {
-            LanceCliente lanceClienteAtualizado = lanceClienteService.atualizarLanceCliente(id, lanceCliente);
-            if (lanceClienteAtualizado != null) {
-                return Response.ok(lanceClienteAtualizado).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Lance do cliente não encontrado.").build();
-            }
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
+            lanceClienteService.atualizarLanceCliente(id, lanceClienteDTO);
+            return Response.noContent().build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o lance do cliente.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao atualizar lance do cliente: " + e.getMessage())
+                    .build();
         }
     }
 
@@ -54,28 +82,9 @@ public class LanceClienteController {
             lanceClienteService.excluirLanceCliente(id);
             return Response.noContent().build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o lance do cliente.").build();
-        }
-    }
-
-    @GET
-    @Path("/{id}")
-    public Response buscarLanceClientePorId(@PathParam("id") Long id) {
-        LanceCliente lanceCliente = lanceClienteService.buscarLanceClientePorId(id);
-        if (lanceCliente != null) {
-            return Response.ok(lanceCliente).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Lance do cliente não encontrado.").build();
-        }
-    }
-
-    @GET
-    public Response listarTodosOsLancesClientes() {
-        try {
-            List<LanceCliente> lancesClientes = lanceClienteService.listarTodosOsLancesClientes();
-            return Response.ok(lancesClientes).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os lances dos clientes.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao excluir lance do cliente: " + e.getMessage())
+                    .build();
         }
     }
 }

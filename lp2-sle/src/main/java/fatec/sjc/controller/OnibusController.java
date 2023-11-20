@@ -1,19 +1,10 @@
 package fatec.sjc.controller;
 
+import fatec.sjc.dto.OnibusDTO;
 import fatec.sjc.entity.Onibus;
 import fatec.sjc.service.OnibusService;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
-import jakarta.ws.rs.Path;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -24,35 +15,60 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class OnibusController {
 
+    private final OnibusService onibusService;
+
     @Inject
-    OnibusService onibusService;
+    public OnibusController(OnibusService onibusService) {
+        this.onibusService = onibusService;
+    }
 
     @POST
-    public Response criarOnibus(@Valid Onibus onibus) {
+    public Response salvarOnibus(OnibusDTO onibusDTO) {
         try {
-            Onibus novoOnibus = onibusService.criarOnibus(onibus);
-            return Response.status(Response.Status.CREATED).entity(novoOnibus).build();
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
+            Onibus savedOnibus = onibusService.salvarOnibus(onibusDTO);
+            return Response.status(Response.Status.CREATED).entity(savedOnibus).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao criar o ônibus.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao salvar ônibus: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @GET
+    public Response listarOnibus() {
+        try {
+            List<Onibus> onibusList = onibusService.listarOnibus();
+            return Response.ok(onibusList).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao listar ônibus: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response buscarPorId(@PathParam("id") Long id) {
+        try {
+            Onibus onibus = onibusService.buscarPorId(id);
+            return Response.ok(onibus).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Ônibus não encontrado com o ID " + id)
+                    .build();
         }
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizarOnibus(@PathParam("id") Long id, @Valid Onibus onibus) {
+    public Response atualizarOnibus(@PathParam("id") Long id, OnibusDTO onibusDTO) {
         try {
-            Onibus onibusAtualizado = onibusService.atualizarOnibus(id, onibus);
-            if (onibusAtualizado != null) {
-                return Response.ok(onibusAtualizado).build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).entity("Ônibus não encontrado.").build();
-            }
-        } catch (ConstraintViolationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Dados inválidos. Verifique os campos obrigatórios.").build();
+            onibusService.atualizarOnibus(onibusDTO);
+            return Response.noContent().build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao atualizar o ônibus.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao atualizar ônibus: " + e.getMessage())
+                    .build();
         }
     }
 
@@ -63,28 +79,9 @@ public class OnibusController {
             onibusService.excluirOnibus(id);
             return Response.noContent().build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao excluir o ônibus.").build();
-        }
-    }
-
-    @GET
-    @Path("/{id}")
-    public Response buscarOnibusPorId(@PathParam("id") Long id) {
-        Onibus onibus = onibusService.buscarOnibusPorId(id);
-        if (onibus != null) {
-            return Response.ok(onibus).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).entity("Ônibus não encontrado.").build();
-        }
-    }
-
-    @GET
-    public Response listarOnibus() {
-        try {
-            List<Onibus> onibus = onibusService.listarTodosOsOnibus();
-            return Response.ok(onibus).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Erro interno ao listar os ônibus.").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Erro ao excluir ônibus: " + e.getMessage())
+                    .build();
         }
     }
 }

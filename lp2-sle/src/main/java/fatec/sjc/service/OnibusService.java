@@ -1,46 +1,52 @@
 package fatec.sjc.service;
 
+import java.util.List;
+
+import fatec.sjc.dto.OnibusDTO;
 import fatec.sjc.entity.Onibus;
 import fatec.sjc.repository.OnibusRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import java.util.List;
 
 @ApplicationScoped
 public class OnibusService {
 
+    private final OnibusRepository onibusRepository;
+
     @Inject
-    OnibusRepository onibusRepository;
+    public OnibusService(OnibusRepository onibusRepository) {
+        this.onibusRepository = onibusRepository;
+    }
 
     @Transactional
-    public Onibus criarOnibus(Onibus onibus) {
+    public Onibus salvarOnibus(OnibusDTO onibusDTO) {
+        Onibus onibus = new Onibus();
+        onibus.setQuantidadeAssentos(onibusDTO.getQuantidadeAssentos());
+        onibus.setQuantidadePortas(onibusDTO.getQuantidadePortas());
         onibusRepository.persist(onibus);
         return onibus;
     }
 
+    public List<Onibus> listarOnibus() {
+        return onibusRepository.listAll();
+    }
+
+    public Onibus buscarPorId(Long id) {
+        return onibusRepository.findById(id);
+    }
+
     @Transactional
-    public Onibus atualizarOnibus(Long id, Onibus onibusAtualizado) {
-        Onibus onibusExistente = onibusRepository.findById(id);
-        if (onibusExistente != null) {
-            onibusExistente.setCapacidadePassageiros(onibusAtualizado.getCapacidadePassageiros());
-        }
-        return onibusExistente;
+    public void atualizarOnibus(OnibusDTO onibusDTO) {
+        Onibus onibus = new Onibus();
+
+        onibus.setQuantidadeAssentos(onibusDTO.getQuantidadeAssentos());
+        onibus.setQuantidadePortas(onibusDTO.getQuantidadePortas());
+        onibusRepository.persist(onibus);
     }
 
     @Transactional
     public void excluirOnibus(Long id) {
-        Onibus onibusExistente = onibusRepository.findById(id);
-        if (onibusExistente != null) {
-            onibusRepository.delete(onibusExistente);
-        }
-    }
-
-    public Onibus buscarOnibusPorId(Long id) {
-        return onibusRepository.findById(id);
-    }
-
-    public List<Onibus> listarTodosOsOnibus() {
-        return onibusRepository.listAll();
+        onibusRepository.deleteById(id);
     }
 }
